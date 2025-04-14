@@ -1,0 +1,43 @@
+#!/usr/bin/env zsh
+
+darwin_batt() {
+  cmd=$(pmset -g batt)
+  amount=$(echo "$cmd" | grep -Eo "\d+%" | cut -d% -f1)
+
+  echo "#[fg=$(get_color $amount),bg=default] $amount%";
+}
+
+linux_batt() {
+  echo "AC"
+}
+
+get_color() {
+  if (( $1 < 22 )) then
+    color="color9"
+  elif (( $1 < 44 )) then
+    color="color208"
+  elif (( $1 < 66 )) then
+    color="color214"
+  elif (( $1 < 88 )) then
+    color="color186"
+  else
+    color="color148"
+  fi
+
+  echo $color
+}
+
+not_applicable() {
+  echo ""
+}
+
+case $(uname -s) in
+  Linux*)
+    linux_batt
+    ;;
+  Darwin*)
+    darwin_batt
+    ;;
+  *)  
+    not_applicable
+esac

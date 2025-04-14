@@ -1,0 +1,18 @@
+# vim:ft=sshconfig ts=2 sw=2 
+
+Include ~/.ssh/local.config
+
+Host xvzc.github.com
+	HostName github.com
+  ForwardAgent yes
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/xvzc.pub
+
+Host kwanghoo93.github.com
+	HostName github.com
+  ForwardAgent yes
+  IdentitiesOnly yes
+  IdentityFile ~/.ssh/kwanghoo93.pub
+
+Match Host * exec "test -z $SSH_CONNECTION"
+  IdentityAgent "~/.1password/agent.sock"

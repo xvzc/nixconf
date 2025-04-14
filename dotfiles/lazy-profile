@@ -1,0 +1,8 @@
+#!/bin/zsh
+
+# ┌─────────┐ 
+# │ OPENVPN │ 
+# └─────────┘ 
+export OVPN_ROOT="$HOME/vpn"
+export OVPN_DATA="$HOME/vpn/data"
+alias vpn='sudo openvpn --setenv PATH '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' --up /etc/openvpn/update-resolv-conf --down /etc/openvpn/update-resolv-conf --script-security 2 --down-pre'

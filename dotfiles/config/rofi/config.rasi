@@ -1,0 +1,24 @@
+configuration {
+    dpi: 128;
+    show-icons: true;
+    sidebar-mode: true;
+    terminal: "WezTerm";
+}
+
+* {
+}
+
+window {
+}
+
+drun {
+    show-icons: false;
+}
+
+inputbar {
+}
+
+prompt {
+}
+
+@theme "~/.config/rofi/themes/nord/nord.rasi"
