@@ -1,26 +1,17 @@
 {
-  inputs,
   pkgs,
   curEnv,
-  lib,
-  config,
   ...
 }:
 let
-  sharedFonts = import ../_shared/fonts.nix { inherit pkgs; };
-  sharedPrograms = import ../_shared/programs.nix;
-  sharedPkgs = import ../_shared/pkgs.nix {
-    inherit pkgs lib curEnv;
-  };
-  # sharedFiles = import ../_shared/files.nix {
-  #   inherit config;
-  # };
+  commonPkgs = import ../common/pkgs.nix pkgs;
 in
+assert curEnv.system == "aarch64-darwin";
 {
+
   imports = [
-    # sharedFiles
-    ./settings.nix
-    # ./homebrew.nix
+    ./system.nix
+    ./home.nix
   ];
 
   users.users.${curEnv.user} = {
@@ -30,30 +21,32 @@ in
     shell = pkgs.zsh;
   };
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
+  environment = {
+    variables = {
+      SSH_AUTH_SOCK = "~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+    };
 
-    users.${curEnv.user} =
-      {
-        pkgs,
-        ...
-      }:
-      {
-        home = {
-          stateVersion = "24.11";
-          enableNixpkgsReleaseCheck = false;
-          packages = sharedPkgs ++ [ ];
-        };
+    systemPackages =
+      with pkgs;
+      [
+        pam-reattach
+      ]
+      ++ commonPkgs.system;
 
-        programs = { } // sharedPrograms;
+    # Enable touchId in tmux sessions
+    # Ref: https://write.rog.gr/writing/using-touchid-with-tmux/
+    etc."pam.d/sudo_local".text = ''
+      # Managed by Nix Darwin
+      auth       optional       ${pkgs.pam-reattach}/lib/pam/pam_reattach.so ignore_ssh
+      auth       sufficient     pam_tid.so
+    '';
 
-        manual.manpages.enable = true;
-      };
   };
 
-  # Fonts
-  fonts = {
-    packages = sharedFonts;
+  nix-homebrew = {
+    enable = true;
+    user = "${curEnv.user}";
+    enableRosetta = false;
+    mutableTaps = true; # disable `brew tap <name>`
   };
 }

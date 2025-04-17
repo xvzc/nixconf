@@ -19,21 +19,30 @@ config.audible_bell = "Disabled"
 config.window_background_opacity = 0.93
 config.colors = require("themes/miami")
 
-config.window_padding = {
-	left = 8,
-	right = 0,
-	top = 0,
-	bottom = 0,
-}
+wezterm.on("window-resized", function(window, pane)
+	local dimensions = window:get_dimensions()
+	local overrides = window:get_config_overrides() or {}
+
+	overrides.window_padding = {
+		left = dimensions.is_full_screen and 0 or 6,
+		right = 0,
+		top = 0,
+		bottom = 0,
+	}
+
+	window:set_config_overrides(overrides)
+end)
 
 config.font_size = 12.0
 
 config.font = wezterm.font_with_fallback({
 	"JetBrainsMonoNL Nerd Font",
-	"D2Coding",
+	"D2Coding Nerd Font",
 })
 
 config.keys = {
+	{ key = "L", mods = "CTRL", action = wezterm.action.ShowDebugOverlay },
+
 	{
 		key = "-",
 		mods = "CTRL",

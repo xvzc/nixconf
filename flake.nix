@@ -15,65 +15,68 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    darwin = {
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+
+    nix-darwin = {
       url = "github:LnL7/nix-darwin/nix-darwin-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
-    # Optional: Declarative tap management
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
-    };
-    homebrew-bundle = {
-      url = "github:homebrew/homebrew-bundle";
-      flake = false;
-    };
-    homebrew-aerospace = {
-      url = "github:nikitabobko/homebrew-tap";
-      flake = false;
-    };
-
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
+    neovim-config = {
+      url = "github:xvzc/nvim";
+      flake = false;
+    };
   };
 
   outputs =
     {
+      self,
       nixpkgs,
       ...
     }@inputs:
     let
       overlays = [
         (final: prev: {
-          neovim = inputs.neovim-nightly.packages.${prev.system}.default;
-        })
-        (final: prev: {
-          # gh CLI on stable has bugs.
           gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
+          neovim = inputs.neovim-nightly.packages.${prev.system}.default;
         })
       ];
 
       mkSystem = import ./lib/mksystem.nix {
-        inherit overlays nixpkgs inputs;
+        inherit
+          self
+          overlays
+          nixpkgs
+          inputs
+          ;
       };
     in
     {
-      nixosConfigurations.desktop-home-01 = mkSystem "desktop-home-01" {
+      lib = nixpkgs.lib // (import ./lib/utils.nix);
+      nixosConfigurations.pablo = mkSystem {
+        os = "nixos";
+        user = "pablo";
+        host = "nixos-desktop";
         system = "x86_64-linux";
-        user = "jerry";
-        isDarwin = false;
+        setupFunc = nixpkgs.lib.nixosSystem;
+        osModules = [
+          inputs.home-manager.nixosModules.home-manager
+        ];
       };
 
-      darwinConfigurations.macbook-air-m2 = mkSystem "macbook-air-m2" {
+      darwinConfigurations.mario = mkSystem {
+        os = "darwin";
+        user = "mario";
+        host = "macbook-air-m2";
         system = "aarch64-darwin";
-        user = "jerry";
-        isDarwin = true;
+        setupFunc = inputs.nix-darwin.lib.darwinSystem;
+        osModules = [
+          inputs.home-manager.darwinModules.home-manager
+          inputs.nix-homebrew.darwinModules.nix-homebrew
+        ];
       };
     };
 }

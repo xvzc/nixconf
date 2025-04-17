@@ -1,5 +1,8 @@
 #!/bin/zsh
+
 # vim:filetype=zsh:tw=80:et
+
+# zmodload zsh/zprof
 
 ZINIT="${HOME}/.local/share/zinit/zinit.git"
 [ ! -d $ZINIT ] && mkdir -p "$(dirname $ZINIT)"
@@ -26,4 +29,4 @@ done
 fpath+="$DOT_ZSH/_completion"
 autoload -Uz compinit; compinit
 
-zmodload zsh/zprof
+# zprof

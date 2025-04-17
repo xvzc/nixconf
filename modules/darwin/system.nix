@@ -1,32 +1,24 @@
-{ pkgs, ... }:
-###################################################################################
-#
-#  macOS's System configuration
-#
-#  All the configuration options are documented here:
-#    https://daiderd.com/nix-darwin/manual/index.html#sec-options
-#  Incomplete list of macOS `defaults` commands :
-#    https://github.com/yannbertrand/macos-defaults
-#
-#
-#  NOTE: Some options are not supported by nix-darwin directly, manually set them:
-#   1. To avoid conflicts with neovim, disable ctrl + up/down/left/right to switch spaces in:
-#     [System Preferences] -> [Keyboard] -> [Keyboard Shortcuts] -> [Mission Control]
-#   2. Disable use Caps Lock as 中/英 switch in:
-#     [System Preferences] -> [Keyboard] -> [Input Sources] -> [Edit] -> [Use 中/英 key to switch ] -> [Disable]
+{ pkgs, curEnv, ... }:
 {
-  security.pam.enableSudoTouchIdAuth = true;
+
   time.timeZone = "Asia/Seoul";
+  security.pam.enableSudoTouchIdAuth = true;
+  # security.pam.services.sudo_local.touchIdAuth = true;
+  # security.pam.services.sudo_local.reattach
 
   system = {
+
     # activationScripts are executed every time you boot the system
     # or run `nixos-rebuild` / `darwin-rebuild`.
     # activateSettings -u will reload the settings from the database
     # and apply them to the current session,
     # so we do not need to logout and login again to make the changes take effect.
     activationScripts.postUserActivation.text = ''
-      /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-    '';
+        osascript -e 'tell application "Finder" to set desktop picture to POSIX file "/Users/${curEnv.user}/nixfiles/wallpaper.jpeg"'
+        sudo nvram StartupMute=%01
+        /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+        killall Dock
+      '';
 
     defaults = {
       menuExtraClock.Show24Hour = true; # show 24 hour clock
@@ -35,13 +27,7 @@
         autohide = true; # automatically hide and show the dock
         show-recents = false; # do not show recent apps in dock
         mru-spaces = false; # do not automatically rearrange spaces based on most recent use.
-        expose-group-apps = true; # Group windows by application
-
-        # customize Hot Corners(触发角, 鼠标移动到屏幕角落时触发的动作)
-        # wvous-tl-corner = 2; # top-left - Mission Control
-        # wvous-tr-corner = 4; # top-right - Desktop
-        # wvous-bl-corner = 3; # bottom-left - Application Windows
-        # wvous-br-corner = 13; # bottom-right - Lock Screen
+        expose-group-apps = true; # Group windows by application (required by aerospace)
       };
 
       # customize finder
@@ -55,7 +41,7 @@
         AppleShowAllFiles = true;
 
         ShowExternalHardDrivesOnDesktop = true;
-        ShowHardDrivesOnDesktop = true;
+        ShowHardDrivesOnDesktop = false;
         ShowMountedServersOnDesktop = true;
         ShowRemovableMediaOnDesktop = true;
 
@@ -88,7 +74,7 @@
 
         # Key repeat settings
         InitialKeyRepeat = 15; # normal minimum is 15 (225 ms), maximum is 120 (1800 ms)
-        KeyRepeat = 3; # normal minimum is 2 (30 ms), maximum is 120 (1800 ms)
+        KeyRepeat = 2; # normal minimum is 2 (30 ms), maximum is 120 (1800 ms)
 
         NSAutomaticCapitalizationEnabled = false; # disable auto capitalization
         NSAutomaticDashSubstitutionEnabled = false; # disable auto dash substitution
@@ -103,13 +89,13 @@
 
       spaces = {
         # Display have separate spaces
-        #   true: disable this feature
+        #   true: disable this feature (required by aerospace)
         #   false: => enable this feature
         spans-displays = true;
       };
 
       WindowManager = {
-        EnableStandardClickToShowDesktop = false; # Click wallpaper to reveal desktop
+        EnableStandardClickToShowDesktop = true; # Click wallpaper to reveal desktop
         StandardHideDesktopIcons = false; # Show items on desktop
         HideDesktop = false; # Do not hide items on desktop & stage manager
         StageManagerHideWidgets = false;
@@ -149,6 +135,7 @@
         "com.apple.symbolichotkeys" = {
           AppleSymbolicHotKeys = {
             "31" = {
+              description = "Screenshot";
               enabled = true;
               value = {
                 type = "standard";
@@ -161,16 +148,17 @@
             };
 
             "36" = {
-              # mission control
+              description = "Mission Control";
               enabled = false;
             };
 
             "60" = {
-              # previous input source
+              description = "Previous input source";
               enabled = false;
             };
 
             "61" = {
+              description = "Next input source";
               enabled = true;
               value = {
                 type = "standard";
@@ -183,16 +171,17 @@
             };
 
             "64" = {
-              # spotlight
+              description = "Trigger Spotlight";
               enabled = false;
             };
 
             "65" = {
-              # spotlight finder search
+              description = "Trigger Spotlight finder search";
               enabled = false;
             };
 
             "118" = {
+              description = "Trigger Spotlight finder search";
               enabled = true;
               value = {
                 parameters = [
@@ -203,8 +192,8 @@
                 type = "standard";
               };
             };
-          };
-        };
+          }; # AppleSymbolicHotKeys END
+        }; # com.apple.symbolichotkeys END
       }; # CustomSystemPreferences END
     }; # defaults END
   }; # system END

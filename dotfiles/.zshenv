@@ -34,4 +34,3 @@ export PATH="$PATH:$HOME/.spoofdpi/bin"
 _is_darwin && export PATH="/opt/homebrew/bin:$PATH"
 _is_darwin && export PATH="$PATH:/Applications/Docker.app/Contents/Resources/bin/"
 
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"

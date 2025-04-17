@@ -10,12 +10,7 @@ with pkgs;
   (nerdfonts.override {
     fonts = [
       "JetBrainsMono"
+      "D2Coding"
     ];
   })
-
-  # (nerdfonts.override {
-  #   fonts = [
-  #     "jetbrains-mono"
-  #   ];
-  # })
 ]
