@@ -1,12 +1,19 @@
-{ pkgs, curEnv, ... }:
 {
-
+  pkgs,
+  curEnv,
+  ...
+}: {
   time.timeZone = "Asia/Seoul";
   security.pam.enableSudoTouchIdAuth = true;
   # security.pam.services.sudo_local.touchIdAuth = true;
   # security.pam.services.sudo_local.reattach
 
   system = {
+    keyboard = {
+      enableKeyMapping = true;
+      remapCapsLockToControl = true;
+      nonUS.remapTilde = true;
+    };
 
     # activationScripts are executed every time you boot the system
     # or run `nixos-rebuild` / `darwin-rebuild`.
@@ -14,20 +21,35 @@
     # and apply them to the current session,
     # so we do not need to logout and login again to make the changes take effect.
     activationScripts.postUserActivation.text = ''
-        osascript -e 'tell application "Finder" to set desktop picture to POSIX file "/Users/${curEnv.user}/nixfiles/wallpaper.jpeg"'
-        sudo nvram StartupMute=%01
-        /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
-        killall Dock
-      '';
+      osascript -e 'tell application "Finder" to set desktop picture to POSIX file "/Users/${curEnv.user}/nixfiles/wallpaper.jpeg"'
+      sudo nvram StartupMute=%01
+      /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+      killall -u ${curEnv.user} cfprefsd
+      killall Dock
+    '';
 
     defaults = {
       menuExtraClock.Show24Hour = true; # show 24 hour clock
 
       dock = {
         autohide = true; # automatically hide and show the dock
+        autohide-delay = 0.0;
+        autohide-time-modifier = 0.2;
+        expose-animation-duration = 0.2;
+        tilesize = 48;
+        launchanim = false;
+        static-only = false;
+        showhidden = true;
+        orientation = "left";
+        show-process-indicators = true;
         show-recents = false; # do not show recent apps in dock
         mru-spaces = false; # do not automatically rearrange spaces based on most recent use.
         expose-group-apps = true; # Group windows by application (required by aerospace)
+        persistent-apps = [
+          "/Applications/WezTerm.app/"
+          "/Applications/Google Chrome.app/"
+          "/Applications/Spotify.app"
+        ];
       };
 
       # customize finder
@@ -131,9 +153,15 @@
 
         # Prevent Photos from opening automatically when devices are plugged in
         "com.apple.ImageCapture".disableHotPlug = true;
+      }; # CustomSystemPreferences END
+
+      CustomUserPreferences = {
+        "com.apple.HIToolbox" = {
+          AppleCapsLockSwitchToLastInputSource = false;
+        };
 
         "com.apple.symbolichotkeys" = {
-          AppleSymbolicHotKeys = {
+          "AppleSymbolicHotKeys" = {
             "31" = {
               description = "Screenshot";
               enabled = true;
@@ -194,7 +222,7 @@
             };
           }; # AppleSymbolicHotKeys END
         }; # com.apple.symbolichotkeys END
-      }; # CustomSystemPreferences END
+      }; # CustomUserPreferences END
     }; # defaults END
   }; # system END
 }

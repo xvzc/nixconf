@@ -5,41 +5,40 @@
   inputs,
   nixpkgs,
   overlays,
-}:
-{
+}: {
   os,
   user,
   host,
   system,
   setupFunc,
-  osModules,
-}:
-let
-  nixSettings = import ../nix-settings.nix { inherit overlays; };
+  sysModules,
+}: let
 in
-assert builtins.pathExists ../wallpaper.jpeg;
-assert (os == "darwin" || "nixos");
-assert (os == "darwin" && self.lib.hasInfix "darwin" system || os == "nixos");
-setupFunc {
-  inherit system;
+  assert builtins.pathExists ../wallpaper.jpeg;
+  assert (os == "darwin" || "nixos");
+  assert (os == "darwin" && self.lib.hasInfix "darwin" system || os == "nixos");
+    setupFunc {
+      inherit system;
 
-  modules = self.lib.flatten [
-    nixSettings
-    osModules
-    ../modules/${os}
-    ../users/${user}.nix
-  ];
+      modules = self.lib.flatten [
+        (import ../nix-settings.nix {inherit overlays;})
+        sysModules
+        ../modules/base
+        ../modules/${os}
+        ../home/${os}.nix
+        ../users/${user}.nix
+      ];
 
-  specialArgs = {
-    inherit inputs;
-    lib = self.lib;
-    curEnv = {
-      inherit
-        os
-        user
-        host
-        system
-        ;
-    };
-  };
-}
+      specialArgs = {
+        inherit inputs;
+        lib = self.lib;
+        curEnv = {
+          inherit
+            os
+            user
+            host
+            system
+            ;
+        };
+      };
+    }

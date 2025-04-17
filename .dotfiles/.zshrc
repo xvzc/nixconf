@@ -27,6 +27,6 @@ done
 [ -f $HOME/.secrets ] && zsh-defer source "$HOME/.secrets"
 
 fpath+="$DOT_ZSH/_completion"
-autoload -Uz compinit; compinit
+autoload -Uz compinit && compinit -u
 
 # zprof

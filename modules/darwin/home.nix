@@ -2,64 +2,57 @@
   curEnv,
   lib,
   ...
-}:
-{
+}: {
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
     backupFileExtension = "hm-bak";
-    users.${curEnv.user} =
-      {
-        pkgs,
-        config,
-        ...
-      }:
-      let
-        commonFiles = import ../common/files.nix { inherit config; };
-        commonPkgs = import ../common/pkgs.nix { inherit pkgs; };
-        commonPrograms = import ../common/programs.nix { inherit pkgs config; };
-        symlink = config.lib.file.mkOutOfStoreSymlink;
-        dotfiles = config.dotfiles;
-      in
-      {
-        imports = [ lib.setDotfilesContext ];
+    users.${curEnv.user} = {
+      pkgs,
+      config,
+      ...
+    }: let
+      commonFiles = import ../common/files.nix {inherit config;};
+      commonPkgs = import ../common/pkgs.nix {inherit pkgs;};
+      commonPrograms = import ../common/programs.nix {inherit pkgs config;};
+      symlink = config.lib.file.mkOutOfStoreSymlink;
+      dotfiles = config.dotfiles;
+    in {
+      imports = [lib.setDotfilesContext];
 
-        home = {
-          stateVersion = "24.11";
-          enableNixpkgsReleaseCheck = false;
+      home = {
+        stateVersion = "24.11";
+        enableNixpkgsReleaseCheck = false;
 
-          activation.link1PasswordAgent = # sh
-            ''
-              mkdir -p ~/.1password && \
-              ln -sf ~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock \
-              ~/.1password/agent.sock && \
-              ln -sf /Applications/1Password.app/Contents/MacOS/op-ssh-sign \
-              ~/.1password/op-ssh-sign && \
-            '';
+        activation.setup = builtins.readFile ../../_static/darwin/setup.sh;
 
-          file = commonFiles.home // {
+        file =
+          commonFiles.home
+          // {
+            "Library/KeyBindings/DefaultKeyBinding.dict".text =
+              builtins.readFile ../../_static/darwin/DefaultKeyBinding.dict;
           };
 
-          packages =
-            with pkgs;
-            [
-              pngpaste
-              jankyborders
-            ]
-            ++ commonPkgs.home;
-        };
+        packages = with pkgs; [
+          pngpaste
+          jankyborders
+        ];
+      };
 
-        xdg.configFile = commonFiles.xdgConfig // {
+      xdg.configFile =
+        commonFiles.xdgConfig
+        // {
           "aerospace".source = symlink "${dotfiles}/.config/aerospace";
           "aerospace".recursive = true;
-          # "aerospace/aerospace.toml".enable = false;
         };
 
-        programs = commonPrograms // {
+      programs =
+        commonPrograms
+        // {
         };
 
-        manual.manpages.enable = true;
-      };
+      manual.manpages.enable = true;
+    };
   };
 
   homebrew = {
@@ -74,14 +67,15 @@
     ];
 
     casks = [
-      "google-chrome"
       "1password"
-      "alfred"
+      "1password-cli"
+      "google-chrome"
       "aerospace"
       "bettertouchtool"
       "discord"
       "wezterm"
       "chatgpt"
+      "raycast"
     ];
 
     masApps = {

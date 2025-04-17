@@ -31,52 +31,49 @@
     };
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      ...
-    }@inputs:
-    let
-      overlays = [
-        (final: prev: {
-          gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
-          neovim = inputs.neovim-nightly.packages.${prev.system}.default;
-        })
-      ];
+  outputs = {
+    self,
+    nixpkgs,
+    ...
+  } @ inputs: let
+    overlays = [
+      (final: prev: {
+        gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
+        neovim = inputs.neovim-nightly.packages.${prev.system}.default;
+      })
+    ];
 
-      mkSystem = import ./lib/mksystem.nix {
-        inherit
-          self
-          overlays
-          nixpkgs
-          inputs
-          ;
-      };
-    in
-    {
-      lib = nixpkgs.lib // (import ./lib/utils.nix);
-      nixosConfigurations.pablo = mkSystem {
-        os = "nixos";
-        user = "pablo";
-        host = "nixos-desktop";
-        system = "x86_64-linux";
-        setupFunc = nixpkgs.lib.nixosSystem;
-        osModules = [
-          inputs.home-manager.nixosModules.home-manager
-        ];
-      };
-
-      darwinConfigurations.mario = mkSystem {
-        os = "darwin";
-        user = "mario";
-        host = "macbook-air-m2";
-        system = "aarch64-darwin";
-        setupFunc = inputs.nix-darwin.lib.darwinSystem;
-        osModules = [
-          inputs.home-manager.darwinModules.home-manager
-          inputs.nix-homebrew.darwinModules.nix-homebrew
-        ];
-      };
+    mkSystem = import ./lib/mksystem.nix {
+      inherit
+        self
+        overlays
+        nixpkgs
+        inputs
+        ;
     };
+  in {
+    lib = nixpkgs.lib // (import ./lib/utils.nix);
+    nixosConfigurations.pablo = mkSystem {
+      os = "nixos";
+      user = "pablo";
+      host = "nixos-desktop";
+      system = "x86_64-linux";
+      setupFunc = nixpkgs.lib.nixosSystem;
+      sysModules = [
+        inputs.home-manager.nixosModules.home-manager
+      ];
+    };
+
+    darwinConfigurations.mario = mkSystem {
+      os = "darwin";
+      user = "mario";
+      host = "macbook-air-m2";
+      system = "aarch64-darwin";
+      setupFunc = inputs.nix-darwin.lib.darwinSystem;
+      sysModules = [
+        inputs.home-manager.darwinModules.home-manager
+        inputs.nix-homebrew.darwinModules.nix-homebrew
+      ];
+    };
+  };
 }

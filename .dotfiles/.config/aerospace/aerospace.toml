@@ -1,6 +1,6 @@
-after-startup-command = [ 
-    'exec-and-forget borders active_color=0xff9bf280 width=3.0 hidpi=off' 
-]
+# after-startup-command = [ 
+#     'exec-and-forget borders active_color=0xff9bf280 width=3.0 hidpi=off' 
+# ]
 
 start-at-login = true 
 
@@ -54,7 +54,7 @@ alt-minus = 'resize smart -50'
 alt-equal = 'resize smart +50'
 
 alt-slash = 'layout tiles horizontal vertical'
-alt-f = 'layout floatink'
+alt-f = 'layout floating'
 alt-h = 'join-with left'
 alt-j = 'join-with down'
 alt-k = 'join-with up'

@@ -1,8 +1,4 @@
-{
-  overlays,
-  ...
-}:
-{
+{overlays, ...}: {
   nix = {
     settings = {
       # Enable flakes and new 'nix' command
@@ -13,7 +9,11 @@
   };
 
   nixpkgs = {
-    config.allowUnfree = true;
+    config = {
+      allowUnfree = true;
+      allowUnsupportedSystem = true;
+    };
+
     overlays = overlays;
   };
 }
