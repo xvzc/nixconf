@@ -1,8 +1,9 @@
 #!/bin/zsh
-
 # vim:filetype=zsh:tw=80:et
 
-# zmodload zsh/zprof
+ENABLE_ZPROF=false
+
+$ENABLE_ZPROF && zmodload zsh/zprof
 
 ZINIT="${HOME}/.local/share/zinit/zinit.git"
 [ ! -d $ZINIT ] && mkdir -p "$(dirname $ZINIT)"
@@ -14,7 +15,8 @@ autoload -Uz _zinit
 
 DOT_ZSH=$HOME/.zsh
 
-source "$DOT_ZSH/main.zsh"
+source "$DOT_ZSH/plugins.zsh"
+source "$DOT_ZSH/opt.zsh"
 source "$DOT_ZSH/alias.zsh"
 source "$DOT_ZSH/style.zsh"
 
@@ -29,4 +31,5 @@ done
 fpath+="$DOT_ZSH/_completion"
 autoload -Uz compinit && compinit -u
 
-# zprof
+$ENABLE_ZPROF && zprof
+

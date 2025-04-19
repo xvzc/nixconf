@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 selected=$( \
-  fd --type d \
+  fd -L --type d \
   --search-path $HOME \
   --hidden | \
   fzf-tmux \
@@ -14,4 +14,5 @@ if [[ -z $selected ]]; then
   exit 0
 fi
 
-tmux new-window -c "$(realpath $selected)"
+# tmux new-window -c "$(realpath -L $selected)"
+tmux new-window -c "$selected"

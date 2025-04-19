@@ -1,16 +1,29 @@
-# NIXNAME ?= macbook-air-m2
 UNAME := $(shell uname)
 
 init:
-	command -v nix || curl -L https://nixos.org/nix/install | bash
-	mkdir -p ~/.config
-	git clone https://github.com/xvzc/nvim ~/.config/nvim
+	[ -f ~/.zprofile ] || touch ~/.zprofile \
+		&& grep -q '^export NIXNAME=' ~/.zprofile \
+		|| echo "export NIXNAME='${NIXNAME}'" >> ~/.zprofile
+	export NIXNAME='${NIXNAME}'
+
 ifeq ($(UNAME), Darwin)
-	nix build --extra-experimental-features nix-command --extra-experimental-features flakes ".#darwinConfigurations.${NIXNAME}.system"
+	command -v nix \
+		|| command -v /nix/var/nix/profiles/default/bin/nix \
+		|| curl -L https://nixos.org/nix/install | sh
+
+	command -v nix || . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+
+	nix build \
+		--extra-experimental-features nix-command \
+		--extra-experimental-features flakes \
+		".#darwinConfigurations.${NIXNAME}.system"
+
 	./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}"
 else
 	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${NIXNAME}"
 endif
+	test -d ~/.config || mkdir -p ~/.config
+	test -d ~/.config/nvim || git clone https://github.com/xvzc/nvim ~/.config/nvim
 
 switch:
 ifeq ($(UNAME), Darwin)

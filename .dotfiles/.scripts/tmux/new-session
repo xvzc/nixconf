@@ -5,11 +5,11 @@ if [[ $# -eq 1 ]]; then
     selected=$1
 else
     selected=$( \
-      fd \
+      fd -L # follow symlinks \
       --search-path ~/.config \
-      --search-path ~/_personal \
-      --search-path \
-      ~/_work --type d \
+      --search-path ~/personal \
+      --search-path ~/work \
+      --type d \
       --exact-depth 1 | \
       fzf-tmux \
       -p80%,60% \

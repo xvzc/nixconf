@@ -4,27 +4,13 @@
 # ┌─────────┐
 # │ GENERAL │
 # └─────────┘
-
-# alias sudo='sudo '
 alias vi='nvim'
-
-if [ $(command -v eza) ]; then
-  alias l="ls"
-  alias ls='eza --sort=type'
-  alias la='eza -alg --sort=type'
-fi
-
-alias 'bat'='bat --style=plain'
-alias 'bat -nu'='bat --style=numbers'
+alias ls='eza -g --sort=type'
 
 _is_linux && alias open='thunar'
 
 alias lazygit='lazygit --use-config-file=$HOME/.config/lazygit/config.yml'
 alias lg='lazygit --use-config-file=$HOME/.config/lazygit/config.yml'
-
-alias py='python3'
-alias python='python3'
-alias wol='wakeonlan -i $(dig +short $HOME_DDNS) -p 9 $DESKTOP_MAC_ADDRESS'
 
 # ┌─────────────┐
 # │ DIRECTORIES │
@@ -63,10 +49,10 @@ alias czf='chezmoi forget'
 # ┌──────┐
 # │ TMUX │
 # └──────┘
-alias tat='tmux -u attach-session -t'
-alias tdt='tmux detach'
-alias tkt='tmux kill-session -t'
-alias tst='tmux -u switch -t'
+alias tas='tmux -u attach-session -t'
+alias tds='tmux detach'
+alias tks='tmux kill-session -t'
+alias tss='tmux -u switch -t'
 alias tns='tmux -u new -c ~ -s'
 alias tls='tmux ls'
 

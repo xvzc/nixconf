@@ -1,12 +1,38 @@
-rec {
-  flatten = list:
-    builtins.concatLists (builtins.map (x:
-      if builtins.isList x
-      then flatten x
-      else [x])
-    list);
+{
+  importListFromDir = dir: let
+    files = builtins.readDir dir;
 
-  hasInfix = sub: full: builtins.match ".*${sub}.*" full != null;
+    nixFiles = builtins.filter (
+      name:
+        (builtins.match ".*\\.nix$" name)
+        != null
+        && name != "default.nix"
+    ) (builtins.attrNames files);
+  in
+    builtins.map (name: import (dir + "/." + "/${name}")) nixFiles;
+
+  importAttrSetsFromDir = dirPath: args: let
+    files = builtins.filter (
+      name:
+        name
+        != "default.nix"
+        && builtins.match ".*\\.nix$" name != null
+    ) (builtins.attrNames (builtins.readDir dirPath));
+
+    importOne = name: let
+      f = import (dirPath + "/${name}");
+      val = f args;
+    in
+      if builtins.isAttrs val
+      then val
+      else throw "${name} must return an attribute set, but got ${builtins.typeOf val}";
+
+    mergeAttrSets = sets:
+      builtins.foldl' (a: b: a // b) {} sets;
+
+    merged = mergeAttrSets (map importOne files);
+  in
+    merged;
 
   setDotfilesContext = {
     lib,

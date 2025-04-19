@@ -12,33 +12,38 @@
   system,
   setupFunc,
   sysModules,
-}: let
-in
-  assert builtins.pathExists ../wallpaper.jpeg;
-  assert (os == "darwin" || "nixos");
-  assert (os == "darwin" && self.lib.hasInfix "darwin" system || os == "nixos");
-    setupFunc {
-      inherit system;
+}:
+assert builtins.pathExists ../wallpaper.jpeg;
+assert (os == "darwin" && builtins.elem system self.darwinSystems)
+|| (os == "nixos" && builtins.elem system self.nixosSystems);
+  setupFunc {
+    inherit system;
 
-      modules = self.lib.flatten [
-        (import ../nix-settings.nix {inherit overlays;})
-        sysModules
-        ../modules/base
+    modules =
+      [
+        {
+          nix.settings.experimental-features = "nix-command flakes";
+          nix.optimise.automatic = true;
+
+          nixpkgs.config.allowUnfree = true;
+          nixpkgs.config.allowUnsupportedSystem = true;
+          # nixpkgs.config.allowBroken = true;
+        }
+      ]
+      ++ sysModules
+      ++ [
         ../modules/${os}
-        ../home/${os}.nix
-        ../users/${user}.nix
       ];
 
-      specialArgs = {
-        inherit inputs;
-        lib = self.lib;
-        curEnv = {
-          inherit
-            os
-            user
-            host
-            system
-            ;
-        };
+    specialArgs = {
+      inherit overlays inputs;
+      env = {
+        inherit
+          os
+          user
+          host
+          system
+          ;
       };
-    }
+    };
+  }

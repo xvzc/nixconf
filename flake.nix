@@ -46,17 +46,18 @@
     mkSystem = import ./lib/mksystem.nix {
       inherit
         self
-        overlays
-        nixpkgs
         inputs
+        nixpkgs
+        overlays
         ;
     };
   in {
-    lib = nixpkgs.lib // (import ./lib/utils.nix);
+    darwinSystems = ["aarch64-darwin"];
+    nixosSystems = ["x86_64-linux"];
     nixosConfigurations.pablo = mkSystem {
       os = "nixos";
       user = "pablo";
-      host = "nixos-desktop";
+      host = "nixos-desktop-p01";
       system = "x86_64-linux";
       setupFunc = nixpkgs.lib.nixosSystem;
       sysModules = [
@@ -67,7 +68,7 @@
     darwinConfigurations.mario = mkSystem {
       os = "darwin";
       user = "mario";
-      host = "macbook-air-m2";
+      host = "macos-labtop-p01";
       system = "aarch64-darwin";
       setupFunc = inputs.nix-darwin.lib.darwinSystem;
       sysModules = [

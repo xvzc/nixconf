@@ -68,7 +68,8 @@ config.keys = {
 	{
 		key = "Tab",
 		mods = "CTRL",
-		action = wezterm.action.SendKey({ key = "Tab", mods = "CTRL" }),
+		-- action = wezterm.action.SendKey({ key = "Tab", mods = "CTRL" }),
+		action = wezterm.action.SendString('\x1b[9;5u'),
 	},
 	{
 		key = "Tab",
@@ -76,5 +77,6 @@ config.keys = {
 		action = wezterm.action.SendKey({ key = "Tab", mods = "SHIFT|CTRL" }),
 	},
 }
+-- ^[[9;5u ^[[1;5Z
 
 return config

@@ -4,13 +4,15 @@ if [[ $# -eq 1 ]]; then
     selected=$1
 else
     selected=$( \
-      fd \
+      fd -L \
+      --hidden \
+      --search-path ~ \
       --search-path ~/.config \
       --search-path ~/.scripts \
-      --search-path ~/_personal \
-      --search-path ~/_work \
+      --search-path ~/personal \
+      --search-path ~/work \
       --search-path ~/playground \
-      --type f --hidden \
+      --type f \
       | fzf-tmux \
       --preview 'bat --style=numbers --color=always --line-range :500 {}' \
       -p60%,60% \

@@ -3,7 +3,6 @@
 
 **/.config/raycast
 **/.wine
-# **/.local/share
 **/.cache
 **/.npm
 **/.local/lib
@@ -21,6 +20,9 @@
 **/go/
 **/.fontconfig
 **/node_modules
+**/.nix-defexpr
+**/nixfiles
+**/.local
 
 /run/
 /boot/

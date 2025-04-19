@@ -1,34 +1,53 @@
 {
+  env,
   pkgs,
-  curEnv,
+  overlays,
   ...
 }: let
-  user = curEnv.user;
+  utils = import ../../lib/utils.nix;
 in
-  assert curEnv.system == "aarch64-darwin"; {
-    imports = [
-      ./system.nix
-    ];
+  assert env.system == "aarch64-darwin"; {
+    nixpkgs.overlays = overlays ++ utils.importListFromDir ./overlays;
 
-    system.stateVersion = 5;
+    time.timeZone = "Asia/Seoul";
 
-    users.users.${user} = {
-      name = "${user}";
-      home = "/Users/${user}";
+    security.pam.enableSudoTouchIdAuth = true;
+
+    system = import ./system.nix {inherit pkgs env;};
+
+    environment = import ./environment {inherit pkgs;};
+
+    users.users.${env.user} = {
+      name = "${env.user}";
+      home = "/Users/${env.user}";
       isHidden = false;
       shell = pkgs.zsh;
     };
 
-    environment.etc."pam.d/sudo_local".text = ''
-      # Managed by Nix Darwin
-      auth       optional       ${pkgs.pam-reattach}/lib/pam/pam_reattach.so ignore_ssh
-      auth       sufficient     pam_tid.so
-    '';
+    home-manager = import ./home {inherit env;};
 
     nix-homebrew = {
       enable = true;
-      user = "${curEnv.user}";
+      user = "${env.user}";
       enableRosetta = false;
       mutableTaps = true; # disable `brew tap <name>`
     };
+
+    homebrew = {
+      enable = true;
+      brewPrefix = "/opt/homebrew/bin";
+      taps = [
+        "nikitabobko/tap" # aerospace
+        "daipeihust/tap" # im-select
+        "laishulu/homebrew" # macism
+      ];
+
+      brews = ["im-select"];
+      casks = ["raycast" "chatgpt" "1password"];
+      masApps = {
+        "KakaoTalk" = 869223134;
+      };
+    };
+
+    fonts.packages = pkgs.callPackage ../_shared/fonts.nix {inherit pkgs;};
   }
