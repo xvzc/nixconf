@@ -18,7 +18,7 @@ config.default_cursor_style = "SteadyBlock"
 config.audible_bell = "Disabled"
 
 -- config.colors = require("themes/miami")
-config.font_size = 12.0
+config.font_size = 12.2
 config.color_scheme_dirs = { "/Users/mario/.config/wezterm/colors" }
 config.color_scheme = "Miami"
 
@@ -56,6 +56,7 @@ config.keys = {
 	{ key = "=", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
 	{ key = "-", mods = "CMD", action = wezterm.action.DisableDefaultAssignment },
 	{ key = "=", mods = "CMD", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "f", mods = "CTRL|CMD|ALT", action = wezterm.action.ToggleFullScreen },
 }
 
 local function recursive_merge(t1, t2)

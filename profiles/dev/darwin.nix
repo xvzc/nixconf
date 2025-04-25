@@ -4,6 +4,9 @@
   lib,
   ...
 }:
+let
+  wallpaper = "/Users/${ctx.username}/nixfiles/.assets/wallpaper.jpeg";
+in
 assert builtins.pathExists ../../.assets/wallpaper.jpeg;
 {
   # Unlike `nixos`, `nix-darwin` requires `system.stateVersion` to be an int.
@@ -15,6 +18,7 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
   users = {
     knownUsers = [ "${ctx.username}" ];
     users.${ctx.username} = {
+      uid = 501;
       home = "/Users/${ctx.username}";
       shell = pkgs.zsh;
     };
@@ -28,12 +32,16 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
   };
 
   homebrew = {
+    enable = true;
     taps = [
       "daipeihust/tap" # im-select
+      "koekeishiya/formulae" # yabai
     ];
 
     brews = [
       "im-select"
+      "yabai"
+      "skhd"
     ];
 
     casks = [
@@ -60,7 +68,7 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
   system.keyboard = {
     enableKeyMapping = true;
     remapCapsLockToControl = true;
-    nonUS.remapTilde = true;
+    nonUS.remapTilde = false; # This doesn't work in Korean Keyboard
   };
 
   # activationScripts are executed every time you boot the system
@@ -68,7 +76,7 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
   # activateSettings -u will reload the settings from the database
   # and apply them to the current session,
   # so we do not need to logout and login again to make the changes take effect.
-  system.activationScripts.darwinActivation.text = # sh
+  system.activationScripts.postUserActivation.text = # sh
     ''
       # Disable dictation
       /usr/bin/defaults write \
@@ -86,49 +94,27 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
         com.apple.speech.recognition.AppleSpeechRecognition.prefs \
         DictationEnabled -bool false
 
-      # Disable boot sound
-      sudo nvram StartupMute=%01
+      # Set wallpaper
+      osascript \
+        -e 'tell application "Finder"' \
+        -e '  set desktop picture to POSIX file "${wallpaper}"' \
+        -e 'end tell'
 
       # Replace `₩` with backtick
-      mkdir -p /Users/${ctx.username}/Library/KeyBindings/
-      echo '{ "₩" = ("insertText:", "`"); }' > \
+      mkdir -p /Users/${ctx.username}/Library/KeyBindings \
+        && echo '{ "₩" = ("insertText:", "`"); }' > \
         "/Users/${ctx.username}/Library/KeyBindings/DefaultKeyBinding.dict"
+
+      # Disable boot sound
+      sudo nvram StartupMute=%01
 
       # Activate settings
       FRAMEWORK_PATH=/System/Library/PrivateFrameworks/SystemAdministration.framework
       sudo $FRAMEWORK_PATH/Resources/activateSettings -u
 
-      # Set wallpaper
-      osascript \
-        -e 'tell application "Finder"' \
-        -e '  set desktop picture to POSIX file "/Users/${ctx.username}/nixfiles/wallpaper.jpeg"' \
-        -e 'end tell'
-
       # Restart dock
       killall -u ${ctx.username} cfprefsd
       killall Dock
-    '';
-
-  system.activationScripts.init1Password.text = # sh
-    ''
-      CTX_HOME=/Users/${ctx.username}
-      # Create symbolic links for the 1Password SSH agent socket and SSH signer binary.
-      # This allows users to do the following:
-      # 1. Use `IdentityAgent "~/.1password/agent.sock"` in their SSH config,
-      #    regardless of the operating system.
-      # 2. Use `gpg.ssh.program = ~/.1password/op-ssh-sign` in their Git config, 
-      #    also OS-independent
-      # mkdir -p $CTX_HOME/.1password && \
-      #   ln -sf $CTX_HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock \
-      #     $CTX_HOME/.1password/agent.sock && \
-      #   ln -sf /Applications/1Password.app/Contents/MacOS/op-ssh-sign \
-      #     $CTX_HOME/.1password/op-ssh-sign
-      #
-      # mkdir -p $CTX_HOME/.1password && \
-      #   ln -sf $CTX_HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock \
-      #     $CTX_HOME/.1password/agent.sock && \
-      #   ln -sf /Applications/1Password.app/Contents/MacOS/op-ssh-sign \
-      #     $CTX_HOME/.1password/op-ssh-sign
     '';
 
   system.defaults.menuExtraClock.Show24Hour = true;
@@ -264,12 +250,13 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
     # Prevent Photos from opening automatically when devices are plugged in
     "com.apple.ImageCapture".disableHotPlug = true;
   };
+
   system.defaults.CustomUserPreferences."com.apple.HIToolbox" = {
     AppleFnUsageType = 0;
     AppleCapsLockSwitchToLastInputSource = false;
   };
 
-  system.defaults.CustomUserPreferences."com.apple.symbolichotkeys"."AppleSymbolicHotKeys" = {
+  system.defaults.CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys = {
     "31" = {
       description = "Screenshot";
       enabled = true;

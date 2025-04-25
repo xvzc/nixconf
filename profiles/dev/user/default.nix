@@ -91,10 +91,10 @@ in
     # │ common │
     # └────────┘
     {
-      ".zsh".source = ../../../.dotfiles/.zsh;
+      ".zsh".source = ../../../dotfiles/zsh;
       ".zsh".recursive = true;
 
-      ".scripts".source = ../../../.dotfiles/.scripts;
+      ".scripts".source = ../../../dotfiles/scripts;
       ".scripts".recursive = true;
 
       ".terminfo".source = ../../../.assets/.terminfo; # No symlink
@@ -113,10 +113,17 @@ in
     # │ common │
     # └────────┘
     {
-      "wezterm/wezterm.lua".source = ../../../.dotfiles/.config/wezterm/wezterm.lua;
-      "wezterm/colors/miami.toml".source = ../../../.dotfiles/.config/wezterm/colors/miami.toml;
+      "wezterm/wezterm.lua".source = ../../../dotfiles/config/wezterm/wezterm.lua;
+      "wezterm/colors/miami.toml".source = ../../../dotfiles/config/wezterm/colors/miami.toml;
 
-      "1Password/ssh/agent.toml".source = ../../../.dotfiles/.config/1Password/ssh/agent.toml;
+      "1Password/ssh/agent.toml".source = ../../../dotfiles/config/1Password/ssh/agent.toml;
+    }
+    # ┌────────┐ 
+    # │ darwin │ 
+    # └────────┘ 
+    ++ lib.optionalAttrs ctx.isDarwin {
+      "yabai/yabairc".source = ../../../dotfiles/config/yabai/yabairc;
+      "skhd/skhdrc".source = ../../../dotfiles/config/skhd/skhdrc;
     };
 
   # programs = utils.importAttrSetsFromDir ./programs { inherit config pkgs lib; };
@@ -129,8 +136,6 @@ in
     eza = import ./programs/eza.nix args;
     ssh = import ./programs/ssh.nix args;
     fastfetch = import ./programs/fastfetch.nix args;
-    # wezterm = import ./programs/wezterm.nix programArgs;
-    # home-manager = import ./programs/home-manager.nix programArgs;
   };
 
   manual.manpages.enable = true;

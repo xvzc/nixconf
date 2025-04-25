@@ -59,8 +59,8 @@ in
   ];
 
   services = {
-    yabai = import ./services/yabai.nix args;
-    skhd = import ./services/skhd.nix args;
+    # yabai = import ./services/yabai.nix args;
+    # skhd = import ./services/skhd.nix args;
   };
 
   # programs = {
