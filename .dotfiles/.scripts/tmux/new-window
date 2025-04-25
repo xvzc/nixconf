@@ -1,18 +1,1 @@
-#!/bin/zsh
-
-selected=$( \
-  fd -L --type d \
-  --search-path $HOME \
-  --hidden | \
-  fzf-tmux \
-  -p80%,60% \
-  --preview 'tree {}' \
-)
-
-if [[ -z $selected ]]; then
-  tmux new-window -c $HOME
-  exit 0
-fi
-
-# tmux new-window -c "$(realpath -L $selected)"
-tmux new-window -c "$selected"
+/nix/store/pl7xl0nqcgvrvzyhkyqpws7prq8shi7x-home-manager-files/.scripts/tmux/new-window

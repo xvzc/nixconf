@@ -25,56 +25,59 @@
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
-    neovim-config = {
-      url = "github:xvzc/nvim";
-      flake = false;
-    };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  } @ inputs: let
-    overlays = [
-      (final: prev: {
-        gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
-        neovim = inputs.neovim-nightly.packages.${prev.system}.default;
-      })
-    ];
+  outputs =
+    { nixpkgs, ... }@inputs:
+    let
+      machines = {
+        "desktop-personal-phys-01" = {
+          system = "x86_64-linux";
+          profile = "dev";
+          username = "pablo";
+          hostname = "nixos-desktop";
+        };
 
-    mkSystem = import ./lib/mksystem.nix {
-      inherit
-        self
-        inputs
-        nixpkgs
-        overlays
-        ;
-    };
-  in {
-    darwinSystems = ["aarch64-darwin"];
-    nixosSystems = ["x86_64-linux"];
-    nixosConfigurations.pablo = mkSystem {
-      os = "nixos";
-      user = "pablo";
-      host = "nixos-desktop-p01";
-      system = "x86_64-linux";
-      setupFunc = nixpkgs.lib.nixosSystem;
-      sysModules = [
-        inputs.home-manager.nixosModules.home-manager
-      ];
-    };
+        "desktop-work-phys-01" = {
+          system = "x86_64-linux";
+          profile = "dev";
+          username = "pablo";
+          hostname = "nixos-desktop";
+        };
 
-    darwinConfigurations.mario = mkSystem {
-      os = "darwin";
-      user = "mario";
-      host = "macos-labtop-p01";
-      system = "aarch64-darwin";
-      setupFunc = inputs.nix-darwin.lib.darwinSystem;
-      sysModules = [
-        inputs.home-manager.darwinModules.home-manager
-        inputs.nix-homebrew.darwinModules.nix-homebrew
-      ];
+        "k8s-master-vm-01" = {
+          system = "x86_64-linux";
+          profile = "server";
+          username = "k8s-master1";
+          hostname = "nixos-desktop";
+        };
+
+        "macair-personal-phys-01" = {
+          system = "aarch64-darwin";
+          profile = "dev";
+          username = "mario";
+          hostname = "macbook-air-m2";
+        };
+      };
+
+      lib = nixpkgs.lib;
+      mkSystem = import ./lib/mksystem.nix { inherit inputs nixpkgs; };
+    in
+    {
+      # darwinConfigurations = builtins.mapAttrs (k: v: mkSystem (v // { machine = k; })) (
+      #   lib.filterAttrs (_: v: builtins.elem v.system lib.platforms.darwin) machines
+      # );
+
+      darwinConfigurations."macair-personal-phys-01" = mkSystem {
+        system = "aarch64-darwin";
+        profile = "dev";
+        username = "mario";
+        hostname = "macbook-air-m2";
+        machine = "macair-personal-phys-01";
+      };
+
+      nixosConfigurations = builtins.mapAttrs (k: v: mkSystem (v // { machine = k; })) (
+        lib.filterAttrs (_: v: builtins.elem v.system lib.platforms.linux) machines
+      );
     };
-  };
 }

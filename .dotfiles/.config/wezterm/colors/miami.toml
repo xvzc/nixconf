@@ -1,0 +1,85 @@
+[colors]
+ansi = [
+  "#2b2b2b", # black           (30)
+  "#db5a53", # red             (31)
+  "#71d46e", # green           (32)
+  "#ffb152", # yellow          (33)
+  "#90acfc", # blue            (34)
+  "#b294bb", # magenta         (35)
+  "#7accbd", # cyan            (36)
+  "#d1d1d1", # white           (37)
+]
+
+brights = [
+  "#919191", # bright black    (90)
+  "#ff9999", # bright red      (91)
+  "#d0e354", # bright green    (92)
+  "#fccb44", # bright yellow   (93)
+  "#9cc2f7", # bright blue     (94)
+  "#f5b5f4", # bright magenta  (95)
+  "#b2ede5", # bright cyan     (96)
+  "#fafae3", # bright white    (97)
+]
+
+foreground = '#fafae3'
+background = '#2b2b2b'
+
+compose_cursor = '#ffb86c'
+cursor_bg = '#f8f8f2'
+cursor_border = '#f8f8f2'
+cursor_fg = '#282a36'
+
+scrollbar_thumb = '#44475a'
+selection_bg = 'rgba(26.666668% 27.843138% 35.294117% 50%)'
+selection_fg = 'rgba(0% 0% 0% 0%)'
+split = '#6272a4'
+
+[colors.indexed]
+
+[colors.tab_bar]
+background = '#282a36'
+
+[colors.tab_bar.active_tab]
+bg_color = '#bd93f9'
+fg_color = '#282a36'
+intensity = 'Normal'
+italic = false
+strikethrough = false
+underline = 'None'
+
+[colors.tab_bar.inactive_tab]
+bg_color = '#282a36'
+fg_color = '#fafae3'
+intensity = 'Normal'
+italic = false
+strikethrough = false
+underline = 'None'
+
+[colors.tab_bar.inactive_tab_hover]
+bg_color = '#6272a4'
+fg_color = '#fafae3'
+intensity = 'Normal'
+italic = true
+strikethrough = false
+underline = 'None'
+
+[colors.tab_bar.new_tab]
+bg_color = '#282a36'
+fg_color = '#fafae3'
+intensity = 'Normal'
+italic = false
+strikethrough = false
+underline = 'None'
+
+[colors.tab_bar.new_tab_hover]
+bg_color = '#ff79c6'
+fg_color = '#fafae3'
+intensity = 'Normal'
+italic = true
+strikethrough = false
+underline = 'None'
+
+[metadata]
+aliases = []
+author = 'xvzc'
+name = 'Miami'

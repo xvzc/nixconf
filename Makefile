@@ -1,18 +1,7 @@
 UNAME := $(shell uname)
 
 init:
-	[ -f ~/.zprofile ] || touch ~/.zprofile \
-		&& grep -q '^export NIXNAME=' ~/.zprofile \
-		|| echo "export NIXNAME='${NIXNAME}'" >> ~/.zprofile
-	export NIXNAME='${NIXNAME}'
-
 ifeq ($(UNAME), Darwin)
-	command -v nix \
-		|| command -v /nix/var/nix/profiles/default/bin/nix \
-		|| curl -L https://nixos.org/nix/install | sh
-
-	command -v nix || . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-
 	nix build \
 		--extra-experimental-features nix-command \
 		--extra-experimental-features flakes \

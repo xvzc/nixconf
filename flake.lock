@@ -179,22 +179,6 @@
         "type": "github"
       }
     },
-    "neovim-config": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1731653246,
-        "narHash": "sha256-KjsRd3g+OJpP/dS2C2UEYJEMNnoG4+uWlR0+kxA028A=",
-        "owner": "xvzc",
-        "repo": "nvim",
-        "rev": "8d5d5cefcefac713f4e0252e50a204b0ca1b8101",
-        "type": "github"
-      },
-      "original": {
-        "owner": "xvzc",
-        "repo": "nvim",
-        "type": "github"
-      }
-    },
     "neovim-nightly": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -390,7 +374,6 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "neovim-config": "neovim-config",
         "neovim-nightly": "neovim-nightly",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",

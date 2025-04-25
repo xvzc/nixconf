@@ -1,3 +1,4 @@
+-- Pull in the wezterm API
 local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
@@ -16,67 +17,61 @@ config.default_cursor_style = "SteadyBlock"
 
 config.audible_bell = "Disabled"
 
-config.window_background_opacity = 0.93
-config.colors = require("themes/miami")
-
-wezterm.on("window-resized", function(window, pane)
-	local dimensions = window:get_dimensions()
-	local overrides = window:get_config_overrides() or {}
-
-	overrides.window_padding = {
-		left = dimensions.is_full_screen and 0 or 6,
-		right = 0,
-		top = 0,
-		bottom = 0,
-	}
-
-	window:set_config_overrides(overrides)
-end)
-
+-- config.colors = require("themes/miami")
 config.font_size = 12.0
+config.color_scheme_dirs = { "/Users/mario/.config/wezterm/colors" }
+config.color_scheme = "Miami"
+
+local padding = 6
+config.window_padding = {
+	left =0,
+	right = 0,
+	top = 0,
+	bottom = 0,
+}
+
+-- wezterm.on("window-resized", function(window, pane)
+-- 	local dimensions = window:get_dimensions()
+-- 	local overrides = window:get_config_overrides() or {}
+-- 	local value = dimensions.is_full_screen and 0 or 6
+--
+-- 	overrides.window_padding = {
+-- 		left = value,
+-- 		right = 0,
+-- 		top = 0,
+-- 		bottom = 0,
+-- 	}
+--
+-- 	window:set_config_overrides(overrides)
+-- end)
 
 config.font = wezterm.font_with_fallback({
 	"JetBrainsMonoNL Nerd Font",
-	"D2Coding Nerd Font",
+	"NanumSquare Neo",
+	"D2Coding",
 })
 
 config.keys = {
-	{ key = "L", mods = "CTRL", action = wezterm.action.ShowDebugOverlay },
-
-	{
-		key = "-",
-		mods = "CTRL",
-		action = wezterm.action.DisableDefaultAssignment,
-	},
-	-- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
-	{
-		key = "=",
-		mods = "CTRL",
-		action = wezterm.action.DisableDefaultAssignment,
-	},
-	{
-		key = "-",
-		mods = "CMD",
-		action = wezterm.action.DisableDefaultAssignment,
-	},
-	-- Send "CTRL-A" to the terminal when pressing CTRL-A, CTRL-A
-	{
-		key = "=",
-		mods = "CMD",
-		action = wezterm.action.DisableDefaultAssignment,
-	},
-	{
-		key = "Tab",
-		mods = "CTRL",
-		-- action = wezterm.action.SendKey({ key = "Tab", mods = "CTRL" }),
-		action = wezterm.action.SendString('\x1b[9;5u'),
-	},
-	{
-		key = "Tab",
-		mods = "SHIFT|CTRL",
-		action = wezterm.action.SendKey({ key = "Tab", mods = "SHIFT|CTRL" }),
-	},
+	{ key = "-", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "=", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "-", mods = "CMD", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "=", mods = "CMD", action = wezterm.action.DisableDefaultAssignment },
 }
--- ^[[9;5u ^[[1;5Z
 
-return config
+local function recursive_merge(t1, t2)
+	for k, v in pairs(t2) do
+		if (type(v) == "table") and (t1[k] ~= nil and type(t1[k]) == "table") then
+			recursive_merge(t1[k], t2[k])
+		else
+			t1[k] = v
+		end
+	end
+	return t1
+end
+
+local ok, mutable = pcall(require, ".mutable")
+if not ok or (mutable == nil) or (type(mutable) ~= "table") then
+	return config
+end
+
+return recursive_merge(config, mutable)
