@@ -59,14 +59,5 @@ in
   ];
 
   services = {
-    # yabai = import ./services/yabai.nix args;
-    # skhd = import ./services/skhd.nix args;
   };
-
-  # programs = {
-  #   zsh = {
-  #     enable = true;
-  #     enableCompletion = true;
-  #   };
-  # };
 }
