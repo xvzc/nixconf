@@ -1,0 +1,10 @@
+#!/bin/zsh
+
+if $(ps uxww | grep -v "open-wezterm" | grep -q "[w]ezterm"); then
+  echo "Exists"
+  wezterm cli spawn --new-window
+else
+  echo "None"
+  wezterm start
+fi
+

@@ -1,5 +1,5 @@
-cmd + alt - r : ~/.config/yabai/scripts/refresh
-alt - return : pgrep -q wezterm && wezterm cli spawn --new-window || wezterm
+cmd + alt + ctrl - r : ~/.scripts/yabai/refresh
+alt - return : ~/.scripts/yabai/open-wezterm
 
 alt - h : yabai -m window --focus west
 alt - l : yabai -m window --focus east

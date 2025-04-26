@@ -118,10 +118,10 @@ in
 
       "1Password/ssh/agent.toml".source = ../../../dotfiles/config/1Password/ssh/agent.toml;
     }
-    # ┌────────┐ 
-    # │ darwin │ 
-    # └────────┘ 
-    ++ lib.optionalAttrs ctx.isDarwin {
+    # ┌────────┐
+    # │ darwin │
+    # └────────┘
+    // lib.optionalAttrs ctx.isDarwin {
       "yabai/yabairc".source = ../../../dotfiles/config/yabai/yabairc;
       "skhd/skhdrc".source = ../../../dotfiles/config/skhd/skhdrc;
     };

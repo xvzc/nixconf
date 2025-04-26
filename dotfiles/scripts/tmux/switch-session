@@ -1,1 +1,14 @@
-/nix/store/pl7xl0nqcgvrvzyhkyqpws7prq8shi7x-home-manager-files/.scripts/tmux/switch-session
+#!/bin/zsh
+
+selected=$( \
+  tmux list-sessions | awk '{ print substr($1, 0, length($1) - 1) }' | \
+  fzf-tmux \
+  -p20%,20% \
+  --preview ''
+)
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+tmux switch -t "$selected"

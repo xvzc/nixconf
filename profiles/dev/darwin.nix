@@ -234,6 +234,7 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
   system.defaults.loginwindow = {
     SHOWFULLNAME = true; # show full name in login window
     GuestEnabled = false; # disable guest user
+    autoLoginUser = ctx.username;
   };
 
   system.defaults.CustomSystemPreferences = {
