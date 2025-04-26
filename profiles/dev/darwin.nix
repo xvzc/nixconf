@@ -48,6 +48,7 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
       "raycast"
       "chatgpt"
       "1password"
+      "wezterm"
     ];
 
     masApps = {
@@ -136,7 +137,7 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
     show-process-indicators = true;
 
     persistent-apps = [
-      "${pkgs.wezterm}/Applications/WezTerm.app"
+      "/Applications/WezTerm.app"
       "${pkgs.google-chrome}/Applications/Google Chrome.app"
       "${pkgs.spotify}/Applications/Spotify.app"
     ];
@@ -232,7 +233,7 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
   };
 
   system.defaults.loginwindow = {
-    SHOWFULLNAME = true; # show full name in login window
+    SHOWFULLNAME = false; # show full name in login window
     GuestEnabled = false; # disable guest user
     autoLoginUser = ctx.username;
   };

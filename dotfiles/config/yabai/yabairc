@@ -40,6 +40,22 @@ yabai -m config mouse_drop_action stack
 
 yabai -m config insert_feedback_color 0x000000ff
 
+# Automatically focus wezterm windows opened with hotkey
+yabai -m signal \
+  --add event="window_created" \
+  app="^WezTerm$" \
+  action="yabai -m window \$YABAI_WINDOW_ID --focus"
+
+# focus window after active space changes
+yabai -m signal \
+  --add event=space_changed \
+  action="yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id)"
+# focus window after active display changes
+yabai -m signal \
+  --add \
+  event=display_changed \
+  action="yabai -m window --focus \$(yabai -m query --windows --space | jq .[0].id)"
+
 [ -f $HOME/.config/yabai/mutablerc ] && source $HOME/.config/yabai/mutablerc
 
 # ~/.config/yabai/scripts/setup-spaces
