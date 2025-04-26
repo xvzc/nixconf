@@ -6,6 +6,7 @@
 }@args:
 let
   pub = builtins.fromTOML (builtins.readFile ../../../.assets/pub.toml);
+  symlink = lib.file.mkOutOfStoreSymlink;
 in
 {
   # Import options so that we can use `config.dotfiles` to get the dotfiles directory.
@@ -122,8 +123,8 @@ in
     # │ darwin │
     # └────────┘
     // lib.optionalAttrs ctx.isDarwin {
-      "yabai/yabairc".source = ../../../dotfiles/config/yabai/yabairc;
-      "skhd/skhdrc".source = ../../../dotfiles/config/skhd/skhdrc;
+      "yabai/yabairc".source = symlink ../../../dotfiles/config/yabai/yabairc;
+      "yabai/skhdrc".source = symlink ../../../dotfiles/config/yabai/skhdrc;
     };
 
   # programs = utils.importAttrSetsFromDir ./programs { inherit config pkgs lib; };
