@@ -4,7 +4,7 @@ HELP="usage: git auth --profile [profile name]"
 
 while [[ $# -gt 0 ]]; do
 	case $1 in
-	-u | --profile )
+	-p | --profile )
 		profile="$2"
 		shift
 		shift
