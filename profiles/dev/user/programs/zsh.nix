@@ -106,6 +106,7 @@ in
       ZSH_HIGHLIGHT_STYLES[alias]=fg=green
       ZSH_HIGHLIGHT_STYLES[builtin]=fg=green
       ZSH_HIGHLIGHT_STYLES[command]=fg=green
+      ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=green
       ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red
       ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=yellow,bold
       ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=yellow,bold
