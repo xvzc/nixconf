@@ -136,6 +136,7 @@ in
     eza = import ./programs/eza.nix args;
     ssh = import ./programs/ssh.nix args;
     fastfetch = import ./programs/fastfetch.nix args;
+    git = import ./programs/git.nix args;
   };
 
   manual.manpages.enable = true;
