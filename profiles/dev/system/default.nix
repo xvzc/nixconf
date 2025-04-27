@@ -7,18 +7,18 @@
 let
 in
 {
-  imports = [ ../${ctx.platform}.nix ];
+  imports = [ ./os/${ctx.platform}.nix ];
 
   time.timeZone = "Asia/Seoul";
   environment.pathsToLink = [ "/share/zsh" ];
 
-  # ┌─────────────────────┐
-  # │ dev system_packages │
-  # └─────────────────────┘
+  # ┌────────────────────────────────┐
+  # │ DEV environment.systemPackages │
+  # └────────────────────────────────┘
   environment.systemPackages =
-    # ┌────────┐
-    # │ common │
-    # └────────┘
+    # ┌───────────────────────┐
+    # │ systemPackages.common │
+    # └───────────────────────┘
     with pkgs;
     [
       btop
@@ -36,13 +36,51 @@ in
       wget
       zip
     ]
-    # ┌────────┐
-    # │ darwin │
-    # └────────┘
+    # ┌───────────────────────┐
+    # │ systemPackages.darwin │
+    # └───────────────────────┘
     ++ lib.optionals ctx.isDarwin [
       pam-reattach
     ];
 
+  # ┌──────────────────┐
+  # │ DEV nix-homebrew │
+  # └──────────────────┘
+  nix-homebrew = lib.mkIf ctx.isDarwin {
+    enable = true;
+    user = "${ctx.username}";
+    enableRosetta = false;
+    mutableTaps = true; # disable `brew tap <name>`
+  };
+
+  # ┌───────────────────────┐
+  # │ DEV homebrew packages │
+  # └───────────────────────┘
+  homebrew = lib.mkIf ctx.isDarwin {
+    enable = true;
+    taps = [
+      "daipeihust/tap" # im-select
+    ];
+
+    brews = [
+      "im-select"
+    ];
+
+    casks = [
+      "raycast"
+      "chatgpt"
+      "1password"
+      "wezterm"
+    ];
+
+    masApps = {
+      "KakaoTalk" = 869223134;
+    };
+  };
+
+  # ┌────────────────────┐
+  # │ DEV fonts.packages │
+  # └────────────────────┘
   fonts.packages = with pkgs; [
     noto-fonts
     font-awesome
@@ -58,6 +96,15 @@ in
     })
   ];
 
-  services = {
-  };
+  # ┌──────────────┐
+  # │ DEV services │
+  # └──────────────┘
+  services =
+    # ┌─────────────────┐
+    # │ services.darwin │
+    # └─────────────────┘
+    lib.optionals ctx.isDarwin {
+      yabai = import ./services/yabai.nix args;
+      skhd = import ./services/skhd.nix args;
+    };
 }

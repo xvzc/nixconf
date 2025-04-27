@@ -1,20 +1,23 @@
 {
   ctx,
   pkgs,
-  lib,
   ...
 }:
 let
   wallpaper = "/Users/${ctx.username}/nixfiles/.assets/wallpaper.jpeg";
 in
-assert builtins.pathExists ../../.assets/wallpaper.jpeg;
+assert builtins.pathExists ../../../../.assets/wallpaper.jpeg;
+# ┌───────────────┐
+# │ DEV os.darwin │
+# └───────────────┘
 {
   # Unlike `nixos`, `nix-darwin` requires `system.stateVersion` to be an int.
   # So we set this option separately based on the current platform.
   system.stateVersion = 5;
 
-  # The user should already exist, but we need to set this up so Nix knows
-  # what our home directory is (https://github.com/LnL7/nix-darwin/issues/423).
+  # The user should already exist, but we need to set
+  # this up so Nix knows what our home directory is.
+  # https://github.com/LnL7/nix-darwin/issues/423
   users = {
     knownUsers = [ "${ctx.username}" ];
     users.${ctx.username} = {
@@ -24,60 +27,24 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
     };
   };
 
-  nix-homebrew = {
-    enable = true;
-    user = "${ctx.username}";
-    enableRosetta = false;
-    mutableTaps = true; # disable `brew tap <name>`
-  };
-
-  homebrew = {
-    enable = true;
-    taps = [
-      "daipeihust/tap" # im-select
-      "koekeishiya/formulae" # yabai
-    ];
-
-    brews = [
-      "im-select"
-      "yabai"
-      "skhd"
-    ];
-
-    casks = [
-      "raycast"
-      "chatgpt"
-      "1password"
-      "wezterm"
-    ];
-
-    masApps = {
-      "KakaoTalk" = 869223134;
-    };
-  };
-
-  # ┌────────────────────┐
-  # │ System Preferences │
-  # └────────────────────┘
   security.pam.enableSudoTouchIdAuth = true;
 
+  # Enable touch id authentication in tmux sessions.
   environment.etc."pam.d/sudo_local".text = ''
     auth       optional       ${pkgs.pam-reattach}/lib/pam/pam_reattach.so
     auth       sufficient     pam_tid.so
   '';
 
+  # ┌────────────────────┐
+  # │ System Preferences │
+  # └────────────────────┘
   system.keyboard = {
     enableKeyMapping = true;
     remapCapsLockToControl = true;
-    nonUS.remapTilde = false; # This doesn't work in Korean Keyboard
+    nonUS.remapTilde = false; # This doesn't work in Korean keyboard
   };
 
-  # activationScripts are executed every time you boot the system
-  # or run `nixos-rebuild` / `darwin-rebuild`.
-  # activateSettings -u will reload the settings from the database
-  # and apply them to the current session,
-  # so we do not need to logout and login again to make the changes take effect.
-  system.activationScripts.postUserActivation.text = # sh
+  system.activationScripts.userDefaults.text = # sh
     ''
       # Disable dictation
       /usr/bin/defaults write \
@@ -99,24 +66,26 @@ assert builtins.pathExists ../../.assets/wallpaper.jpeg;
       osascript \
         -e 'tell application "Finder"' \
         -e '  set desktop picture to POSIX file "${wallpaper}"' \
-        -e 'end tell'
+        -e 'end tell';
 
-      # Replace `₩` with backtick
+      # Replace '₩' with '`' in Korean keyboard
       mkdir -p /Users/${ctx.username}/Library/KeyBindings \
         && echo '{ "₩" = ("insertText:", "`"); }' > \
         "/Users/${ctx.username}/Library/KeyBindings/DefaultKeyBinding.dict"
-
-      # Disable boot sound
-      sudo nvram StartupMute=%01
-
-      # Activate settings
-      FRAMEWORK_PATH=/System/Library/PrivateFrameworks/SystemAdministration.framework
-      sudo $FRAMEWORK_PATH/Resources/activateSettings -u
-
-      # Restart dock
-      killall -u ${ctx.username} cfprefsd
-      killall Dock
     '';
+
+  system.activationScripts.postUserActivation.text = # sh
+    ''
+      # Restart `yabai` and `skhd`
+      sudo launchctl kickstart -k system/org.nixos.yabai-sa || true
+      launchctl kickstart -k "gui/$(id -u)/org.nixos.yabai" || true
+      launchctl kickstart -k "gui/$(id -u)/org.nixos.skhd" || true
+    '';
+
+  system.nvram.variables = {
+    "StartupMute" = "%01"; # Disable boot sound
+    "boot-args" = "-arm64e_preview_abi"; # Allow non-Apple signed binaries
+  };
 
   system.defaults.menuExtraClock.Show24Hour = true;
   system.defaults.dock = {

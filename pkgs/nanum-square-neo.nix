@@ -10,7 +10,12 @@
   };
 
   installPhase = ''
-    mkdir -p $out/share/fonts/truetype
-    cp ./ttf/*.ttf $out/share/fonts/truetype || true
+    find -name \*.otf \
+      -exec mkdir -p $out/share/fonts/opentype \; \
+      -exec mv {} $out/share/fonts/opentype \;
+
+    find -name \*.ttf \
+      -exec mkdir -p $out/share/fonts/truetype \; \
+      -exec mv {} $out/share/fonts/truetype \;
   '';
 })

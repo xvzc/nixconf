@@ -44,12 +44,6 @@ in
     size = 4800;
   };
 
-  syntaxHighlighting = {
-    enable = true;
-  };
-
-  defaultKeymap = "viins";
-
   # These variables will be exported in ~/.zshenv
   sessionVariables = {
     NIXNAME = ctx.machine;
@@ -62,6 +56,29 @@ in
       "gu=97;1:gn=2;3:gR=90;2;3:" # Groups
       "uu=97;1:un=2;3:uR=90;2;3:" # Users
     ];
+  };
+
+  defaultKeymap = "viins";
+
+  syntaxHighlighting = {
+    enable = true;
+    styles = {
+      path = "none";
+      path_prefix = "none";
+      alias = "fg=green";
+      builtin = "fg=green";
+      command = "fg=green";
+      reserved-word = "fg=magenta";
+      unknown-token = "fg=red";
+      single-quoted-argument = "fg=yellow,bold";
+      double-quoted-argument = "fg=yellow,bold";
+      single-hyphen-option = "fg=white";
+      double-hyphen-option = "fg=white";
+      command-substitution-delimiter = "fg=magenta,bold";
+      process-substitution-delimiter = "fg=magenta,bold";
+      dollar-double-quoted-argument = "fg=blue,bold";
+      back-double-quoted-argument = "fg=blue,bold";
+    };
   };
 
   envExtra = # sh
@@ -82,8 +99,6 @@ in
       [[ -n "$ZPROF" ]] && zmodload zsh/zprof
 
       DOT_ZSH=$HOME/.zsh
-
-      autoload -Uz ${plugins.zsh-defer}/zsh-defer
     '';
 
   initExtraBeforeCompInit = # sh
@@ -99,19 +114,6 @@ in
       # └───────────────────┘ 
       # Set LSCOLORS
       eval "$(dircolors -b)"
-
-      (( ''${+ZSH_HIGHLIGHT_STYLES} )) || typeset -A ZSH_HIGHLIGHT_STYLES
-      ZSH_HIGHLIGHT_STYLES[path]=none
-      ZSH_HIGHLIGHT_STYLES[path_prefix]=none
-      ZSH_HIGHLIGHT_STYLES[alias]=fg=green
-      ZSH_HIGHLIGHT_STYLES[builtin]=fg=green
-      ZSH_HIGHLIGHT_STYLES[command]=fg=green
-      ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=green
-      ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red
-      ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=yellow,bold
-      ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=yellow,bold
-      ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=cyan,bold
-      ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=cyan,bold
 
       # Do menu-driven completion.
       zstyle ':completion:*' menu select
@@ -172,16 +174,11 @@ in
       bindkey -a k history-beginning-search-backward
       bindkey -a j history-beginning-search-forward
 
-      # ┌──────────────┐ 
-      # │ LOAD PLUGINS │ 
-      # └──────────────┘ 
-      zsh-defer source ${plugins.zsh-syntax-highlighting}/zsh-syntax-highlighting.plugin.zsh
-
       # ┌──────────────────┐ 
       # │ OPTIONAL SCRIPTS │ 
       # └──────────────────┘ 
-      [ -f $HOME/.secrets ] && zsh-defer source "$HOME/.secrets"
-      [ -f $HOME/.zmutable ] && zsh-defer source "$HOME/.zmutable"
+      [ -f $HOME/.secrets ] && source "$HOME/.secrets"
+      [ -f $HOME/.zmutable ] && source "$HOME/.zmutable"
 
       autoload -U promptinit; promptinit
       prompt pure

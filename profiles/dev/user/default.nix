@@ -2,25 +2,27 @@
   ctx,
   lib,
   pkgs,
+  config,
   ...
 }@args:
 let
   pub = builtins.fromTOML (builtins.readFile ../../../.assets/pub.toml);
-  symlink = lib.file.mkOutOfStoreSymlink;
+  symlink = config.lib.file.mkOutOfStoreSymlink;
 in
 {
-  # Import options so that we can use `config.dotfiles` to get the dotfiles directory.
+  # Apply options so that we can use `config.dotfiles` 
+  # to get the dotfiles directory.
   imports = [ ../../../modules/dotfiles.nix ];
 
   home.stateVersion = "24.11";
   # ┌───────────────────┐
-  # │ DEV HOME_PACKAGES │
+  # │ DEV home.packages │
   # └───────────────────┘
   home.packages =
     with pkgs;
-    # ┌────────┐
-    # │ common │
-    # └────────┘
+    # ┌─────────────────┐
+    # │ packages.common │
+    # └─────────────────┘
     [
       # GUI Applications
       _1password-gui
@@ -69,9 +71,9 @@ in
       # Misc
       neofetch
     ]
-    # ┌────────┐
-    # │ darwin │
-    # └────────┘
+    # ┌─────────────────┐
+    # │ packages.darwin │
+    # └─────────────────┘
     ++ lib.optionals ctx.isDarwin [
       pngpaste
     ];
@@ -84,13 +86,13 @@ in
     vi = "${pkgs.neovim}/bin/nvim";
   };
 
-  # ┌────────────────┐
-  # │ DEV HOME_FILES │
-  # └────────────────┘
+  # ┌───────────────┐
+  # │ DEV home.file │
+  # └───────────────┘
   home.file =
-    # ┌────────┐
-    # │ common │
-    # └────────┘
+    # ┌─────────────┐
+    # │ file.common │
+    # └─────────────┘
     {
       ".zsh".source = ../../../dotfiles/zsh;
       ".zsh".recursive = true;
@@ -106,29 +108,30 @@ in
       "${pub.personal.path}".text = pub.personal.key;
     };
 
-  # ┌──────────────────────┐
-  # │ DEV XDG_CONFIG_FILES │
-  # └──────────────────────┘
+  # ┌────────────────────┐
+  # │ DEV xdg.configFile │
+  # └────────────────────┘
   xdg.configFile =
-    # ┌────────┐
-    # │ common │
-    # └────────┘
+    # ┌───────────────────┐
+    # │ configFile.common │
+    # └───────────────────┘
     {
       "wezterm/wezterm.lua".source = ../../../dotfiles/config/wezterm/wezterm.lua;
       "wezterm/colors/miami.toml".source = ../../../dotfiles/config/wezterm/colors/miami.toml;
 
       "1Password/ssh/agent.toml".source = ../../../dotfiles/config/1Password/ssh/agent.toml;
     }
-    # ┌────────┐
-    # │ darwin │
-    # └────────┘
+    # ┌───────────────────┐
+    # │ configFile.darwin │
+    # └───────────────────┘
     // lib.optionalAttrs ctx.isDarwin {
-      "yabai/yabairc".source = symlink ../../../dotfiles/config/yabai/yabairc;
-      "yabai/skhdrc".source = symlink ../../../dotfiles/config/yabai/skhdrc;
+      # "yabai/yabairc".source = symlink "${config.dotfiles}/config/yabai/yabairc";
+      # "yabai/skhdrc".source = symlink "${config.dotfiles}/config/yabai/skhdrc";
     };
 
-  # programs = utils.importAttrSetsFromDir ./programs { inherit config pkgs lib; };
-
+  # ┌──────────────┐
+  # │ DEV programs │
+  # └──────────────┘
   programs = {
     zsh = import ./programs/zsh.nix args;
     fzf = import ./programs/fzf.nix args;

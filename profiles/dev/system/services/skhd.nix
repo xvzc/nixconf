@@ -9,8 +9,8 @@ in
 {
   enable = ctx.isDarwin;
   skhdConfig = ''
-    cmd + alt - r : ~/.config/yabai/scripts/refresh
-    alt - return : wezterm cli spawn --new-window
+    cmd + alt + ctrl - r : (pkill -9 yabai || true) && (pkill -9 skhd || true)
+    alt - return : ~/.scripts/yabai/open-wezterm
 
     alt - h : yabai -m window --focus west
     alt - l : yabai -m window --focus east
@@ -43,11 +43,6 @@ in
     cmd + alt - j : yabai -m window --swap south
     cmd + alt - k : yabai -m window --swap north
     cmd + alt - l : yabai -m window --swap east
-
-    # Create space on the active display
-
-    # Delete focused space and focus first space on display
-    # yabai -m space --destroy
 
     cmd + alt - t : yabai -m window --toggle float
     cmd + alt - s : yabai -m window --toggle sticky
