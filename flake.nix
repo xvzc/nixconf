@@ -38,19 +38,19 @@
           hostname = "nixos-desktop";
         };
 
-        "desktop-work-phys-01" = {
-          system = "x86_64-linux";
-          profile = "dev";
-          username = "pablo";
-          hostname = "nixos-desktop";
-        };
-
-        "k8s-master-vm-01" = {
-          system = "x86_64-linux";
-          profile = "server";
-          username = "k8s-master1";
-          hostname = "nixos-desktop";
-        };
+        # "desktop-work-phys-01" = {
+        #   system = "x86_64-linux";
+        #   profile = "dev";
+        #   username = "pablo";
+        #   hostname = "nixos-desktop";
+        # };
+        #
+        # "k8s-master-vm-01" = {
+        #   system = "x86_64-linux";
+        #   profile = "server";
+        #   username = "k8s-master1";
+        #   hostname = "nixos-desktop";
+        # };
 
         "macair-personal-phys-01" = {
           system = "aarch64-darwin";
