@@ -5,7 +5,6 @@
   config,
   ...
 }:
-# assert builtins.hasAttr ".zsh" config.home.file;
 let
   plugins = {
     pure = pkgs.fetchgit {
@@ -81,6 +80,18 @@ in
     };
   };
 
+  shellAliases =
+    lib.genAttrs (builtins.map toString (lib.range 0 9)) (n: "cd -${n} &> /dev/null")
+    // {
+      "vi" = "${pkgs.neovim}/bin/nvim";
+      "tas" = "tmux -u attach-session -t";
+      "tds" = "tmux detach";
+      "tks" = "tmux kill-session -t";
+      "tss" = "tmux -u switch -t";
+      "tns" = "tmux -u new -c ~ -s";
+      "tls" = "tmux ls";
+    };
+
   envExtra = # sh
     ''
       setopt no_global_rcs
@@ -109,9 +120,9 @@ in
 
   initExtra = # sh
     ''
-      # ┌───────────────────┐ 
-      # │ ADDITIONAL CONFIG │ 
-      # └───────────────────┘ 
+      # ┌───────────────────────────┐ 
+      # │ ADDITIONAL CONFIGURATIONS │ 
+      # └───────────────────────────┘ 
       # Set LSCOLORS
       eval "$(dircolors -b)"
 
@@ -217,17 +228,14 @@ in
 
         [[ ! -z $out ]] && cd $out
       }
-    '';
 
-  shellAliases =
-    lib.genAttrs (builtins.map toString (lib.range 0 9)) (n: "cd -${n} &> /dev/null")
-    // {
-      "d" = "dir -v";
-      "tas" = "tmux -u attach-session -t";
-      "tds" = "tmux detach";
-      "tks" = "tmux kill-session -t";
-      "tss" = "tmux -u switch -t";
-      "tns" = "tmux -u new -c ~ -s";
-      "tls" = "tmux ls";
-    };
+      # The Nix installer modifies '/etc/zshrc'. When macOS is updated, it will 
+      # typically overwrite /etc/zshrc again. because of this known issue, we 
+      # source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' in case
+      # See https://nix.dev/guides/troubleshooting#macos-update-breaks-nix-installation
+      if [ -z "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then return; fi
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+    '';
 }

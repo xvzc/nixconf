@@ -1,16 +1,16 @@
 {
   ctx,
+  lib,
   pkgs,
   ...
-}:
+}@args:
 let
   wallpaper = "/Users/${ctx.username}/nixfiles/.assets/wallpaper.jpeg";
 in
-assert builtins.pathExists ../../../../.assets/wallpaper.jpeg;
-# ┌───────────────┐
-# │ DEV os.darwin │
-# └───────────────┘
+assert builtins.pathExists ../../../.assets/wallpaper.jpeg;
 {
+  imports = [ ./base.nix ];
+
   # Unlike `nixos`, `nix-darwin` requires `system.stateVersion` to be an int.
   # So we set this option separately based on the current platform.
   system.stateVersion = 5;
@@ -21,12 +21,53 @@ assert builtins.pathExists ../../../../.assets/wallpaper.jpeg;
   users = {
     knownUsers = [ "${ctx.username}" ];
     users.${ctx.username} = {
-      uid = 501;
+      uid = 501; # This is the default user id for darwin system
       home = "/Users/${ctx.username}";
       shell = pkgs.zsh;
     };
   };
 
+  environment.systemPackages = with pkgs; [
+    pam-reattach
+  ];
+
+  nix-homebrew = {
+    enable = true;
+    user = "${ctx.username}";
+    enableRosetta = false;
+    mutableTaps = true; # disable `brew tap <name>`
+  };
+
+  homebrew = {
+    enable = true;
+    taps = [
+      "daipeihust/tap" # im-select
+    ];
+
+    brews = [
+      "im-select"
+    ];
+
+    casks = [
+      "raycast"
+      "chatgpt"
+      "1password"
+      "wezterm"
+    ];
+
+    masApps = {
+      "KakaoTalk" = 869223134;
+    };
+  };
+
+  services = {
+    yabai = import ./services/yabai.nix args;
+    skhd = import ./services/skhd.nix args;
+  };
+
+  # ┌────────────────────┐
+  # │ System Preferences │
+  # └────────────────────┘
   security.pam.enableSudoTouchIdAuth = true;
 
   # Enable touch id authentication in tmux sessions.
@@ -35,9 +76,6 @@ assert builtins.pathExists ../../../../.assets/wallpaper.jpeg;
     auth       sufficient     pam_tid.so
   '';
 
-  # ┌────────────────────┐
-  # │ System Preferences │
-  # └────────────────────┘
   system.keyboard = {
     enableKeyMapping = true;
     remapCapsLockToControl = true;
@@ -67,11 +105,6 @@ assert builtins.pathExists ../../../../.assets/wallpaper.jpeg;
         -e 'tell application "Finder"' \
         -e '  set desktop picture to POSIX file "${wallpaper}"' \
         -e 'end tell';
-
-      # Replace '₩' with '`' in Korean keyboard
-      mkdir -p /Users/${ctx.username}/Library/KeyBindings \
-        && echo '{ "₩" = ("insertText:", "`"); }' > \
-        "/Users/${ctx.username}/Library/KeyBindings/DefaultKeyBinding.dict"
     '';
 
   system.activationScripts.postUserActivation.text = # sh

@@ -64,17 +64,9 @@
       mkSystem = import ./lib/mksystem.nix { inherit inputs nixpkgs; };
     in
     {
-      # darwinConfigurations = builtins.mapAttrs (k: v: mkSystem (v // { machine = k; })) (
-      #   lib.filterAttrs (_: v: builtins.elem v.system lib.platforms.darwin) machines
-      # );
-
-      darwinConfigurations."macair-personal-phys-01" = mkSystem {
-        system = "aarch64-darwin";
-        profile = "dev";
-        username = "mario";
-        hostname = "macbook-air-m2";
-        machine = "macair-personal-phys-01";
-      };
+      darwinConfigurations = builtins.mapAttrs (k: v: mkSystem (v // { machine = k; })) (
+        lib.filterAttrs (_: v: builtins.elem v.system lib.platforms.darwin) machines
+      );
 
       nixosConfigurations = builtins.mapAttrs (k: v: mkSystem (v // { machine = k; })) (
         lib.filterAttrs (_: v: builtins.elem v.system lib.platforms.linux) machines
