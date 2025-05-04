@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 
-SELECTIONS := \
+HOSTS := \
   macair-personal-phys-01 \
   desktop-personal-phys-01 \
   quit
@@ -19,10 +19,10 @@ clean:
 
 init: .cache/ran-setup
 
-.cache/current-machine:
-	$(MAKE) select-current-machine
+.cache/current-host:
+	$(MAKE) select-current-host
 
-.cache/has-nix: | .cache/current-machine
+.cache/has-nix: | .cache/current-host
 	$(MAKE) install-nix
 	@touch .cache/has-nix
 
@@ -30,23 +30,23 @@ init: .cache/ran-setup
 	$(MAKE) setup;
 	@touch .cache/ran-setup
 
-select-current-machine:
-	@echo "Select a machine:"
-	@select SELECTION in ${SELECTIONS}; do \
+select-current-host:
+	@echo "Select a host:"
+	@select SELECTION in ${HOSTS}; do \
 		if [ "$$SELECTION" = "quit" ]; then \
 			echo "quit"; \
 			exit 0; \
 		elif [ -n "$$SELECTION" ]; then \
-			CURRENT_MACHINE="$$SELECTION"; \
+			CURRENT_HOST="$$SELECTION"; \
 			break; \
 		else \
 			echo "Invalid selection."; \
 			exit 1; \
 		fi; \
 	done; \
-	echo "\033[1;32mSelected machine: \033[0;36m'$$CURRENT_MACHINE'\033[0m\n"; \
+	echo "\033[1;32mSelected machine: \033[0;36m'$$CURRENT_HOST'\033[0m\n"; \
 	mkdir -p .cache; \
-	echo "$$CURRENT_MACHINE" > .cache/current-machine
+	echo "$$CURRENT_HOST" > .cache/current-host
 
 install-nix:
 	@if command -v nix >/dev/null 2>&1; then \
@@ -65,27 +65,27 @@ ifeq ($(UNAME), Darwin)
 	nix build \
 		--extra-experimental-features nix-command \
 		--extra-experimental-features flakes \
-		".#darwinConfigurations.${MACHINE}.system"
+		".#darwinConfigurations.${NIX_HOST}.system"
 
-	./result/sw/bin/darwin-rebuild switch --flake ".#${MACHINE}"
+	./result/sw/bin/darwin-rebuild switch --flake ".#${NIX_HOST}"
 else
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${MACHINE}"
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${NIX_HOST}"
 endif
 
 switch:
 ifeq ($(UNAME), Darwin)
-	nix build ".#darwinConfigurations.${NIXNAME}.system"
-	./result/sw/bin/darwin-rebuild switch --flake ".#${NIXNAME}"
+	nix build ".#darwinConfigurations.${NIX_HOST}.system"
+	./result/sw/bin/darwin-rebuild switch --flake ".#${NIX_HOST}"
 else
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${NIXNAME}"
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${NIX_HOST}"
 endif
 
 test:
 ifeq ($(UNAME), Darwin)
-	nix build ".#darwinConfigurations.${NIXNAME}.system" --show-trace
-	./result/sw/bin/darwin-rebuild build --flake ".#${NIXNAME}"
+	nix build ".#darwinConfigurations.${NIX_HOST}.system" --show-trace
+	./result/sw/bin/darwin-rebuild build --flake ".#${NIX_HOST}"
 else
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild test --flake ".#$(NIXNAME)"
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild test --flake ".#$(NIX_HOST)"
 endif
 
 

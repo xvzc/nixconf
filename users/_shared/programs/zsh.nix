@@ -5,26 +5,6 @@
   config,
   ...
 }:
-let
-  plugins = {
-    pure = pkgs.fetchgit {
-      url = "https://github.com/sindresorhus/pure";
-      rev = "92b8e9057988566b37ff695e70e2e9bbeb7196c8";
-      sha256 = "TbOrnhLHgOvcfsgmL0l3bWY33yLIhG1KSi4ITIPq1+A=";
-    };
-    zsh-defer = pkgs.fetchgit {
-      url = "https://github.com/romkatv/zsh-defer.git";
-      rev = "53a26e287fbbe2dcebb3aa1801546c6de32416fa";
-      sha256 = "MFlvAnPCknSgkW3RFA8pfxMZZS/JbyF3aMsJj9uHHVU=";
-    };
-
-    zsh-syntax-highlighting = pkgs.fetchgit {
-      url = "https://github.com/zsh-users/zsh-syntax-highlighting.git";
-      rev = "5eb677bb0fa9a3e60f0eff031dc13926e093df92";
-      sha256 = "IIcGYa0pXdll/XDPA15zDBkLUuLhTdrqwS9sn06ce0Y=";
-    };
-  };
-in
 {
   enable = true;
   zprof.enable = false;
@@ -45,7 +25,7 @@ in
 
   # These variables will be exported in ~/.zshenv
   sessionVariables = {
-    NIXNAME = ctx.machine;
+    NIX_HOST = ctx.host;
     PIP_REQUIRE_VIRTUALENV = true;
     KEYTIMEOUT = 1; # Remove ESC delay
     EDITOR = "nvim";
@@ -115,7 +95,7 @@ in
   initExtraBeforeCompInit = # sh
     ''
       fpath+=($DOT_ZSH/_completion)
-      fpath+=(${plugins.pure})
+      fpath+=(${pkgs.pure-prompt})
     '';
 
   initExtra = # sh
@@ -233,7 +213,7 @@ in
       # typically overwrite /etc/zshrc again. because of this known issue, we 
       # source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' in case
       # See https://nix.dev/guides/troubleshooting#macos-update-breaks-nix-installation
-      if [ -z "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then return; fi
+      if [ -n "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then return; fi
       if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
         . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
       fi

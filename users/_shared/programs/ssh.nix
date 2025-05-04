@@ -1,4 +1,5 @@
 {
+  pkgs,
   ctx,
   lib,
   ...

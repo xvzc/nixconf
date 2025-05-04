@@ -1,7 +1,4 @@
 {
-  ctx,
-  lib,
-  pkgs,
   ...
 }:
 let
@@ -19,7 +16,6 @@ in
   customPaneNavigationAndResize = true;
   resizeAmount = 1;
   sensibleOnTop = false;
-  # shell = "/etc/profiles/per-user/${ctx.username}/bin/zsh";
 
   extraConfig = # tmux
     ''

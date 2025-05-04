@@ -25,51 +25,63 @@
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs =
-    { nixpkgs, ... }@inputs:
+    { nixpkgs, nix-darwin, ... }@inputs:
     let
-      machines = {
-        "desktop-personal-phys-01" = {
-          system = "x86_64-linux";
-          profile = "dev";
-          username = "pablo";
-          hostname = "nixos-desktop";
-        };
-
-        # "desktop-work-phys-01" = {
-        #   system = "x86_64-linux";
-        #   profile = "dev";
-        #   username = "pablo";
-        #   hostname = "nixos-desktop";
-        # };
-        #
-        # "k8s-master-vm-01" = {
-        #   system = "x86_64-linux";
-        #   profile = "server";
-        #   username = "k8s-master1";
-        #   hostname = "nixos-desktop";
-        # };
-
-        "macair-personal-phys-01" = {
+      lib = nixpkgs.lib;
+      mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs; };
+      mkHome = import ./lib/mkhome.nix { inherit nixpkgs inputs; };
+      configurations = [
+        {
           system = "aarch64-darwin";
           profile = "dev";
-          username = "mario";
-          hostname = "macbook-air-m2";
-        };
-      };
-
-      lib = nixpkgs.lib;
-      mkSystem = import ./lib/mksystem.nix { inherit inputs nixpkgs; };
+          user = "mario";
+          host = "macair-personal-phys-01";
+        }
+        {
+          system = "x86_64-linux";
+          profile = "dev";
+          user = "pablo";
+          host = "desktop-personal-phys-01";
+        }
+        # {
+        #   system = "x86_64-linux";
+        #   profile = "linux-dev";
+        #   user = "mario";
+        #   host = "desktop-work-phys-01";
+        # }
+        # {
+        #   system = "x86_64-linux";
+        #   profile = "linux-server";
+        #   user = "master1";
+        #   host = "kube-master-vm-01";
+        # }
+      ];
     in
     {
-      darwinConfigurations = builtins.mapAttrs (k: v: mkSystem (v // { machine = k; })) (
-        lib.filterAttrs (_: v: builtins.elem v.system lib.platforms.darwin) machines
+
+      darwinConfigurations = lib.listToAttrs (
+        lib.map (c: {
+          name = c.host;
+          value = mkSystem c;
+        }) (lib.filter (x: builtins.elem x.system lib.platforms.darwin) configurations)
       );
 
-      nixosConfigurations = builtins.mapAttrs (k: v: mkSystem (v // { machine = k; })) (
-        lib.filterAttrs (_: v: builtins.elem v.system lib.platforms.linux) machines
+      nixosConfigurations = lib.listToAttrs (
+        lib.map (c: {
+          name = c.host;
+          value = mkSystem c;
+        }) (lib.filter (x: builtins.elem x.system lib.platforms.linux) configurations)
+      );
+
+      homeConfigurations = lib.listToAttrs (
+        lib.map (c: {
+          name = "${c.user}@${c.host}";
+          value = mkHome c;
+        }) configurations
       );
     };
 }

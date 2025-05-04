@@ -1,48 +1,24 @@
-{ inputs, nixpkgs }:
 {
-  system,
-  profile,
-  machine,
-  username,
-  hostname,
-  ...
+  inputs,
+  nixpkgs,
 }:
+{
+  ...
+}@args:
 let
   lib = nixpkgs.lib;
-  systemAttr = lib.findFirst (attr: builtins.elem system attr.forSystems) null [
-    {
-      type = "darwin";
-      builder = inputs.nix-darwin.lib.darwinSystem;
-      forSystems = lib.platforms.darwin;
-    }
-    {
-      type = "linux";
-      builder = lib.nixosSystem;
-      forSystems = lib.platforms.linux;
-    }
-  ];
-
-  ctx = {
-    inherit machine username hostname;
-    isDarwin = builtins.elem system lib.platforms.darwin;
-    isLinux = builtins.elem system lib.platforms.linux;
+  ctx = import ./mkcontext.nix { inherit lib args; };
+  builder = {
+    darwin = inputs.nix-darwin.lib.darwinSystem;
+    linux = nixpkgs.lib.nixosSystem;
   };
 in
-systemAttr.builder {
-  inherit system;
+builder.${ctx.os} {
+  inherit (ctx) system;
 
+  specialArgs = { inherit ctx inputs; };
   modules = lib.lists.flatten [
-    {
-      nix.settings.experimental-features = "nix-command flakes";
-      nix.optimise.automatic = true;
-
-      nixpkgs.config.allowUnfree = true;
-      nixpkgs.config.allowUnsupportedSystem = true;
-      nixpkgs.overlays = lib.lists.flatten [
-        (import ../profiles/${profile}/overlays.nix { inherit ctx lib inputs; })
-        (import ../machines/${machine}/overlays.nix { inherit ctx lib inputs; })
-      ];
-    }
+    ../configuration.nix
     (lib.optionals ctx.isDarwin [
       inputs.nix-homebrew.darwinModules.nix-homebrew
       inputs.home-manager.darwinModules.home-manager
@@ -51,14 +27,12 @@ systemAttr.builder {
       inputs.home-manager.nixosModules.home-manager
     ])
     {
+      home-manager.extraSpecialArgs = { inherit ctx; };
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      home-manager.users.${username} = ../profiles/${profile}/home/${systemAttr.type}.nix;
-      home-manager.extraSpecialArgs = { inherit ctx; };
+      home-manager.users.${ctx.user} = ../users/${ctx.user};
     }
-    ../profiles/${profile}/system/${systemAttr.type}.nix
-    ../machines/${machine}
+    ../profiles/${ctx.profile}
+    ../hosts/${ctx.host}
   ];
-
-  specialArgs = { inherit ctx inputs; };
 }
