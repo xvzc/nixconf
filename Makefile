@@ -8,9 +8,9 @@ HOSTS := \
 UNAME := $(shell uname)
 
 ifeq ($(UNAME), Darwin)
-INSTALL_COMMAND := echo 'this is a macos install command'
+INSTALL_COMMAND := .cache/install.sh
 else
-INSTALL_COMMAND := echo 'this is a linux install command'
+INSTALL_COMMAND := .cache/install.sh --daemon
 endif
 
 clean: 
@@ -23,7 +23,7 @@ init: .cache/ran-setup
 	$(MAKE) select-current-host
 
 .cache/has-nix: | .cache/current-host
-	$(MAKE) install-nix
+	$(MAKE) check-or-install-nix
 	@touch .cache/has-nix
 
 .cache/ran-setup: | .cache/has-nix
@@ -35,7 +35,7 @@ select-current-host:
 	@select SELECTION in ${HOSTS}; do \
 		if [ "$$SELECTION" = "quit" ]; then \
 			echo "quit"; \
-			exit 0; \
+			exit 1; \
 		elif [ -n "$$SELECTION" ]; then \
 			CURRENT_HOST="$$SELECTION"; \
 			break; \
@@ -44,13 +44,13 @@ select-current-host:
 			exit 1; \
 		fi; \
 	done; \
-	echo "\033[1;32mSelected machine: \033[0;36m'$$CURRENT_HOST'\033[0m\n"; \
+	echo "\033[1;32mSelected host: \033[0;36m'$$CURRENT_HOST'\033[0m\n"; \
 	mkdir -p .cache; \
 	echo "$$CURRENT_HOST" > .cache/current-host
 
-install-nix:
+check-or-install-nix:
 	@if command -v nix >/dev/null 2>&1; then \
-		echo "\033[1;32mFound nix binary: \033[0;36m'$$(which nix)'\033[0m"; \
+		echo "\033[1;32mFound a nix binary: \033[0;36m'$$(which nix)'\033[0m"; \
 	else \
 		echo "NIX binary is not found. Installing.."; \
 		curl -L -o .cache/install.sh https://nixos.org/nix/install; \
@@ -58,18 +58,17 @@ install-nix:
 	fi
 
 setup:
-	@echo "Fetching "
-	test -d ~/.config || mkdir -p ~/.config
-	test -d ~/.config/nvim || git clone https://github.com/xvzc/nvim ~/.config/nvim
 ifeq ($(UNAME), Darwin)
+	@CURRENT_HOST=$(shell cat .cache/current-host); \
 	nix build \
 		--extra-experimental-features nix-command \
 		--extra-experimental-features flakes \
-		".#darwinConfigurations.${NIX_HOST}.system"
+		".#darwinConfigurations.$$CURRENT_HOST.system"; \
 
-	./result/sw/bin/darwin-rebuild switch --flake ".#${NIX_HOST}"
+	./result/sw/bin/darwin-rebuild switch --flake ".#$$CURRENT_HOST"
 else
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${NIX_HOST}"
+	@CURRENT_HOST=$(shell cat .cache/current-host); \
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#$$CURRENT_HOST";
 endif
 
 switch:
