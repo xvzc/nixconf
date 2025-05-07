@@ -26,62 +26,102 @@
 
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
     flake-utils.url = "github:numtide/flake-utils";
+
+    nvim = {
+      type = "github";
+      owner = "xvzc";
+      repo = "nvim";
+      flake = false;
+    };
+
+    wallpapers = {
+      type = "github";
+      owner = "xvzc";
+      repo = "wallpapers";
+      flake = false;
+    };
+
+    assets = {
+      url = "github:xvzc/assets";
+      flake = false;
+    };
   };
 
   outputs =
-    { nixpkgs, nix-darwin, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      nix-darwin,
+      ...
+    }@inputs:
     let
-      lib = nixpkgs.lib;
-      mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs; };
-      mkHome = import ./lib/mkhome.nix { inherit nixpkgs inputs; };
+      inherit (self) outputs;
+      inherit (nixpkgs) lib;
+
+      mkDarwin = import ./lib/mksystem.nix {
+        inherit lib inputs outputs;
+        builder = nix-darwin.lib.darwinSystem;
+        extraModules = [
+          inputs.nix-homebrew.darwinModules.nix-homebrew
+          inputs.home-manager.darwinModules.home-manager
+        ];
+      };
+
+      mkNixos = import ./lib/mksystem.nix {
+        inherit lib inputs outputs;
+        builder = nixpkgs.lib.nixosSystem;
+        extraModules = [
+          inputs.home-manager.nixosModules.home-manager
+        ];
+      };
+
       configurations = [
         {
           system = "aarch64-darwin";
-          profile = "dev";
           user = "mario";
-          host = "macair-personal-phys-01";
+          host = "macbook-air-m2";
         }
         {
           system = "x86_64-linux";
-          profile = "dev";
-          user = "pablo";
-          host = "desktop-personal-phys-01";
+          user = "kazusa";
+          host = "nixos-desktop-01";
+        }
+        {
+          system = "x86_64-linux";
+          user = "kazusa";
+          host = "nixos-desktop-02";
         }
         # {
         #   system = "x86_64-linux";
-        #   profile = "linux-dev";
-        #   user = "mario";
-        #   host = "desktop-work-phys-01";
+        #   user = "nezuko";
+        #   host = "kube-master-01";
         # }
         # {
         #   system = "x86_64-linux";
-        #   profile = "linux-server";
-        #   user = "master1";
-        #   host = "kube-master-vm-01";
+        #   user = "nezuko";
+        #   host = "kube-worker-01";
+        # }
+        # {
+        #   system = "x86_64-linux";
+        #   user = "nezuko";
+        #   host = "kube-worker-02";
         # }
       ];
     in
     {
-
+      overlays = import ./overlays { inherit inputs; };
       darwinConfigurations = lib.listToAttrs (
         lib.map (c: {
           name = c.host;
-          value = mkSystem c;
+          value = mkDarwin c;
         }) (lib.filter (x: builtins.elem x.system lib.platforms.darwin) configurations)
       );
 
       nixosConfigurations = lib.listToAttrs (
         lib.map (c: {
           name = c.host;
-          value = mkSystem c;
+          value = mkNixos c;
         }) (lib.filter (x: builtins.elem x.system lib.platforms.linux) configurations)
-      );
-
-      homeConfigurations = lib.listToAttrs (
-        lib.map (c: {
-          name = "${c.user}@${c.host}";
-          value = mkHome c;
-        }) configurations
       );
     };
 }

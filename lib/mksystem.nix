@@ -1,38 +1,45 @@
 {
+  lib,
   inputs,
-  nixpkgs,
+  outputs,
+  builder,
+  extraModules,
 }:
 {
+  user,
+  host,
+  system,
   ...
-}@args:
+}:
 let
-  lib = nixpkgs.lib;
-  ctx = import ./mkcontext.nix { inherit lib args; };
-  builder = {
-    darwin = inputs.nix-darwin.lib.darwinSystem;
-    linux = nixpkgs.lib.nixosSystem;
+  ctx = {
+    inherit user host system;
   };
 in
-builder.${ctx.os} {
+builder {
   inherit (ctx) system;
 
-  specialArgs = { inherit ctx inputs; };
+  specialArgs = { inherit ctx inputs outputs; };
   modules = lib.lists.flatten [
-    ../configuration.nix
-    (lib.optionals ctx.isDarwin [
-      inputs.nix-homebrew.darwinModules.nix-homebrew
-      inputs.home-manager.darwinModules.home-manager
-    ])
-    (lib.optionals ctx.isLinux [
-      inputs.home-manager.nixosModules.home-manager
-    ])
     {
-      home-manager.extraSpecialArgs = { inherit ctx; };
+      nix.settings.experimental-features = "nix-command flakes";
+      nix.optimise.automatic = true;
+    }
+    {
+      nixpkgs.config.allowUnfree = true;
+      nixpkgs.overlays = [
+        outputs.overlays.additions
+        outputs.overlays.overrides
+        outputs.overlays.nixpkgs-unstable
+      ];
+    }
+    extraModules
+    ../hosts/${ctx.host}
+    {
+      home-manager.extraSpecialArgs = { inherit ctx inputs outputs; };
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      home-manager.users.${ctx.user} = ../users/${ctx.user};
+      home-manager.users.${ctx.user} = ../users/${ctx.user}.nix;
     }
-    ../profiles/${ctx.profile}
-    ../hosts/${ctx.host}
   ];
 }

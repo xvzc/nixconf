@@ -1,8 +1,9 @@
 SHELL := /bin/sh
 
 HOSTS := \
-  macair-personal-phys-01 \
-  desktop-personal-phys-01 \
+  macbook-air-m2 \
+  nixos-desktop-01 \
+  nixos-desktop-02 \
   quit
 
 UNAME := $(shell uname)
@@ -27,7 +28,7 @@ init: .cache/ran-setup
 	@touch .cache/has-nix
 
 .cache/ran-setup: | .cache/has-nix
-	$(MAKE) setup;
+	$(MAKE) setup
 	@touch .cache/ran-setup
 
 select-current-host:
@@ -57,6 +58,9 @@ check-or-install-nix:
 		$(INSTALL_COMMAND); \
 	fi
 
+update-dependencies: 
+	nix flake update wallpapers nvim
+
 setup:
 ifeq ($(UNAME), Darwin)
 	@CURRENT_HOST=$(shell cat .cache/current-host); \
@@ -72,6 +76,7 @@ else
 endif
 
 switch:
+	$(MAKE) update-dependencies
 ifeq ($(UNAME), Darwin)
 	nix build ".#darwinConfigurations.${NIX_HOST}.system"
 	./result/sw/bin/darwin-rebuild switch --flake ".#${NIX_HOST}"
@@ -80,6 +85,7 @@ else
 endif
 
 test:
+	$(MAKE) update-dependencies
 ifeq ($(UNAME), Darwin)
 	nix build ".#darwinConfigurations.${NIX_HOST}.system" --show-trace
 	./result/sw/bin/darwin-rebuild build --flake ".#${NIX_HOST}"

@@ -1,7 +1,0 @@
-#!/bin/zsh
-
-if $(ps uxww | grep -v "open-wezterm" | grep -q "[w]ezterm"); then
-  wezterm cli spawn --new-window
-else
-  /Applications/WezTerm.app/Contents/MacOS/wezterm start
-fi

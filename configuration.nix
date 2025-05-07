@@ -11,8 +11,11 @@
   nixpkgs.config.allowUnfree = true;
   nixpkgs.config.allowUnsupportedSystem = true;
   nixpkgs.overlays = lib.lists.flatten [
-    (import ./profiles/${ctx.profile}/overlays.nix { inherit ctx lib inputs; })
-    (import ./hosts/${ctx.host}/overlays.nix { inherit ctx lib inputs; })
-    (import ./users/${ctx.user}/overlays.nix { inherit ctx lib inputs; })
+    (final: prev: {
+      neovim = inputs.neovim-nightly.packages.${prev.system}.default;
+      nanum-square-neo = final.callPackage ./pkgs/nanum-square-neo.nix { };
+      yabai = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.yabai;
+      skhd = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.skhd;
+    })
   ];
 }
