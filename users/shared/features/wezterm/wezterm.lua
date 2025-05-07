@@ -19,7 +19,7 @@ config.audible_bell = "Disabled"
 
 -- config.colors = require("themes/miami")
 config.font_size = 12.2
-config.color_scheme_dirs = { "/Users/mario/.config/wezterm/colors" }
+config.color_scheme_dirs = { "~/.config/wezterm/colors" }
 config.color_scheme = "Miami"
 
 local padding = 6

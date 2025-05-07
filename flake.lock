@@ -432,8 +432,7 @@
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "nvim": "nvim",
-        "wallpapers": "wallpapers"
+        "nvim": "nvim"
       }
     },
     "systems": {
@@ -469,22 +468,6 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
-        "type": "github"
-      }
-    },
-    "wallpapers": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1746595896,
-        "narHash": "sha256-8D07nlS5i9gNjQAfFOS7zuWuLW4pMku2l2GT5Mn7kNk=",
-        "owner": "xvzc",
-        "repo": "wallpapers",
-        "rev": "60018aeadc6670ce7e9403e3034e21c337826d08",
-        "type": "github"
-      },
-      "original": {
-        "owner": "xvzc",
-        "repo": "wallpapers",
         "type": "github"
       }
     }

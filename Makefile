@@ -59,7 +59,7 @@ check-or-install-nix:
 	fi
 
 update-dependencies: 
-	nix flake update wallpapers nvim
+	nix flake update assets nvim
 
 setup:
 ifeq ($(UNAME), Darwin)

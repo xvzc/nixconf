@@ -28,16 +28,7 @@
     flake-utils.url = "github:numtide/flake-utils";
 
     nvim = {
-      type = "github";
-      owner = "xvzc";
-      repo = "nvim";
-      flake = false;
-    };
-
-    wallpapers = {
-      type = "github";
-      owner = "xvzc";
-      repo = "wallpapers";
+      url = "github:xvzc/nvim";
       flake = false;
     };
 
@@ -78,17 +69,17 @@
       configurations = [
         {
           system = "aarch64-darwin";
-          user = "mario";
+          user = "kazusa";
           host = "macbook-air-m2";
         }
         {
           system = "x86_64-linux";
-          user = "kazusa";
+          user = "mizuki";
           host = "nixos-desktop-01";
         }
         {
           system = "x86_64-linux";
-          user = "kazusa";
+          user = "nezuko";
           host = "nixos-desktop-02";
         }
         # {
