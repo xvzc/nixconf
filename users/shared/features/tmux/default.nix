@@ -100,28 +100,17 @@ in
         bind s run-shell   -b "~/.config/tmux/scripts/switch-session"
         bind ! setw        synchronize-panes;
 
-        bind -n F12 \
-          popup -h 70% -w 60% \
-          -E "([[ $(tmux display-message -p '#S') = 'floaterm' ]] && tmux detach) || (tmux attach -t floaterm || tmux new -s floaterm)"
+        bind -n F12 run-shell -b "~/.config/tmux/scripts/toggle-popup"
 
 
         # ┌────────┐ 
         # │ STYLES │ 
         # └────────┘ 
-        # set  -g    status-right-length 100
-        # set  -g    status-left-length  100
-        # set  -g    status-left         ""
-        # set  -g    status-right        "#{E:@catppuccin_status_application}"
-        # set  -ag   status-right        "#{E:@catppuccin_status_session}"
-
-
         # status left look and feel
         set -g status-interval 1
         set -g status-left-length 100
         set -g status-left ""
         set -ga status-left "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_bg},bold]  #S },#{#[bg=#{@thm_bg},fg=#{@thm_green}]  #S }}"
-        # set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]│"
-        # set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_blue}]  #{=/-32/...:#{s|$USER|~|:#{b:pane_current_path}}} "
         set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
         set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
 
@@ -135,13 +124,6 @@ in
         set -g status-position top
         set -g status-style    bg=default
         set -g status-justify  "absolute-centre"
-
-        # pane border look and feel
-        # setw -g pane-border-status top
-        # setw -g pane-border-format ""
-        # setw -g pane-active-border-style "bg=#{@thm_bg},fg=#{@thm_overlay_0}"
-        # setw -g pane-border-style "bg=#{@thm_bg},fg=#{@thm_surface_0}"
-        # setw -g pane-border-lines single
 
         # window look and feel
         set -wg automatic-rename on
