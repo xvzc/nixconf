@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 {
   home.packages = with pkgs; [
     neovim
@@ -10,11 +10,7 @@
   };
 
   xdg.configFile = {
-    "nvim".source = pkgs.fetchgit {
-      url = "https://github.com/xvzc/nvim.git";
-      rev = "HEAD";
-      sha256 = "zBMMZiSh/QtJYSd4AC70vPu3xbBI32H/fDZ74m4A75Q=";
-    };
+    "nvim".source = inputs.nvim;
   };
 
   home.sessionVariables = {
