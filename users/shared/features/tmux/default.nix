@@ -1,4 +1,5 @@
 {
+  pkgs,
   ...
 }:
 let
@@ -22,6 +23,7 @@ in
   programs.tmux = {
     enable = true;
     prefix = "C-a";
+    terminal = "wezterm";
     baseIndex = 1;
     disableConfirmationPrompt = false;
     escapeTime = 10; # Default
@@ -32,12 +34,24 @@ in
     resizeAmount = 1;
     sensibleOnTop = false;
 
+    plugins = [
+      {
+        plugin = pkgs.unstable.tmuxPlugins.catppuccin;
+        extraConfig = ''
+          set -g @catppuccin_flavor "macchiato"
+          set -g @catppuccin_status_background "none"
+          set -g @catppuccin_window_status_style "none"
+          set -g @catppuccin_pane_status_enabled "off"
+          set -g @catppuccin_pane_border_status "off"
+        '';
+      }
+    ];
+
     extraConfig = # tmux
       ''
         # ┌─────────┐ 
         # │ OPTIONS │ 
         # └─────────┘ 
-        set -g  default-terminal  "wezterm"
         set -sa terminal-features ",wezterm:RGB"
         set -gq allow-passthrough on
         set -g  focus-events      on
@@ -46,7 +60,7 @@ in
         set -g  set-titles        on
         set -g  status-position   top
         set -s  set-clipboard     on
-        setw -g monitor-activity  on
+        # setw -g monitor-activity  on
 
         # ┌─────────────┐ 
         # │ KEYBINDINGS │ 
@@ -73,39 +87,77 @@ in
         bind -T copy-mode-vi    V               send -X select-line
         bind -T copy-mode-vi    escape          send -X cancel
 
-        bind -r f   resize-pane -Z; # Maximize current pane
         bind -r C-n next-window
         bind -r C-p previous-window
 
         bind - split-window -v -c "$HOME"
         bind _ split-window -h -c "$HOME"
 
-        bind c run-shell -b "~/.config/tmux/scripts/new-window"
-        bind v run-shell -b "~/.config/tmux/scripts/new-nvim-buffer"
-        bind i run-shell -b "~/.config/tmux/scripts/new-session"
-        bind s run-shell -b "~/.config/tmux/scripts/switch-session"
-        bind ! setw synchronize-panes;
+        bind f resize-pane -Z; # Maximize current pane
+        bind c run-shell   -b "~/.config/tmux/scripts/new-window"
+        bind v run-shell   -b "~/.config/tmux/scripts/new-nvim-buffer"
+        bind i run-shell   -b "~/.config/tmux/scripts/new-session"
+        bind s run-shell   -b "~/.config/tmux/scripts/switch-session"
+        bind ! setw        synchronize-panes;
+
+        bind -n F12 \
+          popup -h 70% -w 60% \
+          -E "([[ $(tmux display-message -p '#S') = 'floaterm' ]] && tmux detach) || (tmux attach -t floaterm || tmux new -s floaterm)"
+
 
         # ┌────────┐ 
         # │ STYLES │ 
         # └────────┘ 
-        set  -g status-style                 bg=default
+        # set  -g    status-right-length 100
+        # set  -g    status-left-length  100
+        # set  -g    status-left         ""
+        # set  -g    status-right        "#{E:@catppuccin_status_application}"
+        # set  -ag   status-right        "#{E:@catppuccin_status_session}"
 
-        # Status bar
-        set  -g status-left-length           60
-        set  -g status-left                  "#[fg=black, bg=green] #S #[default] "
-        set  -g status-right                 "#[fg=white,bg=default]"
 
-        # Inactive windows
-        set  -g window-status-style          fg=colour244,bg=default
-        set  -g window-status-format         "[#I] #W "
-        setw -g window-status-separator      "#[fg=white]|"
+        # status left look and feel
+        set -g status-interval 1
+        set -g status-left-length 100
+        set -g status-left ""
+        set -ga status-left "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_bg},bold]  #S },#{#[bg=#{@thm_bg},fg=#{@thm_green}]  #S }}"
+        # set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]│"
+        # set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_blue}]  #{=/-32/...:#{s|$USER|~|:#{b:pane_current_path}}} "
+        set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
+        set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
 
-        # Active windows
-        set  -g window-status-current-style  fg=black,bg=colour136
-        set  -g window-status-current-format "[#I] #W "
+        # status right look and feel
+        set -g  status-right-length 100
+        set -g  status-right        ""
+        # set -ga status-right        "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]│"
+        set -ga status-right        "#[bg=#{@thm_bg},fg=#{@thm_maroon}]  #{pane_current_command} "
 
-        # Border
+        # Configure Tmux
+        set -g status-position top
+        set -g status-style    bg=default
+        set -g status-justify  "absolute-centre"
+
+        # pane border look and feel
+        # setw -g pane-border-status top
+        # setw -g pane-border-format ""
+        # setw -g pane-active-border-style "bg=#{@thm_bg},fg=#{@thm_overlay_0}"
+        # setw -g pane-border-style "bg=#{@thm_bg},fg=#{@thm_surface_0}"
+        # setw -g pane-border-lines single
+
+        # window look and feel
+        set -wg automatic-rename on
+        set -g automatic-rename-format "Window"
+
+        set -g window-status-format " #I#{?#{!=:#{window_name},Window},: #W,} "
+        set -g window-status-style "bg=#{@thm_bg},fg=#{@thm_rosewater}"
+        set -g window-status-last-style "bg=#{@thm_bg},fg=#{@thm_peach}"
+        set -g window-status-activity-style "bg=#{@thm_red},fg=#{@thm_bg}"
+        set -g window-status-bell-style "bg=#{@thm_red},fg=#{@thm_bg},bold"
+        set -gF window-status-separator "#[bg=#{@thm_bg},fg=#{@thm_overlay_0}]│"
+
+        set -g window-status-current-format " #I#{?#{!=:#{window_name},Window},: #W,} "
+        set -g window-status-current-style "bg=#{@thm_peach},fg=#{@thm_bg},bold"
+
+        # # Border
         set  -g pane-active-border-style     bg=default,fg=#ddbaf7
         set  -g pane-border-style            fg=#6a5b75
 

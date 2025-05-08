@@ -14,7 +14,7 @@
     ))
 
     # Language Servers & Formatters
-    bash-language-server
+    unstable.bash-language-server
     clang-tools
     lua-language-server
     nixd

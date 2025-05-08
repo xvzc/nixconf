@@ -6,7 +6,7 @@ selected=$( \
   --hidden | \
   fzf-tmux \
   -p80%,60% \
-  --preview 'tree {}' \
+  --preview 'eza --tree --only-dirs {}' \
 )
 
 if [[ -z $selected ]]; then

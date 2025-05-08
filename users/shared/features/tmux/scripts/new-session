@@ -13,7 +13,7 @@ else
       --exact-depth 1 | \
       fzf-tmux \
       -p80%,60% \
-      --preview 'tree {}' \
+      --preview 'eza --tree --only-dirs {}' \
     )
 fi
 

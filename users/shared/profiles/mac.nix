@@ -16,7 +16,7 @@ with lib;
     ../features/bat
     ../features/eza
     ../features/fd
-    ../features/fish
+    # ../features/fish
     ../features/fzf
     ../features/git
     ../features/jetbrains
@@ -26,7 +26,7 @@ with lib;
     ../features/tmux
     ../features/wezterm
     ../features/yabai
-    # ../features/zsh
+    ../features/zsh
 
     ../packages/cli.nix
     ../packages/code.nix

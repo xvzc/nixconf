@@ -14,20 +14,9 @@ in
     };
   };
 
-  programs.starship = {
-    enable = true;
-    # Configuration written to ~/.config/starship.toml
-    settings = {
-      # add_newline = false;
-
-      # character = {
-      #   success_symbol = "[➜](bold green)";
-      #   error_symbol = "[➜](bold red)";
-      # };
-
-      # package.disabled = true;
-    };
-  };
+  home.packages = [
+    pkgs.pure-prompt
+  ];
 
   programs.zsh = {
     enable = true;
@@ -53,13 +42,6 @@ in
     };
 
     # defaultKeymap = "viins";
-    plugins = [
-      {
-        name = "vi-mode";
-        src = pkgs.zsh-vi-mode;
-        file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
-      }
-    ];
 
     syntaxHighlighting = {
       enable = true;
@@ -133,29 +115,29 @@ in
         zstyle ':completion:*' list-colors "$EZA_COLORS"
 
         zmodload zsh/nearcolor
-        # zstyle :prompt:pure:path color 'blue'
-        # zstyle :prompt:pure:git:dirty color 'red'
-        # zstyle :prompt:pure:git:branch color 'cyan'
-        # zstyle :prompt:pure:virtualenv show yes
-        # zstyle :prompt:pure:prompt:success color '#f5b5f4'
-        # zstyle :prompt:pure:execution_time color '#fadf32'
+        zstyle :prompt:pure:path color 'blue'
+        zstyle :prompt:pure:git:dirty color 'red'
+        zstyle :prompt:pure:git:branch color 'cyan'
+        zstyle :prompt:pure:virtualenv show yes
+        zstyle :prompt:pure:prompt:success color '#f5b5f4'
+        zstyle :prompt:pure:execution_time color '#fadf32'
 
         # ┌─────────┐ 
         # │ VI-MODE │ 
         # └─────────┘ 
-        # BLOCK='\e[1 q'
-        # BEAM='\e[5 q'
-        # function zle-line-init zle-keymap-select {
-        #   if [[ $KEYMAP == vicmd ]] || [[ $1 = 'block' ]]; then
-        #     echo -ne $BLOCK
-        #   elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] ||
-        #        [[ $KEYMAP = "" ]] || [[ $1 = "beam" ]]; then
-        #     echo -ne $BEAM
-        #   fi
-        # }
+        BLOCK='\e[1 q'
+        BEAM='\e[5 q'
+        function zle-line-init zle-keymap-select {
+          if [[ $KEYMAP == vicmd ]] || [[ $1 = 'block' ]]; then
+            echo -ne $BLOCK
+          elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] ||
+               [[ $KEYMAP = "" ]] || [[ $1 = "beam" ]]; then
+            echo -ne $BEAM
+          fi
+        }
 
-        # zle -N zle-keymap-select
-        # zle -N zle-line-init
+        zle -N zle-keymap-select
+        zle -N zle-line-init
 
         # Edit line in vim with ctrl-e:
         autoload -Uz edit-command-line
@@ -179,52 +161,28 @@ in
         [ -f $HOME/.secrets ] && source "$HOME/.secrets"
         [ -f $HOME/.zmutable ] && source "$HOME/.zmutable"
 
-        # autoload -U promptinit; promptinit
-        # prompt pure
+        autoload -U promptinit; promptinit
+        prompt pure
+
+        # The Nix installer modifies '/etc/zshrc'. When macOS is updated, it will 
+        # typically overwrite /etc/zshrc again. because of this known issue, we 
+        # source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' in case
+        # See https://nix.dev/guides/troubleshooting#macos-update-breaks-nix-installation
+        if [ -z "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then
+          if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+            . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+          fi
+        fi
 
         [[ -n "$ZPROF" ]] && zprof
       '';
 
     profileExtra = # sh
       ''
-        # ┌───────────┐ 
-        # │ FUNCTIONS │ 
-        # └───────────┘ 
         function timezsh() {
           shell=''${1-$SHELL}
           for i in $(seq 1 100); do time $shell -i -c exit; done
         }
-
-        function fvi() {
-          out=$( \
-            fd -L --type f --hidden --relative-path --follow --exclude .git $1 \
-              | fzf \
-              --preview 'bat --style=numbers --color=always --line-range :500 {}' \
-              --query=$1 \
-          )
-
-          [[ ! -z $out ]] && nvim $out
-        }
-
-        function fcd() {
-          out=$( \
-            fd -L --type d --hidden --relative-path \
-              | fzf \
-              --preview='tree {}' \
-              --query=$1 \
-          )
-
-          [[ ! -z $out ]] && cd $out
-        }
-
-        # The Nix installer modifies '/etc/zshrc'. When macOS is updated, it will 
-        # typically overwrite /etc/zshrc again. because of this known issue, we 
-        # source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' in case
-        # See https://nix.dev/guides/troubleshooting#macos-update-breaks-nix-installation
-        if [ -n "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then return; fi
-        if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
-          . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
-        fi
       '';
   };
 }

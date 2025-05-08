@@ -1,63 +1,9 @@
--- Pull in the wezterm API
 local wezterm = require("wezterm")
 
 local config = wezterm.config_builder()
 
-config.term = "wezterm"
-
-config.window_decorations = "RESIZE"
-config.use_fancy_tab_bar = true
-config.hide_tab_bar_if_only_one_tab = true
-config.window_close_confirmation = "NeverPrompt"
-
-config.cursor_blink_ease_out = "Constant"
-config.cursor_blink_ease_in = "Constant"
-config.cursor_blink_rate = 0
-config.default_cursor_style = "SteadyBlock"
-
-config.audible_bell = "Disabled"
-
--- config.colors = require("themes/miami")
-config.font_size = 12.2
-config.color_scheme_dirs = { "~/.config/wezterm/colors" }
-config.color_scheme = "Miami"
-
-local padding = 6
-config.window_padding = {
-	left =0,
-	right = 0,
-	top = 0,
-	bottom = 0,
-}
-
--- wezterm.on("window-resized", function(window, pane)
--- 	local dimensions = window:get_dimensions()
--- 	local overrides = window:get_config_overrides() or {}
--- 	local value = dimensions.is_full_screen and 0 or 6
---
--- 	overrides.window_padding = {
--- 		left = value,
--- 		right = 0,
--- 		top = 0,
--- 		bottom = 0,
--- 	}
---
--- 	window:set_config_overrides(overrides)
--- end)
-
-config.font = wezterm.font_with_fallback({
-	"JetBrainsMonoNL Nerd Font",
-	"NanumSquare Neo",
-	"D2Coding",
-})
-
-config.keys = {
-	{ key = "-", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-	{ key = "=", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-	{ key = "-", mods = "CMD", action = wezterm.action.DisableDefaultAssignment },
-	{ key = "=", mods = "CMD", action = wezterm.action.DisableDefaultAssignment },
-	{ key = "f", mods = "CTRL|CMD|ALT", action = wezterm.action.ToggleFullScreen },
-}
+local is_darwin = wezterm.target_triple:find("darwin") ~= nil
+local is_linux = wezterm.target_triple:find("linux") ~= nil
 
 local function recursive_merge(t1, t2)
 	for k, v in pairs(t2) do
@@ -69,10 +15,73 @@ local function recursive_merge(t1, t2)
 	end
 	return t1
 end
+-- window = wezterm.target_triple
+-- window:toast_notification('wezterm', "hello", nil, 4000)
 
 local ok, mutable = pcall(require, ".mutable")
 if not ok or (mutable == nil) or (type(mutable) ~= "table") then
-	return config
+	mutable = {}
+end
+
+config.term = "wezterm"
+
+config.hide_tab_bar_if_only_one_tab = true
+config.use_fancy_tab_bar = true
+config.window_close_confirmation = "NeverPrompt"
+config.window_decorations = "RESIZE"
+
+config.cursor_blink_ease_out = "Constant"
+config.cursor_blink_ease_in = "Constant"
+config.cursor_blink_rate = 0
+config.default_cursor_style = "SteadyBlock"
+
+config.audible_bell = "Disabled"
+
+config.color_scheme_dirs = { "~/.config/wezterm/colors" }
+config.color_scheme = "Miami"
+
+config.font = wezterm.font_with_fallback({
+	"JetBrainsMonoNL Nerd Font",
+	"NanumSquare Neo",
+})
+
+config.keys = {
+	{ key = "-", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "=", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
+	-- { key = "f", mods = "CTRL|CMD|ALT", action = wezterm.action.ToggleFullScreen },
+}
+
+if is_darwin then
+	config.font_size = 12.5
+	config.window_decorations = "RESIZE | MACOS_FORCE_SQUARE_CORNERS"
+	config.window_padding = {
+		left = is_darwin and 6 or 0,
+		right = 0,
+		top = 0,
+		bottom = 0,
+	}
+
+	table.insert(config.keys, {
+		key = "-",
+		mods = "CMD",
+		action = wezterm.action.DisableDefaultAssignment,
+	})
+
+	table.insert(config.keys, {
+		key = "=",
+		mods = "CMD",
+		action = wezterm.action.DisableDefaultAssignment,
+	})
+end
+
+if is_linux then
+	config.font_size = 12.2
+	config.window_padding = {
+		left = 0,
+		right = 0,
+		top = 0,
+		bottom = 0,
+	}
 end
 
 return recursive_merge(config, mutable)

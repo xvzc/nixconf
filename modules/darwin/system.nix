@@ -99,7 +99,7 @@ with lib;
       # │ FINDER │
       # └────────┘
       system.defaults.finder = {
-        QuitMenuItem = true; # enable quit menu item
+        QuitMenuItem = false; # enable quit menu item
 
         ShowPathbar = true; # show path bar
         ShowStatusBar = true; # show status bar
@@ -295,7 +295,9 @@ with lib;
       };
 
       system.defaults.NSGlobalDomain = {
-        "com.apple.sound.beep.feedback" = 0; # disable beep sound on volume up/down
+        # disable beep sound on volume up/down
+        "com.apple.sound.beep.feedback" = 0;
+        "com.apple.sound.beep.volume" = 0.000;
       };
 
       system.defaults.screencapture = {

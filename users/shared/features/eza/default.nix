@@ -2,7 +2,7 @@
 {
   programs.eza = {
     enable = true;
-    enableZshIntegration = true;
+    # enableZshIntegration = true;
     extraOptions = [
       "--group-directories-first"
       "-g"
@@ -11,6 +11,8 @@
 
   programs.zsh.shellAliases = {
     l = "ls";
+    ll = "eza -alX";
+    la = "eza -a";
   };
 
   home.sessionVariables = {

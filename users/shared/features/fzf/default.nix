@@ -63,4 +63,28 @@
     };
   };
 
+  programs.zsh.profileExtra = # sh
+    ''
+      function fvi() {
+        out=$( \
+          fd -L --type f --hidden --relative-path --follow --exclude .git $1 \
+            | fzf \
+            --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+            --query=$1 \
+        )
+
+        [[ ! -z $out ]] && nvim $out
+      }
+
+      function fcd() {
+        out=$( \
+          fd -L --type d --hidden --relative-path \
+            | fzf \
+            --preview='eza --tree --only-dirs {}' \
+            --query=$1 \
+        )
+
+        [[ ! -z $out ]] && cd $out
+      }
+    '';
 }
