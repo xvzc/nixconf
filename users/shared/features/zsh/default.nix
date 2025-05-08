@@ -1,6 +1,5 @@
 {
   lib,
-  ctx,
   pkgs,
   ...
 }:
@@ -15,9 +14,20 @@ in
     };
   };
 
-  home.packages = with pkgs; [
-    pure-prompt
-  ];
+  programs.starship = {
+    enable = true;
+    # Configuration written to ~/.config/starship.toml
+    settings = {
+      # add_newline = false;
+
+      # character = {
+      #   success_symbol = "[➜](bold green)";
+      #   error_symbol = "[➜](bold red)";
+      # };
+
+      # package.disabled = true;
+    };
+  };
 
   programs.zsh = {
     enable = true;
@@ -39,19 +49,17 @@ in
 
     # These variables will be exported in ~/.zshenv
     sessionVariables = {
-      NIX_HOST = ctx.host;
-      PIP_REQUIRE_VIRTUALENV = true;
       KEYTIMEOUT = 1; # Remove ESC delay
-      EDITOR = "nvim";
-      VISUAL = "nvim";
-      EZA_COLORS = lib.strings.concatStrings [
-        "da=37:di=34:" # Directories
-        "gu=97;1:gn=2;3:gR=90;2;3:" # Groups
-        "uu=97;1:un=2;3:uR=90;2;3:" # Users
-      ];
     };
 
-    defaultKeymap = "viins";
+    # defaultKeymap = "viins";
+    plugins = [
+      {
+        name = "vi-mode";
+        src = pkgs.zsh-vi-mode;
+        file = "share/zsh-vi-mode/zsh-vi-mode.plugin.zsh";
+      }
+    ];
 
     syntaxHighlighting = {
       enable = true;
@@ -63,8 +71,8 @@ in
         command = "fg=green";
         reserved-word = "fg=magenta";
         unknown-token = "fg=red";
-        single-quoted-argument = "fg=yellow,bold";
-        double-quoted-argument = "fg=yellow,bold";
+        single-quoted-argument = "fg=11";
+        double-quoted-argument = "fg=11";
         single-hyphen-option = "fg=white";
         double-hyphen-option = "fg=white";
         command-substitution-delimiter = "fg=magenta,bold";
@@ -95,7 +103,7 @@ in
     initExtraBeforeCompInit = # sh
       ''
         fpath+=($HOME/${customCompletionPath})
-        fpath+=(${pkgs.pure-prompt})
+        # fpath+=(${pkgs.pure-prompt})
       '';
 
     initExtra = # sh
@@ -125,29 +133,29 @@ in
         zstyle ':completion:*' list-colors "$EZA_COLORS"
 
         zmodload zsh/nearcolor
-        zstyle :prompt:pure:path color 'blue'
-        zstyle :prompt:pure:git:dirty color 'red'
-        zstyle :prompt:pure:git:branch color 'cyan'
-        zstyle :prompt:pure:virtualenv show yes
-        zstyle :prompt:pure:prompt:success color '#f5b5f4'
-        zstyle :prompt:pure:execution_time color '#fadf32'
+        # zstyle :prompt:pure:path color 'blue'
+        # zstyle :prompt:pure:git:dirty color 'red'
+        # zstyle :prompt:pure:git:branch color 'cyan'
+        # zstyle :prompt:pure:virtualenv show yes
+        # zstyle :prompt:pure:prompt:success color '#f5b5f4'
+        # zstyle :prompt:pure:execution_time color '#fadf32'
 
         # ┌─────────┐ 
         # │ VI-MODE │ 
         # └─────────┘ 
-        BLOCK='\e[1 q'
-        BEAM='\e[5 q'
-        function zle-line-init zle-keymap-select {
-          if [[ $KEYMAP == vicmd ]] || [[ $1 = 'block' ]]; then
-            echo -ne $BLOCK
-          elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] ||
-               [[ $KEYMAP = "" ]] || [[ $1 = "beam" ]]; then
-            echo -ne $BEAM
-          fi
-        }
+        # BLOCK='\e[1 q'
+        # BEAM='\e[5 q'
+        # function zle-line-init zle-keymap-select {
+        #   if [[ $KEYMAP == vicmd ]] || [[ $1 = 'block' ]]; then
+        #     echo -ne $BLOCK
+        #   elif [[ $KEYMAP == main ]] || [[ $KEYMAP == viins ]] ||
+        #        [[ $KEYMAP = "" ]] || [[ $1 = "beam" ]]; then
+        #     echo -ne $BEAM
+        #   fi
+        # }
 
-        zle -N zle-keymap-select
-        zle -N zle-line-init
+        # zle -N zle-keymap-select
+        # zle -N zle-line-init
 
         # Edit line in vim with ctrl-e:
         autoload -Uz edit-command-line
@@ -171,8 +179,8 @@ in
         [ -f $HOME/.secrets ] && source "$HOME/.secrets"
         [ -f $HOME/.zmutable ] && source "$HOME/.zmutable"
 
-        autoload -U promptinit; promptinit
-        prompt pure
+        # autoload -U promptinit; promptinit
+        # prompt pure
 
         [[ -n "$ZPROF" ]] && zprof
       '';

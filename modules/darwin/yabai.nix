@@ -15,6 +15,11 @@ with lib;
   };
 
   config = mkIf cfg.enable {
+system.activationScripts.preActivation.text = 
+''
+csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
+'';
+
     # ┌──────────┐ 
     # │ PACKAGES │ 
     # └──────────┘ 

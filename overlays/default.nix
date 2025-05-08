@@ -6,9 +6,11 @@
   };
 
   overrides = final: prev: {
-    gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
     neovim = inputs.neovim-nightly.packages.${prev.system}.default;
+
+    gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
     wezterm = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.wezterm;
+    kitty = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.kitty;
     alacritty = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.alacritty;
     yabai = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.yabai;
     skhd = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.skhd;

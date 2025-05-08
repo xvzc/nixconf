@@ -22,7 +22,7 @@ with lib;
       enable = true;
       user = "${cfg.user}";
       enableRosetta = false;
-      mutableTaps = true; # disable `brew tap <name>`
+      # mutableTaps = true; # disable `brew tap <name>`
     };
 
     homebrew = {

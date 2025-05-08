@@ -16,4 +16,9 @@
       sha256 = "zBMMZiSh/QtJYSd4AC70vPu3xbBI32H/fDZ74m4A75Q=";
     };
   };
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
 }

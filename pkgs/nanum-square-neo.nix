@@ -11,11 +11,11 @@
 
   installPhase = ''
     find -name \*.otf \
-      -exec mkdir -p $out/share/fonts/opentype \; \
-      -exec mv {} $out/share/fonts/opentype \;
+      -exec mkdir -p $out/share/fonts/opentype/Nanum \; \
+      -exec mv {} $out/share/fonts/opentype/Nanum \;
 
     find -name \*.ttf \
-      -exec mkdir -p $out/share/fonts/truetype \; \
-      -exec mv {} $out/share/fonts/truetype \;
+      -exec mkdir -p $out/share/fonts/truetype/Nanum \; \
+      -exec mv {} $out/share/fonts/truetype/Nanum \;
   '';
 })
