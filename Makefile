@@ -73,7 +73,8 @@ ifeq ($(UNAME), Darwin)
 else
 	@CURRENT_HOST=$(shell cat .cache/current-host); \
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'; \
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#$$CURRENT_HOST";
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch \
+		--flake ".#$$CURRENT_HOST";
 endif
 
 switch:
