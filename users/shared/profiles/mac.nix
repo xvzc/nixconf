@@ -22,6 +22,7 @@ with lib;
     ../features/zsh
 
     ../features/bat.nix
+    ../features/direnv.nix
     ../features/eza.nix
     ../features/fd.nix
     ../features/fzf.nix
