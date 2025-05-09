@@ -1,0 +1,12 @@
+name: nix
+root: ~/nixfiles
+
+windows:
+  - editor:
+      # layout: 2dbb,193x52,0,0{122x52,0,0,4,70x52,123,0[70x34,123,0,6,70x17,123,35,7]}
+      panes:
+        - nvim
+
+  - shell:
+    panes:
+      -

@@ -13,23 +13,23 @@ with lib;
     ./base.nix
 
     ../features/1password
-    ../features/bat
-    ../features/eza
-    ../features/fd
-    # ../features/fish
-    ../features/fzf
     ../features/git
     ../features/jetbrains
-    ../features/neovim
     ../features/kitty
-    ../features/ssh
     ../features/tmux
     ../features/wezterm
     ../features/yabai
     ../features/zsh
 
+    ../features/bat.nix
+    ../features/eza.nix
+    ../features/fd.nix
+    ../features/fzf.nix
+    ../features/neovim.nix
+    ../features/ssh.nix
+
     ../packages/cli.nix
-    ../packages/code.nix
+    ../packages/dev.nix
     ../packages/gui.nix
   ];
 

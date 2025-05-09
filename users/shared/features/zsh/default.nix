@@ -18,6 +18,8 @@ in
     pkgs.pure-prompt
   ];
 
+  programs.direnv.enable = true;
+
   programs.zsh = {
     enable = true;
     zprof.enable = false;

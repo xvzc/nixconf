@@ -1,0 +1,12 @@
+name: nvim
+root: ~/personal/nvim
+
+windows:
+  - editor:
+      layout: main-vertical
+      panes:
+        - editor:
+          - nvim
+  - shell:
+      layout: main-vertical
+
