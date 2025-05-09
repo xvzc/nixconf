@@ -4,9 +4,8 @@
     neovim
   ];
 
-  programs.zsh.shellAliases = {
+  home.shellAliases = {
     vi = "nvim";
-    vv = "XDG_CONFIG_HOME=$HOME/personal nvim";
   };
 
   xdg.configFile = {

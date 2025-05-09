@@ -21,7 +21,7 @@ in
     TMUXINATOR_CONFIG = "$HOME/.config/tmux/projects";
   };
 
-  programs.zsh.shellAliases = {
+  home.shellAliases = {
     tds = "tmux detach";
     tks = "tmux kill-session -t";
     tss = "tmux -u switch -t";
