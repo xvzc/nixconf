@@ -14,5 +14,4 @@ if [[ -z $selected ]]; then
   exit 0
 fi
 
-# tmux new-window -c "$(realpath -L $selected)"
-tmux new-window -c "$selected"
+tmux new-window -c "$(realpath --no-symlinks $selected)"

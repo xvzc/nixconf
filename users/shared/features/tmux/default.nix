@@ -12,11 +12,10 @@ in
   };
 
   programs.zsh.shellAliases = {
-    tas = "tmux -u attach-session -t";
     tds = "tmux detach";
     tks = "tmux kill-session -t";
     tss = "tmux -u switch -t";
-    tns = "tmux -u new -c ~ -s";
+    tns = "tmux -u new -c ~ -A -s";
     tls = "tmux ls";
   };
 
@@ -53,13 +52,13 @@ in
         # │ OPTIONS │ 
         # └─────────┘ 
         set -sa terminal-features ",wezterm:RGB"
-        set -gq allow-passthrough on
-        set -g  focus-events      on
-        set -g  renumber-windows  on
-        setw -g automatic-rename  on
-        set -g  set-titles        on
-        set -g  status-position   top
-        set -s  set-clipboard     on
+        set -gq allow-passthrough "on"
+        set -g  focus-events      "on"
+        set -g  renumber-windows  "on"
+        setw -g automatic-rename  "on"
+        set -g  set-titles        "on"
+        set -g  status-position   "top"
+        set -s  set-clipboard     "on"
         # setw -g monitor-activity  on
 
         # ┌─────────────┐ 
@@ -100,44 +99,48 @@ in
         bind s run-shell   -b "~/.config/tmux/scripts/switch-session"
         bind ! setw        synchronize-panes;
 
-        bind -n F12 run-shell -b "~/.config/tmux/scripts/toggle-popup"
+        bind-key -n F12 if-shell -F '#{==:#{session_name},scratch}' {
+          detach-client
+        } {
+          display-popup -w 60% -h 70% -E -B "tmux new -A -s scratch"
+        }
+
 
 
         # ┌────────┐ 
         # │ STYLES │ 
         # └────────┘ 
         # status left look and feel
-        set -g status-interval 1
+        set -g status-interval    1
         set -g status-left-length 100
-        set -g status-left ""
-        set -ga status-left "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_bg},bold]  #S },#{#[bg=#{@thm_bg},fg=#{@thm_green}]  #S }}"
-        set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
-        set -ga status-left "#[bg=#{@thm_bg},fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
+        set -g status-left        ""
+        set -ga status-left       "#{?client_prefix,#{#[bg=#{@thm_red},fg=#{@thm_bg},bold]  #S },#{#[bg=default,fg=#{@thm_green}]  #S }}"
+        set -ga status-left       "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]│"
+
 
         # status right look and feel
         set -g  status-right-length 100
         set -g  status-right        ""
-        # set -ga status-right        "#[bg=#{@thm_bg},fg=#{@thm_overlay_0},none]│"
-        set -ga status-right        "#[bg=#{@thm_bg},fg=#{@thm_maroon}]  #{pane_current_command} "
+        set -ga status-right        "#[bg=default,fg=#{@thm_yellow}]#{?window_zoomed_flag,  zoom ,}"
+        set -ga status-right        "#[bg=default,fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
+        set -ga status-right        "#[bg=default,fg=#{@thm_maroon}]  #{pane_current_command} "
 
         # Configure Tmux
-        set -g status-position top
-        set -g status-style    bg=default
-        set -g status-justify  "absolute-centre"
+        set -g status-position "top"
+        set -g status-style    "bg=default"
 
         # window look and feel
-        set -wg automatic-rename on
-        set -g automatic-rename-format "Window"
+        set -wg automatic-rename        "on"
+        set -g  automatic-rename-format "Window"
 
-        set -g window-status-format " #I#{?#{!=:#{window_name},Window},: #W,} "
-        set -g window-status-style "bg=#{@thm_bg},fg=#{@thm_rosewater}"
-        set -g window-status-last-style "bg=#{@thm_bg},fg=#{@thm_peach}"
-        set -g window-status-activity-style "bg=#{@thm_red},fg=#{@thm_bg}"
-        set -g window-status-bell-style "bg=#{@thm_red},fg=#{@thm_bg},bold"
-        set -gF window-status-separator "#[bg=#{@thm_bg},fg=#{@thm_overlay_0}]│"
-
-        set -g window-status-current-format " #I#{?#{!=:#{window_name},Window},: #W,} "
-        set -g window-status-current-style "bg=#{@thm_peach},fg=#{@thm_bg},bold"
+        set -ga status-right                "#[bg=default,fg=#{@thm_overlay_0},none]#{?window_zoomed_flag,│,}"
+        set -g  window-status-format         " #I #{?window_end_flag,#{#[bg=default,fg=#{@thm_overlay_0},none]│},}"
+        set -g  window-status-style          "bg=default,fg=#{@thm_rosewater}"
+        set -g  window-status-last-style     "bg=default,fg=#{@thm_peach}"
+        set -g  window-status-activity-style "bg=#{@thm_red},fg=#{@thm_bg}"
+        set -g  window-status-bell-style     "bg=#{@thm_red},fg=#{@thm_bg},bold"
+        set -gF window-status-separator     "#[bg=#{@thm_bg},fg=#{@thm_overlay_0}]│"
+        set -g  window-status-current-format "#[bg=#{@thm_peach},fg=#{@thm_bg},bold] #I #{?window_end_flag,#{#[bg=default,fg=#{@thm_overlay_0},none]│},}"
 
         # # Border
         set  -g pane-active-border-style     bg=default,fg=#ddbaf7
