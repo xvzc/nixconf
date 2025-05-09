@@ -12,9 +12,12 @@
     ++ [
       _1password-cli
     ];
+  xdg.configFile."1Password/ssh/agent.toml".text = # toml
+    ''
+      [[ssh-keys]]
+      vault = "Personal"
 
-  xdg.configFile."1Password/ssh" = {
-    source = ./ssh;
-    recursive = true;
-  };
+      [[ssh-keys]]
+      vault = "Work"
+    '';
 }

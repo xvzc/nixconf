@@ -12,7 +12,6 @@ with lib;
   imports = [
     ./base.nix
 
-    ../features/1password
     ../features/git
     ../features/jetbrains
     ../features/kitty
@@ -21,6 +20,7 @@ with lib;
     ../features/yabai
     ../features/zsh
 
+    ../features/1password.nix
     ../features/bat.nix
     ../features/direnv.nix
     ../features/eza.nix
