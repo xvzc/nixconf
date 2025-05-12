@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.darwin.system;
+  cfg = config.host.darwin.system;
 in
 with lib;
 {
-  options.darwin.system = {
+  options.host.darwin.system = {
     autoLoginUser = mkOption {
       type = types.str;
       default = ctx.user;

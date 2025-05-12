@@ -27,7 +27,7 @@
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
     flake-utils.url = "github:numtide/flake-utils";
 
-    nvim = {
+    nvim-xvzc = {
       url = "github:xvzc/nvim";
       flake = false;
     };
@@ -49,22 +49,8 @@
       inherit (self) outputs;
       inherit (nixpkgs) lib;
 
-      mkDarwin = import ./lib/mksystem.nix {
-        inherit lib inputs outputs;
-        builder = nix-darwin.lib.darwinSystem;
-        extraModules = [
-          inputs.nix-homebrew.darwinModules.nix-homebrew
-          inputs.home-manager.darwinModules.home-manager
-        ];
-      };
-
-      mkNixos = import ./lib/mksystem.nix {
-        inherit lib inputs outputs;
-        builder = nixpkgs.lib.nixosSystem;
-        extraModules = [
-          inputs.home-manager.nixosModules.home-manager
-        ];
-      };
+      mkSystem = import ./lib/mkSystem.nix { inherit nixpkgs inputs outputs; };
+      mkHome = import ./lib/mkhome.nix { inherit nixpkgs inputs outputs; };
 
       configurations = [
         {
@@ -100,19 +86,31 @@
       ];
     in
     {
+      # ┌─────────┐
+      # │ OUTPUTS │
+      # └─────────┘
       overlays = import ./overlays { inherit inputs; };
+
       darwinConfigurations = lib.listToAttrs (
         lib.map (c: {
           name = c.host;
-          value = mkDarwin c;
+          value = mkSystem c;
         }) (lib.filter (x: builtins.elem x.system lib.platforms.darwin) configurations)
       );
 
       nixosConfigurations = lib.listToAttrs (
         lib.map (c: {
           name = c.host;
-          value = mkNixos c;
+          value = mkSystem c;
         }) (lib.filter (x: builtins.elem x.system lib.platforms.linux) configurations)
       );
+
+      homeConfigurations = lib.listToAttrs (
+        lib.map (c: {
+          name = "${c.user}@${c.host}";
+          value = mkHome c;
+        }) configurations
+      );
+      # - OUTPUTS - 8< -----
     };
 }

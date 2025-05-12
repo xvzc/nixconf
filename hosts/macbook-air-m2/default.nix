@@ -1,23 +1,21 @@
 {
   pkgs,
-  inputs,
   ...
 }:
 let
 in
 {
   imports = [
-    ../../modules/base/dev.nix
+    ../../modules/host/base/dev.nix
 
-    ../../modules/darwin/homebrew.nix
-    ../../modules/darwin/networking.nix
-    ../../modules/darwin/system.nix
-    ../../modules/darwin/users.nix
-    ../../modules/darwin/yabai.nix
+    ../../modules/host/darwin/homebrew.nix
+    ../../modules/host/darwin/identity.nix
+    ../../modules/host/darwin/system.nix
+    ../../modules/host/darwin/yabai.nix
   ];
 
-  darwin.yabai.enable = true;
-  darwin.system = {
+  host.darwin.yabai.enable = true;
+  host.darwin.system = {
     dock.apps = [
       "${pkgs.wezterm}/Applications/WezTerm.app"
       "${pkgs.google-chrome}/Applications/Google Chrome.app"

@@ -4,6 +4,7 @@
 
   home.sessionVariables = {
     NIX_HOST = ctx.host;
+    NIXCONF_DIR = "$HOME/nixconf";
     PIP_REQUIRE_VIRTUALENV = "true";
   };
 

@@ -1,5 +1,5 @@
-name: nvim
-root: ~/personal/nvim
+name: boj-cli
+root: ~/personal/boj-cli
 
 windows:
   - editor:
@@ -7,6 +7,3 @@ windows:
       panes:
         - editor:
           - nvim
-  - shell:
-      layout: main-vertical
-

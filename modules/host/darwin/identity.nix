@@ -1,16 +1,21 @@
 {
   config,
-  lib,
   pkgs,
+  lib,
   ctx,
   ...
 }:
 let
-  cfg = config.darwin.users;
+  cfg = config.host.darwin.identity;
 in
 with lib;
 {
-  options.darwin.users = {
+  options.host.darwin.identity = {
+    host = mkOption {
+      type = types.str;
+      default = ctx.host;
+    };
+
     user = mkOption {
       type = types.str;
       default = ctx.user;
@@ -29,6 +34,12 @@ with lib;
         home = "/Users/${cfg.user}";
         shell = pkgs.zsh;
       };
+    };
+
+    networking = {
+      hostName = cfg.host;
+      computerName = cfg.host;
+      localHostName = cfg.host;
     };
   };
 }

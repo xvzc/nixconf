@@ -1,4 +1,4 @@
-# Original Source: https://github.com/Misterio77/nix-config/blob/main/overlays/default.nix
+# Original src: https://github.com/Misterio77/nix-config/blob/main/overlays/default.nix
 { inputs, ... }:
 {
   additions = final: prev: {

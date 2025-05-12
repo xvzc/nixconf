@@ -6,11 +6,11 @@
   ...
 }:
 let
-  cfg = config.darwin.yabai;
+  cfg = config.host.darwin.yabai;
 in
 with lib;
 {
-  options.darwin.yabai = {
+  options.host.darwin.yabai = {
     enable = mkEnableOption "Whether to enable yabai";
   };
 

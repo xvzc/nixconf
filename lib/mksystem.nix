@@ -1,20 +1,18 @@
 {
-  lib,
+  nixpkgs,
   inputs,
   outputs,
-  builder,
-  extraModules,
 }:
 {
-  user,
-  host,
-  system,
   ...
-}:
+}@ctx:
 let
-  ctx = {
-    inherit user host system;
-  };
+  inherit (inputs.nix-darwin.lib) darwinSystem;
+  inherit (nixpkgs.lib) nixosSystem;
+
+  lib = nixpkgs.lib;
+  isDarwin = builtins.elem ctx.system nixpkgs.lib.platforms.darwin;
+  builder = if isDarwin then darwinSystem else nixosSystem;
 in
 builder {
   inherit (ctx) system;
@@ -33,13 +31,7 @@ builder {
         outputs.overlays.nixpkgs-unstable
       ];
     }
-    extraModules
+    (lib.optionalAttrs isDarwin inputs.nix-homebrew.darwinModules.nix-homebrew)
     ../hosts/${ctx.host}
-    {
-      home-manager.extraSpecialArgs = { inherit ctx inputs outputs; };
-      home-manager.useGlobalPkgs = true;
-      home-manager.useUserPackages = true;
-      home-manager.users.${ctx.user} = ../users/${ctx.user}.nix;
-    }
   ];
 }

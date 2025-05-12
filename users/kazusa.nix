@@ -1,11 +1,14 @@
 {
   inputs,
+  pkgs,
   ...
 }:
 {
   imports = [
-    ./shared/profiles/mac.nix
+    ../modules/user/macos-general.nix
   ];
 
-  mac.wallpaper.source = "${inputs.assets}/wallpapers/anime-cat-clouds.jpg";
+  user.macos-general = {
+    wallpaper.source = "${inputs.assets}/wallpapers/anya-forger-spy-x.jpg";
+  };
 }

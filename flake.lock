@@ -3,11 +3,11 @@
     "assets": {
       "flake": false,
       "locked": {
-        "lastModified": 1746619915,
-        "narHash": "sha256-II00Z+LM0aAjj1zT2eli8baC/Q/BlZzhgrnO2WJc15U=",
+        "lastModified": 1746856032,
+        "narHash": "sha256-7FqJ+spAv/28GBYV/ImvVOA0AOXvJEnM9sIQjk3TGH8=",
         "owner": "xvzc",
         "repo": "assets",
-        "rev": "73ae67ae8185573532b834b7868c6fb9e81bf7d2",
+        "rev": "46ccdf8e69fff9be76a0ed2c3e84974442788370",
         "type": "github"
       },
       "original": {
@@ -405,14 +405,14 @@
         "type": "github"
       }
     },
-    "nvim": {
+    "nvim-xvzc": {
       "flake": false,
       "locked": {
-        "lastModified": 1746711762,
-        "narHash": "sha256-EL31ILAfcctvgTHuv1FqjFebSuF98CcjPnot63y9nIA=",
+        "lastModified": 1747061114,
+        "narHash": "sha256-4LESEggUsDUfZwTOIVFfLql30MZJfW8DWH++ZVqT1OM=",
         "owner": "xvzc",
         "repo": "nvim",
-        "rev": "e09a4642639da815818b2a547cb79622ce831cb2",
+        "rev": "b35b988936bfeb7cfb7f03863962c1e55516d5d2",
         "type": "github"
       },
       "original": {
@@ -432,7 +432,7 @@
         "nixpkgs": "nixpkgs_4",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "nvim": "nvim"
+        "nvim-xvzc": "nvim-xvzc"
       }
     },
     "systems": {

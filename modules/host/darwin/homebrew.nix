@@ -5,12 +5,11 @@
   ...
 }:
 let
-  cfg = config.darwin.homebrew;
+  cfg = config.host.darwin.homebrew;
 in
 with lib;
 {
-
-  options.darwin.homebrew = {
+  options.host.darwin.homebrew = {
     user = mkOption {
       type = types.str;
       default = ctx.user;

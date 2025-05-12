@@ -183,6 +183,9 @@ in
           shell=''${1-$SHELL}
           for i in $(seq 1 100); do time $shell -i -c exit; done
         }
+
+        ${lib.optionalString pkgs.stdenv.isDarwin (builtins.readFile ./func-darwin.zsh)}
+        ${lib.optionalString pkgs.stdenv.isLinux (builtins.readFile ./func-linux.zsh)}
       '';
   };
 }

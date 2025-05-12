@@ -17,6 +17,7 @@ in
     curl
     gcc
     gnupg
+    home-manager
     htop
     openssh
     unzip

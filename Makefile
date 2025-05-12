@@ -68,13 +68,17 @@ ifeq ($(UNAME), Darwin)
 	nix build \
 		--extra-experimental-features nix-command \
 		--extra-experimental-features flakes \
-		".#darwinConfigurations.$$CURRENT_HOST.system"; \
-	./result/sw/bin/darwin-rebuild switch --flake ".#$$CURRENT_HOST"
+		".#darwinConfigurations.$$CURRENT_HOST.system" \
+		&& ./result/sw/bin/darwin-rebuild switch --flake ".#$$CURRENT_HOST" \
+		&& nix build .#homeConfigurations."$$USER@$$CURRENT_HOST".activationPackage \
+		&& ./result/activate;
 else
-	@CURRENT_HOST=$(shell cat .cache/current-host); \
+	CURRENT_HOST=$(shell cat .cache/current-host); \
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'; \
 	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch \
-		--flake ".#$$CURRENT_HOST";
+		--flake ".#$$CURRENT_HOST"; \
+	nix build .#homeConfigurations."$$USER@$$CURRENT_HOST".activationPackage; \
+		./result/activate;
 endif
 
 switch:
