@@ -65,7 +65,7 @@ _setup:
 ifeq ($(UNAME), Darwin)
 	CURRENT_HOST=$(shell cat .cache/current-host); \
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'; \
-	nix build \
+	caffeinate -ids nix build \
 		--extra-experimental-features nix-command \
 		--extra-experimental-features flakes \
 		".#darwinConfigurations.$$CURRENT_HOST.system" \
