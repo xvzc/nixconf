@@ -17,6 +17,10 @@ with lib;
   };
 
   config = {
+    environment.systemPath = [
+      "/opt/homebrew/bin"
+    ];
+
     nix-homebrew = {
       enable = true;
       user = "${cfg.user}";

@@ -33,8 +33,4 @@ with lib;
   home.packages = with pkgs; [
     pngpaste
   ];
-
-  home.sessionPath = [
-    "/opt/homebrew/bin"
-  ];
 }
