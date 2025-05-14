@@ -75,10 +75,10 @@ ifeq ($(UNAME), Darwin)
 else
 	CURRENT_HOST=$(shell cat .cache/current-host); \
 	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch \
-		--extra-experimental-features nix-command \
-		--extra-experimental-features flakes \
 		--flake ".#$$CURRENT_HOST"; \
 	nix build .#homeConfigurations."$$USER@$$CURRENT_HOST".activationPackage; \
+		--extra-experimental-features nix-command \
+		--extra-experimental-features flakes \
 		./result/activate;
 endif
 

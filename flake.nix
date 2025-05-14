@@ -40,7 +40,7 @@
       inherit (self) outputs;
       inherit (nixpkgs) lib;
 
-      mkSystem = import ./lib/mkSystem.nix { inherit nixpkgs inputs outputs; };
+      mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs outputs; };
       mkHome = import ./lib/mkhome.nix { inherit nixpkgs inputs outputs; };
 
       configurations = [
