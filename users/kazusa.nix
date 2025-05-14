@@ -1,14 +1,13 @@
 {
   inputs,
-  pkgs,
   ...
 }:
 {
   imports = [
-    ../modules/user/macos-general.nix
+    ../modules/user/macos-user-dev.nix
   ];
 
-  user.macos-general = {
+  user.features = {
     wallpaper.source = "${inputs.assets}/wallpapers/anya-forger-spy-x.jpg";
   };
 }

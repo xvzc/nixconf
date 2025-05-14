@@ -18,7 +18,6 @@ inputs.home-manager.lib.homeManagerConfiguration {
     config.allowUnfree = true;
     overlays = [
       outputs.overlays.additions
-      outputs.overlays.overrides
       outputs.overlays.nixpkgs-unstable
     ];
   };

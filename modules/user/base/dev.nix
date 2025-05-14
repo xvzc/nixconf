@@ -1,5 +1,13 @@
 { pkgs, ... }:
 {
+  imports = [
+    ./_common.nix
+  ];
+
+  home.sessionPath = [
+    "$HOME/.local/share/JetBrains/Toolbox/scripts"
+  ];
+
   home.packages = with pkgs; [
     # Environment
     cargo
@@ -14,7 +22,7 @@
     ))
 
     # Language Servers & Formatters
-    unstable.bash-language-server
+    bash-language-server
     clang-tools
     lua-language-server
     nixd
@@ -23,5 +31,16 @@
     shfmt
     stylua
     tree-sitter
+
+    fastfetch
+    jq
+    ripgrep
+    tree
+
+    # GUI Applications
+    discord
+    google-chrome
+    slack
+    spotify
   ];
 }

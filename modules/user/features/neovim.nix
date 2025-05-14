@@ -1,7 +1,7 @@
 { pkgs, inputs, ... }:
 {
   home.packages = with pkgs; [
-    neovim
+    neovim-nightly
   ];
 
   home.shellAliases = {

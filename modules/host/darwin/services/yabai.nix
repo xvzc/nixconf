@@ -6,31 +6,30 @@
   ...
 }:
 let
-  cfg = config.host.darwin.yabai;
+  cfg = config.host.darwin.services.yabai;
 in
 with lib;
 {
-  options.host.darwin.yabai = {
+  options.host.darwin.services.yabai = {
     enable = mkEnableOption "Whether to enable yabai";
   };
 
   config = mkIf cfg.enable {
-system.activationScripts.preActivation.text = 
-''
-csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
-'';
+    system.activationScripts.preActivation.text = ''
+      csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
+    '';
 
-    # ┌──────────┐ 
-    # │ PACKAGES │ 
-    # └──────────┘ 
+    # ┌──────────┐
+    # │ PACKAGES │
+    # └──────────┘
     environment.systemPackages = [
       pkgs.skhd
       pkgs.yabai
     ];
 
-    # ┌───────┐ 
-    # │ YABAI │ 
-    # └───────┘ 
+    # ┌───────┐
+    # │ YABAI │
+    # └───────┘
     launchd.user.agents.yabai = {
       serviceConfig.ProgramArguments = [ "${pkgs.yabai}/bin/yabai" ];
 
@@ -64,9 +63,9 @@ csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
         launchctl kickstart -k "gui/$(id -u)/org.nixos.skhd" || true
       '';
 
-    # ┌──────┐ 
-    # │ SKHD │ 
-    # └──────┘ 
+    # ┌──────┐
+    # │ SKHD │
+    # └──────┘
     launchd.user.agents.skhd = {
       path = [ config.environment.systemPath ];
 
@@ -79,7 +78,6 @@ csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
       serviceConfig.ProcessType = "Interactive";
       serviceConfig.StandardErrorPath = "/tmp/skhd_error_log.txt";
     };
-
 
     system.nvram.variables = {
       "boot-args" = "-arm64e_preview_abi"; # Allow non-Apple signed binaries

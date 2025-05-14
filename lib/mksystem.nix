@@ -27,7 +27,6 @@ builder {
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = [
         outputs.overlays.additions
-        outputs.overlays.overrides
         outputs.overlays.nixpkgs-unstable
       ];
     }

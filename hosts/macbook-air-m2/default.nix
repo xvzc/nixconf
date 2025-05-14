@@ -2,19 +2,11 @@
   pkgs,
   ...
 }:
-let
-in
 {
   imports = [
-    ../../modules/host/base/dev.nix
-
-    ../../modules/host/darwin/homebrew.nix
-    ../../modules/host/darwin/identity.nix
-    ../../modules/host/darwin/system.nix
-    ../../modules/host/darwin/yabai.nix
+    ../../modules/host/macos-host-gui.nix
   ];
 
-  host.darwin.yabai.enable = true;
   host.darwin.system = {
     dock.apps = [
       "${pkgs.wezterm}/Applications/WezTerm.app"

@@ -45,7 +45,7 @@
 
     plugins = [
       {
-        plugin = pkgs.unstable.tmuxPlugins.catppuccin;
+        plugin = pkgs.tmuxPlugins.catppuccin;
         extraConfig = # tmux
           ''
             set -g @catppuccin_flavor "macchiato"

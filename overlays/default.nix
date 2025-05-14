@@ -3,17 +3,7 @@
 {
   additions = final: prev: {
     nanum-square-neo = final.callPackage ../pkgs/nanum-square-neo.nix { };
-  };
-
-  overrides = final: prev: {
-    neovim = inputs.neovim-nightly.packages.${prev.system}.default;
-
-    gh = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.gh;
-    wezterm = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.wezterm;
-    kitty = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.kitty;
-    alacritty = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.alacritty;
-    yabai = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.yabai;
-    skhd = inputs.nixpkgs-unstable.legacyPackages.${prev.system}.skhd;
+    neovim-nightly = inputs.neovim-nightly.packages.${prev.system}.default;
   };
 
   # This one contains whatever you want to overlay
@@ -22,12 +12,25 @@
   modifications = final: prev: {
   };
 
-  # When applied, the unstable nixpkgs set (declared in the flake inputs) will
-  # be accessible through 'pkgs.unstable'
-  nixpkgs-unstable = final: _: {
-    unstable = import inputs.nixpkgs-unstable {
-      system = final.system;
-      config.allowUnfree = true;
+  nixpkgs-unstable =
+    final: prev:
+    let
+      unstable = import inputs.nixpkgs-unstable {
+        system = final.system;
+        config.allowUnfree = true;
+      };
+    in
+    {
+      # Set the default to unstable for packages referenced in multiple places.
+      _1password-gui = unstable._1password-gui;
+      _1password-cli = unstable._1password-cli;
+
+      skhd = unstable.skhd;
+      yabai = unstable.yabai;
+
+      wezterm = unstable.wezterm;
+      bash-language-server = unstable.bash-language-server;
+      tmuxPlugins.catppuccin = unstable.tmuxPlugins.catppuccin;
+      gh = unstable.gh;
     };
-  };
 }

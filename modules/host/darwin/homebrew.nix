@@ -36,9 +36,9 @@ with lib;
 
       casks = [
         "docker"
-        "raycast"
+        # "raycast"
         "chatgpt"
-        "1password"
+        # "1password"
       ];
 
       masApps = {

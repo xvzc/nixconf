@@ -1,6 +1,6 @@
 { ... }:
 {
   imports = [
-    ../base.nix
+    ./base.nix
   ];
 }

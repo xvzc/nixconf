@@ -5,25 +5,12 @@
 let
 in
 {
-  time.timeZone = "Asia/Seoul";
-  environment.pathsToLink = [ 
-    "/share/zsh" 
-    "/share/terminfo"
+  imports = [
+    ./_common.nix
   ];
 
-  environment.systemPackages = with pkgs; [
-    btop
-    coreutils
-    curl
-    gcc
-    gnupg
-    home-manager
-    htop
-    openssh
-    unzip
-    vim
-    wget
-    zip
+  environment.pathsToLink = [
+    "/share/terminfo"
   ];
 
   fonts.packages = with pkgs; [

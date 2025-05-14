@@ -3,7 +3,7 @@ function nfu() {
 }
 
 function sfs() {
-  nfu && nix build "$NIXCONF_DIR#darwinConfigurations.$NIX_HOST.system" \
+  nix build "$NIXCONF_DIR#darwinConfigurations.$NIX_HOST.system" \
     && "$NIXCONF_DIR/result/sw/bin/darwin-rebuild" switch \
     --flake "$NIXCONF_DIR#$NIX_HOST";
 }
@@ -13,7 +13,7 @@ function sft() {
 }
 
 function hfs() {
-  nfu && home-manager switch --flake $NIXCONF_DIR;
+  home-manager switch --flake $NIXCONF_DIR;
 }
 
 function hft() {
