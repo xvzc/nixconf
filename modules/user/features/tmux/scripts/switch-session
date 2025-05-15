@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 selected=$( \
   tmux ls -f '#{&&:#{!=:#{session_name},scratch},#{==:#{session_attached},0}}' \
