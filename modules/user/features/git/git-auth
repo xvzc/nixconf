@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/sh
 
 HELP="usage: git auth --profile [profile name]"
 

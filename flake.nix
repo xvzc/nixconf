@@ -18,6 +18,11 @@
 
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
 
+    rose-pine-hyprcursor = {
+      url = "github:ndom91/rose-pine-hyprcursor";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nvim-xvzc = {
       url = "github:xvzc/nvim";
       flake = false;

@@ -8,6 +8,6 @@
   ];
 
   user.features = {
-    wallpaper.source = "${inputs.assets}/wallpapers/anime-girl-nun.jpg";
+    wallpaper.source = "${inputs.assets}/wallpapers/anime-cat-clouds.jpg";
   };
 }

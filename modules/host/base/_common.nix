@@ -10,11 +10,21 @@ in
     "/share/zsh"
   ];
 
+  environment.shells = [
+    pkgs.zsh
+  ];
+
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+  };
+
   environment.systemPackages = with pkgs; [
     btop
     coreutils
     curl
     gcc
+    gnumake
     gnupg
     home-manager
     htop

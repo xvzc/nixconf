@@ -41,7 +41,7 @@ config.color_scheme_dirs = { "~/.config/wezterm/colors" }
 config.color_scheme = "Miami"
 
 config.font = wezterm.font_with_fallback({
-	"JetBrainsMonoNL Nerd Font",
+	"JetBrainsMonoNL NF",
 	"NanumSquare Neo",
 })
 
