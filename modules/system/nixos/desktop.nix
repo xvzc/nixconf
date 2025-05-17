@@ -1,7 +1,4 @@
 { config, pkgs, ... }:
-let
-  cfg = config.host.linux.desktop;
-in
 {
 
   config = {

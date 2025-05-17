@@ -6,11 +6,11 @@
 }:
 
 let
-  cfg = config.host.darwin.programs._1password;
+  cfg = config.programs._1password;
 in
 {
   options = {
-    host.darwin.programs._1password = {
+    programs._1password = {
       enable = lib.mkEnableOption "the 1Password CLI tool";
 
       package = lib.mkPackageOption pkgs "1Password CLI" {
@@ -28,4 +28,3 @@ in
     '';
   };
 }
-

@@ -13,6 +13,11 @@
     "/share/terminfo"
   ];
 
+  programs = {
+    _1password.enable = true;
+    _1password-gui.enable = true;
+  };
+
   fonts.packages = with pkgs; [
     noto-fonts
     font-awesome

@@ -6,11 +6,11 @@
 }:
 
 let
-  cfg = config.host.darwin.programs._1password-gui;
+  cfg = config.programs._1password-gui;
 in
 {
   options = {
-    host.darwin.programs._1password-gui = {
+    programs._1password-gui = {
       enable = lib.mkEnableOption "the 1Password GUI application";
 
       package = lib.mkPackageOption pkgs "1Password GUI" {

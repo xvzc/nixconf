@@ -24,7 +24,7 @@
     ../../_common/tui/tmux
     ../../_common/tui/neovim.nix
 
-    ../../../modules/user/wallpaper.nix
+    ../../../modules/home-manager/wallpaper.nix
     ./for-${ctx.os}.nix
   ];
 

@@ -4,12 +4,8 @@
 }:
 {
   imports = [
-    ./_profiles/dev-user-darwin.nix
-
-    ../modules/user/wallpaper.nix
+    ./_profiles/dev
   ];
 
-  user.features = {
-    wallpaper.source = "${inputs.assets}/wallpapers/anya-forger-spy-x.jpg";
-  };
+  wallpaper.source = "${inputs.assets}/wallpapers/anya-forger-spy-x.jpg";
 }
