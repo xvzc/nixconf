@@ -4,7 +4,9 @@
 }:
 {
   imports = [
-    ../modules/user/macos-user-dev.nix
+    ./_profiles/dev-user-darwin.nix
+
+    ../modules/user/wallpaper.nix
   ];
 
   user.features = {

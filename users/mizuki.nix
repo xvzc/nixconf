@@ -4,10 +4,8 @@
 }:
 {
   imports = [
-    ../modules/user/nixos-user-dev.nix
+    ./_profiles/dev
   ];
 
-  user.features = {
-    wallpaper.source = "${inputs.assets}/wallpapers/anime-cat-clouds.jpg";
-  };
+  wallpaper.source = "${inputs.assets}/wallpapers/mangekyo-sharingan-1.png";
 }

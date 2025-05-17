@@ -43,6 +43,7 @@ config.color_scheme = "Miami"
 config.font = wezterm.font_with_fallback({
 	"JetBrainsMonoNL NF",
 	"NanumSquare Neo",
+  "D2Coding",
 })
 
 config.keys = {

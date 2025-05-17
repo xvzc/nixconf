@@ -5,10 +5,10 @@
 }:
 {
   ...
-}@ctx:
+}@args:
 let
-  isDarwin = builtins.elem ctx.system nixpkgs.lib.platforms.darwin;
-  homeDirectory = if isDarwin then "/Users/${ctx.user}" else "/home/${ctx.user}";
+  ctx = import ./mkcontext.nix nixpkgs.lib args;
+  homeDirectory = if ctx.isDarwin then "/Users/${ctx.user}" else "/home/${ctx.user}";
 in
 inputs.home-manager.lib.homeManagerConfiguration {
   # System is very important!

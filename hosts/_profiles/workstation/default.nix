@@ -1,12 +1,12 @@
 {
   pkgs,
+  ctx,
   ...
 }:
-let
-in
 {
   imports = [
-    ./_common.nix
+    ../base.nix
+    ./for-${ctx.os}.nix
   ];
 
   environment.pathsToLink = [
@@ -19,6 +19,7 @@ in
     noto-fonts-emoji
     material-design-icons
     nanum-square-neo
+    d2coding
 
     (nerdfonts.override {
       fonts = [

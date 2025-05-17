@@ -22,7 +22,7 @@
     in
     {
       inherit unstable;
-      # Set the default to unstable for packages referenced in multiple places.
+
       _1password-gui = unstable._1password-gui;
       _1password-cli = unstable._1password-cli;
 
@@ -35,13 +35,7 @@
       gh = unstable.gh;
       slack = unstable.slack;
       kdePackages = unstable.kdePackages;
-
-      # hyprland = unstable.hyprland;
-      # hypridle = unstable.hypridle;
+      wine = unstable.wine;
       rofi = unstable.rofi;
-
-      sddm-astronaut = unstable.sddm-astronaut.override {
-        embeddedTheme = "hyprland_kath";
-      };
     };
 }

@@ -3,7 +3,7 @@
 # to /etc/nixos/configuration.nix instead.
 {
   config,
-  pkgs,
+  lib,
   modulesPath,
   ...
 }:
@@ -23,31 +23,34 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
-  boot.kernelPackages = pkgs.unstable.linuxPackages;
-  boot.kernelParams = [ "nvidia-drm.modeset=1" "nvidia-drm.fbdev=1"];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-label/nixos";
+    device = "/dev/disk/by-uuid/5d09272e-c212-4cd9-85e2-01c3df22768d";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device = "/dev/disk/by-label/boot";
+    device = "/dev/disk/by-uuid/0BDD-5216";
     fsType = "vfat";
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
   };
 
   swapDevices = [
-    { device = "/dev/disk/by-label/swap"; }
+    { device = "/dev/disk/by-uuid/4e83d1fe-7484-4f2e-a40d-99ee514abced"; }
   ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
+  networking.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp12s0.useDHCP = lib.mkDefault true;
   # networking.interfaces.wlp13s0.useDHCP = lib.mkDefault true;
-  networking.useDHCP = false;
 
-  nixpkgs.hostPlatform = "x86_64-linux";
-  hardware.cpu.amd.updateMicrocode = config.hardware.enableRedistributableFirmware;
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
 }

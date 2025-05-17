@@ -4,7 +4,7 @@
 }:
 {
   imports = [
-    ../../modules/host/macos-host-gui.nix
+    ../_shared/profiles/workstation-macos.nix
   ];
 
   host.darwin.system = {

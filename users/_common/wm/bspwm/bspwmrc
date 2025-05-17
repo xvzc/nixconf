@@ -1,0 +1,37 @@
+#!/bin/sh
+bspc monitor -d 1 2 3 4 5 6 7 8 9 0
+
+bspc config window_gap 28
+
+bspc config split_ratio 0.5
+bspc config borderless_monocle true
+bspc config gapless_monocle true
+bspc config border_width 1
+bspc config click_to_focus true
+
+# bspc config active_border_color "#d9fccf"
+bspc config focused_border_color "#d9fccf"
+
+bspc config pointer_modifier mod1
+
+bspc rule -a '*:pavucontrol' state=floating follow=on focus=on
+bspc rule -a '*:flameshot' state=floating follow=on focus=on
+bspc rule -a '*:chat-gpt' state=fullscreen follow=on focus=on
+bspc rule -a '*:kakaotalk.exe' split_ratio=0.8 split_dir=east
+
+(pgrep -x picom >/dev/null && pkill -9 -f picom)
+(picom --config ~/.config/bspwm/picom.conf &)
+(pgrep -x sxhkd >/dev/null && pkill -9 -f sxhkd)
+(sxhkd -c ~/.config/bspwm/sxhkdrc &)
+
+(pgrep -x polybar >/dev/null && pkill -9 -f polybar)
+(polybar -c ~/.config/polybar/polybar.ini root &)
+(polybar -c ~/.config/polybar/polybar.ini sub &)
+
+# (pgrep -x trayer >/dev/null && pkill -9 -f trayer)
+# (trayer -l --margin 0 --padding 10 --align right --edge top --height 29 --distance 0,0 --distancefrom right,top --transparent true --alpha 0 --tint '#000000' &)
+
+# nitrogen --restore &
+[ -f "$HOME/.fehbg" ] && "$HOME/.fehbg"
+pgrep 1password >/dev/null || 1password --silent
+# flameshot &
