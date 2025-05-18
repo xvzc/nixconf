@@ -86,6 +86,23 @@
       # └─────────┘
       overlays = import ./overlays { inherit inputs; };
 
+      pubkeys = {
+        home = {
+          name = "home.pub";
+          text = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIIOn17UKMSvSOCQ6/XH+sqBjbpSbu+r0ECJEnVZ7niy";
+        };
+
+        pers = {
+          name = "pers.pub";
+          text = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHZZ3IHZk+M07W5NhhKWLq0wmoFQ+xi4Mk8isnJcjVe5";
+        };
+
+        work = {
+          name = "work.pub";
+          text = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKtHXAUu74FYAyhBgsPTzvofhr0YDQ1SDWczpupcUjdc";
+        };
+      };
+
       darwinConfigurations = lib.listToAttrs (
         lib.map (c: {
           name = c.host;

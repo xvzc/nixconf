@@ -13,10 +13,10 @@
   ];
 
   imports = [
-    ../../../modules/system/nix-darwin/programs/_1password.nix
-    ../../../modules/system/nix-darwin/programs/_1password-gui.nix
+    ../../../modules/system/darwin/programs/_1password.nix
+    ../../../modules/system/darwin/programs/_1password-gui.nix
 
-    ../../../modules/system/nix-darwin/services/yabai.nix
+    ../../../modules/system/darwin/services/yabai.nix
   ];
 
   services.yabai.enable = true;

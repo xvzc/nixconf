@@ -1,4 +1,5 @@
 {
+  outputs,
   config,
   lib,
   pkgs,
@@ -34,7 +35,7 @@ in
       user = {
         name = "xvzc";
         email = "dev.kwanghoo@gmail.com";
-        signingKey = "${home}/.ssh/personal.pub";
+        signingKey = "${home}/.ssh/${outputs.pubkeys.pers.name}";
       };
 
       core = {
