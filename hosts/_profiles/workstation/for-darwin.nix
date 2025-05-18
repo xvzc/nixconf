@@ -52,13 +52,6 @@
 
   homebrew = {
     enable = true;
-    taps = [
-      "daipeihust/tap" # im-select
-    ];
-
-    brews = [
-      "im-select"
-    ];
 
     casks = [
       "docker"

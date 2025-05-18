@@ -15,5 +15,6 @@ with lib;
 
   home.packages = with pkgs; [
     pngpaste
+    im-select
   ];
 }

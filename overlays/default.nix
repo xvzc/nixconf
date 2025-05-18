@@ -2,8 +2,10 @@
 { inputs, ... }:
 {
   additions = final: prev: {
-    nanum-square-neo = final.callPackage ../pkgs/nanum-square-neo.nix { };
     neovim-nightly = inputs.neovim-nightly.packages.${prev.system}.default;
+
+    nanum-square-neo = final.callPackage ../pkgs/nanum-square-neo.nix { };
+    im-select = final.callPackage ../pkgs/im-select.nix { };
   };
 
   # This one contains whatever you want to overlay
