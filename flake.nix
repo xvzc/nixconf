@@ -38,7 +38,6 @@
     {
       self,
       nixpkgs,
-      nix-darwin,
       ...
     }@inputs:
     let

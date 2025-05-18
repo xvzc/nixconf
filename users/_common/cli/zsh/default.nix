@@ -1,12 +1,17 @@
 {
   lib,
   pkgs,
+  ctx,
   ...
 }:
 let
   customCompletionPath = ".local/share/zsh/site-functions";
 in
 {
+  imports = [
+    ./for-${ctx.os}.nix
+  ];
+
   home.file = {
     "${customCompletionPath}" = {
       source = ./site-functions;
@@ -90,38 +95,6 @@ in
 
     initExtra = # sh
       ''
-        # ┌───────────────────────────┐ 
-        # │ ADDITIONAL CONFIGURATIONS │ 
-        # └───────────────────────────┘ 
-        # Set LSCOLORS
-        eval "$(dircolors -b)"
-
-        # Do menu-driven completion.
-        zstyle ':completion:*' menu select
-
-        # Add git auth command
-        zstyle ':completion:*:*:git:*' user-commands \
-          auth:'authenticate current git repository with ssh key'
-
-        # Formatting and messages
-        zstyle ':completion:*' verbose yes
-
-        # Enable fuzzy matching
-        zstyle ":completion:*" matcher-list "" \
-          "m:{a-z\-}={A-Z\_}" \
-          "r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}" \
-          "r:|?=** m:{a-z\-}={A-Z\_}"
-
-        zstyle ':completion:*' list-colors "$EZA_COLORS"
-
-        zmodload zsh/nearcolor
-        zstyle :prompt:pure:path color 'blue'
-        zstyle :prompt:pure:git:dirty color 'red'
-        zstyle :prompt:pure:git:branch color 'cyan'
-        zstyle :prompt:pure:virtualenv show yes
-        zstyle :prompt:pure:prompt:success color '#f5b5f4'
-        zstyle :prompt:pure:execution_time color '#fadf32'
-
         # ┌─────────┐ 
         # │ VI-MODE │ 
         # └─────────┘ 
@@ -155,19 +128,51 @@ in
         bindkey -a k history-beginning-search-backward
         bindkey -a j history-beginning-search-forward
 
+        # ┌────────┐ 
+        # │ STYLES │ 
+        # └────────┘ 
+        # Set LSCOLORS
+        eval "$(dircolors -b)"
+
+        # Do menu-driven completion.
+        zstyle ':completion:*' menu select
+
+        # Add git auth command
+        zstyle ':completion:*:*:git:*' user-commands \
+          auth:'authenticate current git repository with ssh key'
+
+        # Formatting and messages
+        zstyle ':completion:*' verbose yes
+
+        # Enable fuzzy matching
+        zstyle ":completion:*" matcher-list "" \
+          "m:{a-z\-}={A-Z\_}" \
+          "r:[^[:alpha:]]||[[:alpha:]]=** r:|=* m:{a-z\-}={A-Z\_}" \
+          "r:|?=** m:{a-z\-}={A-Z\_}"
+
+        zstyle ':completion:*' list-colors "$EZA_COLORS"
+
+        zmodload zsh/nearcolor
+        zstyle :prompt:pure:path color 'blue'
+        zstyle :prompt:pure:git:dirty color 'red'
+        zstyle :prompt:pure:git:branch color 'cyan'
+        zstyle :prompt:pure:virtualenv show yes
+        zstyle :prompt:pure:prompt:success color '#f5b5f4'
+        zstyle :prompt:pure:execution_time color '#fadf32'
+
+        autoload -U promptinit; promptinit
+        prompt pure
+
         # ┌──────────────────┐ 
         # │ OPTIONAL SCRIPTS │ 
         # └──────────────────┘ 
         [ -f $HOME/.secrets ] && source "$HOME/.secrets"
         [ -f $HOME/.zmutable ] && source "$HOME/.zmutable"
 
-        autoload -U promptinit; promptinit
-        prompt pure
-
-        # The Nix installer modifies '/etc/zshrc'. When macOS is updated, it will 
-        # typically overwrite /etc/zshrc again. because of this known issue, we 
-        # source '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' in case
-        # See https://nix.dev/guides/troubleshooting#macos-update-breaks-nix-installation
+        # When macOS is updated, it will typically overwrite '/etc/zshrc'.
+        # Because of this known issue, we check if nix-darwin environment 
+        # variables are properly loaded and source 'nix-daemon.sh' if not.
+        # https://nix.dev/guides/troubleshooting#macos-update-breaks-nix-installation
         if [ -z "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then
           if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
             . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
@@ -183,9 +188,6 @@ in
           shell=''${1-$SHELL}
           for i in $(seq 1 100); do time $shell -i -c exit; done
         }
-
-        ${lib.optionalString pkgs.stdenv.isDarwin (builtins.readFile ./func-darwin.zsh)}
-        ${lib.optionalString pkgs.stdenv.isLinux (builtins.readFile ./func-linux.zsh)}
       '';
   };
 }

@@ -19,11 +19,7 @@
     ../../../modules/system/nix-darwin/services/yabai.nix
   ];
 
-  # ┌──────┐
-  # │ MAIN │
-  # └──────┘
-  # ========
-  services.yabai.enable = lib.mkForce true;
+  services.yabai.enable = true;
 
   # ┌──────────┐
   # │ SECURITY │
