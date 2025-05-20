@@ -39,5 +39,14 @@
       kdePackages = unstable.kdePackages;
       wine = unstable.wine;
       rofi = unstable.rofi;
+
+      # pipewire = unstable.pipewire;
+
+      waybar = unstable.waybar;
+      hyprland = unstable.hyprland;
+      discord = unstable.discord;
     };
+
+  wayland = {
+  };
 }

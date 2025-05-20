@@ -1,7 +1,8 @@
 { pkgs, ... }:
 {
   imports = [
-    ../../_common/wm/bspwm
+    ../../../shared/user/wm/bspwm
+    # ../../_common/wm/hypr
   ];
 
   home.packages = with pkgs; [

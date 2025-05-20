@@ -7,8 +7,18 @@ let
   cursor-size = 24;
 in
 {
+  home.pointerCursor = {
+    gtk.enable = true;
+    x11.enable = true;
+    # hyprcursor.enable = true;
+    package = pkgs.unstable.adwaita-icon-theme;
+    name = "Adwaita";
+    size = 24;
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
+    xwayland.enable = true;
 
     extraConfig = ''
       $mod1 = SUPER
@@ -19,6 +29,7 @@ in
       exec-once = dconf write /org/gnome/desktop/interface/cursor-size ${toString cursor-size}
       exec-once = dconf write /org/gnome/desktop/interface/gtk-theme "'Adwaita-dark'"
       exec-once = dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
+      exec-once = kime
 
       decoration {
         active_opacity = 0.97

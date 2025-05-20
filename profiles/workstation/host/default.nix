@@ -5,7 +5,7 @@
 }:
 {
   imports = [
-    ../base.nix
+    ../../_base/host.nix
     ./for-${ctx.os}.nix
   ];
 

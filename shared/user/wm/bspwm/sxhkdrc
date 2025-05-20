@@ -31,7 +31,7 @@ super + alt + ctrl + s
 # ┌─────────────┐ 
 # │ state/flags │ 
 # └─────────────┘ 
-super + alt + t
+super + f
     if [ "$(bspc query -N -n focused.tiled)" ]; then \
         bspc node focused -t floating; \
     else \
@@ -53,6 +53,9 @@ super + {h,j,k,l}
 
 super + alt + {h,j,k,l}
     bspc node -s {west,south,north,east}
+
+super + {_,shift + }r
+	bspc node -f {next,prev}.local.!hidden.window
 
 # focus the node for the given path jump
 # alt + {p,b,comma,period}

@@ -1,7 +1,5 @@
 {
   pkgs,
-  inputs,
-  config,
   ctx,
   ...
 }:
@@ -11,15 +9,12 @@ in
   imports = [
     ./hardware-configuration.nix
 
-    ../_profiles/workstation
+    ../../modules/nixos/desktop.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.unstable.linuxPackages;
-
-  networking.hostName = ctx.host;
-  networking.networkmanager.enable = true;
 
   users.users.${ctx.user} = {
     shell = pkgs.zsh;
@@ -32,27 +27,64 @@ in
     ];
   };
 
-  services.xserver.videoDrivers = [ "nvidia" ];
-
-  environment.sessionVariables = {
-    # WLR_NO_HARDWARE_CURSORS = "1";
-    # NIXOS_OZONE_WL = "1";
-    # GBM_BACKEND = "nvidia-drm";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+  desktop = {
+    cpu = "amd";
+    gpu = "nvidia";
+    audio.enable = true;
+    windowManager = "bspwm";
   };
 
-  hardware = {
-    nvidia = {
-      modesetting.enable = true;
-      open = true;
-      package = config.boot.kernelPackages.nvidiaPackages.beta;
-      nvidiaSettings = true;
-      # prime.sync.enable = false;
-      powerManagement.enable = true;
-    };
-
-    graphics = {
-      enable = true;
+  networking.useDHCP = false;
+  networking.hostName = ctx.host;
+  networking = {
+    networkmanager.enable = true;
+    networkmanager.ensureProfiles.profiles = {
+      # Run `nmcli con up wired` to enable this connection
+      wired = {
+        connection = {
+          auto-connect-priority = 1000;
+          id = "wired";
+          permissions = "";
+          type = "ethernet";
+        };
+        ipv4 = {
+          dns-search = "";
+          method = "auto";
+        };
+        ipv6 = {
+          addr-gen-mode = "stable-privacy";
+          dns-search = "";
+          method = "auto";
+        };
+      };
+      home-wifi = {
+        connection = {
+          id = "home-wifi";
+          permissions = "";
+          type = "wifi";
+        };
+        ipv4 = {
+          dns-search = "";
+          method = "auto";
+        };
+        ipv6 = {
+          addr-gen-mode = "stable-privacy";
+          dns-search = "";
+          method = "auto";
+        };
+        wifi = {
+          mac-address-blacklist = "";
+          mode = "infrastructure";
+          ssid = "c8bad2e1";
+        };
+        wifi-security = {
+          # Run `nmcli con modify home-wifi 'wifi-sec.psk'`
+          # to set the wifi password. or via `nmtui`
+          auth-alg = "open";
+          key-mgmt = "wpa-psk";
+          psk = "$WIFI_PASSWORD";
+        };
+      };
     };
   };
 }

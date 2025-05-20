@@ -33,7 +33,7 @@ with lib;
       home.activation.setWallpaper =
         # sh
         ''
-          run ${pkgs.feh}/bin/feh --bg-fill ${cfg.source}
+          run ${pkgs.feh}/bin/feh --bg-fill ${cfg.source} || true
         '';
     })
   ]);

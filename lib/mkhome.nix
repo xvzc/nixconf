@@ -28,6 +28,7 @@ inputs.home-manager.lib.homeManagerConfiguration {
       home.username = ctx.user;
       home.homeDirectory = homeDirectory;
     }
+    ../profiles/${ctx.profile}/user
     ../users/${ctx.user}.nix
   ];
 }

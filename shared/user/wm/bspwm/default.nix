@@ -5,55 +5,47 @@
   ];
 
   home.packages = with pkgs; [
-    polybar
+    (polybar.override {
+      pulseSupport = true;
+    })
     dconf
     nitrogen
     bspwm
     picom
     sxhkd
+    lxappearance
   ];
 
   gtk = {
     enable = true;
-    cursorTheme = {
+    theme = {
+      package = pkgs.gnome.gnome-themes-extra;
       name = "Adwaita-dark";
-      size = 24;
     };
-    gtk2.extraConfig = ''
-      gtk-theme-name = "Adwaita-dark";
-      gtk-icon-theme-namae = "Adwaita-dark";
-      gtk-cursor-theme-name = "Adwaita-dark";
-    '';
-    gtk3.extraConfig = {
-      gtk-theme-name = "Adwaita-dark";
-      gtk-icon-theme-namae = "Adwaita-dark";
-      gtk-cursor-theme-name = "Adwaita-dark";
-    };
-    gtk4.extraConfig = {
-      gtk-application-prefer-dark-theme = 1;
-      gtk-theme-name = "Adwaita-dark";
-      gtk-icon-theme-namae = "Adwaita-dark";
-      gtk-cursor-theme-name = "Adwaita-dark";
-    };
+    iconTheme.name = "Adwaita-dark";
   };
 
-  dconf.settings = {
-    "org/gnome/desktop/interface" = {
-      gtk-theme = "Adwaita-dark";
-      color-scheme = "prefer-dark";
-    };
-  };
+  # home.sessionVariables = {
+  #   GTK_THEME = "Adwaita-dark";
+  #   GTK2_RC_FILES = "$HOME/.gtkrc-2.0";
+  #   QT_STYLE_OVERRIDE = "Adwaita-dark";
+  # };
 
+  # xdg.configFile."bspwm/bspwmrc".source = ./bspwmrc;
   # xdg.configFile."bspwm/bspwmrc".source = ./bspwmrc;
   xdg.configFile."bspwm/picom.conf".source = ./picom.conf;
   xdg.configFile."bspwm/sxhkdrc".source = ./sxhkdrc;
+  # home.file.".xinitrc".text = # sh
+  #   ''
+  #     ${pkgs.kime}/bin/kime
+  #   '';
 
-  home.file.".icons/default".source = "${pkgs.adwaita-icon-theme}/share/icons/Adwaita";
+  # home.file.".icons/default".source = "${pkgs.adwaita-icon-theme}/share/icons/Adwaita";
 
   home.pointerCursor = {
     gtk.enable = true;
     x11.enable = true;
-    package = pkgs.gnome.adwaita-icon-theme;
+    package = pkgs.unstable.adwaita-icon-theme;
     name = "Adwaita";
     size = 24;
   };
@@ -62,7 +54,10 @@
     enable = true;
     initExtra = # sh
       ''
+        export GTK_THEME="Adwaita-dark";
+        export GTK_APPLICATION_PREFER_DARK_THEME=1
         ${pkgs.kime}/bin/kime
+        xsetroot -cursor_name left_ptr
       '';
     windowManager.bspwm = {
       enable = true;
@@ -70,13 +65,6 @@
       extraConfig = builtins.readFile ./bspwmrc;
     };
   };
-
-  # xsession.initExtra = ''
-  #
-  #   # Xcursor.size: 24
-  #
-  #   exec bspwm
-  # '';
 
   #
   # services.sxhkd = {

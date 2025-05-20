@@ -31,6 +31,7 @@ builder {
       ];
     }
     (lib.optionalAttrs ctx.isDarwin inputs.nix-homebrew.darwinModules.nix-homebrew)
+    ../profiles/${ctx.profile}/host
     ../hosts/${ctx.host}
   ];
 }

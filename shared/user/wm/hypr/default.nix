@@ -1,9 +1,11 @@
-{...}:{
+{ inputs, ... }:
+{
   imports = [
     ./hypridle.nix
     ./hyprland.nix
     ./hyprlock.nix
-    # ./hyprpaper.nix
+    ./hyprpaper.nix
     ./rofi.nix
   ];
+
 }

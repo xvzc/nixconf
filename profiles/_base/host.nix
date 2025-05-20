@@ -22,6 +22,7 @@ in
   environment.systemPackages = with pkgs; [
     btop
     coreutils
+    cmake
     curl
     gcc
     gnumake

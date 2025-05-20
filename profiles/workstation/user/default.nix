@@ -5,26 +5,25 @@
 }:
 {
   imports = [
-    ../base.nix
+    ../../_base/user.nix
 
-    ../../_common/app/jetbrains
-    ../../_common/app/kitty
-    ../../_common/app/wezterm
-    ../../_common/app/1password.nix
+    ../../../shared/user/app/jetbrains
+    ../../../shared/user/app/kitty
+    ../../../shared/user/app/wezterm
+    ../../../shared/user/app/1password.nix
 
-    ../../_common/cli/git
-    ../../_common/cli/zsh
-    ../../_common/cli/bat.nix
-    ../../_common/cli/direnv.nix
-    ../../_common/cli/eza.nix
-    ../../_common/cli/fd.nix
-    ../../_common/cli/fzf.nix
-    ../../_common/cli/ssh.nix
+    ../../../shared/user/cli/git
+    ../../../shared/user/cli/zsh
+    ../../../shared/user/cli/bat.nix
+    ../../../shared/user/cli/direnv.nix
+    ../../../shared/user/cli/eza.nix
+    ../../../shared/user/cli/fd.nix
+    ../../../shared/user/cli/fzf.nix
+    ../../../shared/user/cli/ssh.nix
 
-    ../../_common/tui/tmux
-    ../../_common/tui/neovim.nix
+    ../../../shared/user/tui/tmux
+    ../../../shared/user/tui/neovim.nix
 
-    ../../../modules/home-manager/wallpaper.nix
     ./for-${ctx.os}.nix
   ];
 
@@ -62,6 +61,8 @@
     tree
 
     # GUI Applications
+    chromium
+    firefox-wayland
     discord
     google-chrome
     slack

@@ -1,30 +1,18 @@
 {
+  lib,
   pkgs,
   ...
 }:
+let
+in
 {
   environment.systemPackages = with pkgs; [
-    pavucontrol
     wine
+    lm_sensors
   ];
 
-  services = {
-    xserver = {
-      enable = true;
-      displayManager.lightdm = {
-        enable = true;
-        greeters.enso = {
-          enable = true;
-          blur = true;
-        };
-      };
-
-      windowManager.bspwm = {
-        enable = true;
-      };
-    };
-  };
-
+  # See `man nmcli`
+  # See Connection details part  in `man nmcli-examples` for more examples
   i18n = {
     defaultLocale = "en_US.UTF-8";
     inputMethod = {

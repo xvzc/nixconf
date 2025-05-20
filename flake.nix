@@ -18,11 +18,6 @@
 
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
 
-    rose-pine-hyprcursor = {
-      url = "github:ndom91/rose-pine-hyprcursor";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nvim-xvzc = {
       url = "github:xvzc/nvim";
       flake = false;
@@ -50,11 +45,13 @@
       configurations = [
         {
           system = "aarch64-darwin";
+          profile = "workstation";
           user = "kazusa";
           host = "macbook-air-m2";
         }
         {
           system = "x86_64-linux";
+          profile = "workstation";
           user = "mizuki";
           host = "nixos-desktop-01";
         }
