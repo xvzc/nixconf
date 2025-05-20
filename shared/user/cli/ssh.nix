@@ -7,47 +7,48 @@
 let
   darwinAgent = "\"~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock\"";
   linuxAgent = "~/.1password/agent.sock";
+  pubkeys = import ../../../vars/pubkeys.nix;
 in
 {
-  home.file.".ssh/${outputs.pubkeys.home.name}" = {
-    text = outputs.pubkeys.home.text;
+  home.file."${pubkeys.home.path}" = {
+    text = pubkeys.home.text;
   };
 
-  home.file.".ssh/${outputs.pubkeys.pers.name}" = {
-    text = outputs.pubkeys.pers.text;
+  home.file."${pubkeys.pers.path}" = {
+    text = pubkeys.pers.text;
   };
 
-  home.file.".ssh/${outputs.pubkeys.work.name}" = {
-    text = outputs.pubkeys.work.text;
+  home.file."${pubkeys.work.path}" = {
+    text = pubkeys.work.text;
   };
 
   programs.ssh = {
     enable = true;
     includes = [ "~/.ssh/config.d/*" ];
     extraConfig = ''
-      Host pers.github.com
+      Host ${pubkeys.pers.name}.github.com
         HostName github.com
         ForwardAgent yes
         IdentitiesOnly yes
-        IdentityFile ~/.ssh/pers.pub
+        IdentityFile ~/${pubkeys.pers.path}
         ${lib.optionalString pkgs.stdenv.isDarwin "IdentityAgent ${darwinAgent}"}
 
-      Host work.github.com
+      Host ${pubkeys.work.name}.github.com
         HostName github.com
         ForwardAgent yes
         IdentitiesOnly yes
-        IdentityFile ~/.ssh/work.pub
+        IdentityFile ~/${pubkeys.work.path}
         ${lib.optionalString pkgs.stdenv.isDarwin "IdentityAgent ${darwinAgent}"}
 
       ${lib.optionalString pkgs.stdenv.isDarwin # sshconfig
         ''
-          Host home
+          Host ${pubkeys.home.name}
             HostName home.xvzc.dev
             User mario
             ForwardAgent yes
             IdentitiesOnly yes
             StrictHostKeyChecking no
-            IdentityFile ~/.ssh/home.pub
+            IdentityFile ~/${pubkeys.home.path}
             IdentityAgent ${darwinAgent}
         ''
       }

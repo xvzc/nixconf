@@ -7,6 +7,7 @@
 }:
 let
   home = config.home.homeDirectory;
+  pubkeys = import ../../../../vars/pubkeys.nix;
 in
 {
 
@@ -35,7 +36,7 @@ in
       user = {
         name = "xvzc";
         email = "dev.kwanghoo@gmail.com";
-        signingKey = "${home}/.ssh/${outputs.pubkeys.pers.name}";
+        signingKey = "${home}/${pubkeys.pers.path}";
       };
 
       core = {
