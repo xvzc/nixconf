@@ -61,7 +61,6 @@
     tree
 
     # GUI Applications
-    chromium
     firefox-wayland
     discord
     google-chrome
