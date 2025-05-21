@@ -9,6 +9,7 @@ in
   environment.systemPackages = with pkgs; [
     wine
     lm_sensors
+    chromedriver
   ];
 
   # See `man nmcli`

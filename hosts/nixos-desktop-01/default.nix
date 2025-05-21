@@ -4,6 +4,7 @@
   ...
 }:
 let
+  pubkeys = import ../../vars/pubkeys.nix;
 in
 {
   imports = [
@@ -19,6 +20,10 @@ in
   users.users.${ctx.user} = {
     shell = pkgs.zsh;
     isNormalUser = true;
+    openssh.authorizedKeys.keys = [
+      pubkeys.home.text
+    ];
+
     extraGroups = [
       "wheel"
       "docker"
@@ -85,6 +90,15 @@ in
           psk = "$WIFI_PASSWORD";
         };
       };
+    };
+  };
+
+  services.openssh = {
+    enable = true;
+    ports = [ 22 ];
+    settings = {
+      PermitRootLogin = "no";
+      PasswordAuthentication = false;
     };
   };
 }

@@ -43,8 +43,8 @@ in
       ${lib.optionalString pkgs.stdenv.isDarwin # sshconfig
         ''
           Host ${pubkeys.home.name}
-            HostName home.xvzc.dev
-            User mario
+            HostName ${pubkeys.home.name}.xvzc.dev
+            User mizuki
             ForwardAgent yes
             IdentitiesOnly yes
             StrictHostKeyChecking no
