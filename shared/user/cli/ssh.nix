@@ -22,10 +22,10 @@ in
     text = pubkeys.work.text;
   };
 
-  programs.ssh = {
-    enable = true;
-    includes = [ "~/.ssh/config.d/*" ];
-    extraConfig = ''
+  home.file.".ssh/config".text = # sshconfig
+    ''
+      Include ~/.ssh/config.d/*
+
       Host ${pubkeys.pers.name}.github.com
         HostName github.com
         ForwardAgent yes
@@ -55,11 +55,10 @@ in
 
       ${lib.optionalString pkgs.stdenv.isLinux # sshconfig
         ''
-          Match Host * exec "test $SSH_TTY"
+          Match Host * exec "test -z $SSH_TTY"
             IdentityAgent ${linuxAgent}
         ''
       }
-    '';
-  };
 
+    '';
 }
