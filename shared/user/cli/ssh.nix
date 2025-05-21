@@ -55,7 +55,7 @@ in
 
       ${lib.optionalString pkgs.stdenv.isLinux # sshconfig
         ''
-          Match Host * exec "test -z $SSH_TTY"
+          Match Host * exec "test $SSH_TTY"
             IdentityAgent ${linuxAgent}
         ''
       }
