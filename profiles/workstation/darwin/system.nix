@@ -8,13 +8,13 @@
   # Disable pre-defined nix-darwin modules to override.
   disabledModules = [
     "services/yabai"
-    "programs/_1password"
     "programs/_1password-gui"
+    "programs/_1password"
   ];
 
   imports = [
-    ../../../modules/system/darwin/programs/_1password.nix
     ../../../modules/system/darwin/programs/_1password-gui.nix
+    ../../../modules/system/darwin/programs/_1password.nix
 
     ../../../modules/system/darwin/services/yabai.nix
   ];

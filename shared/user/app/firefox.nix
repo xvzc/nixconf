@@ -1,7 +1,8 @@
-{ ... }:
+{ lib, pkgs, ... }:
 {
   programs.firefox = {
     enable = true;
+    package = pkgs.firefox-bin;
 
     profiles.default = {
       id = 0;
@@ -11,6 +12,7 @@
         "browser.toolbars.bookmarks.visibility" = "always";
         "browser.translations.automaticallyPopup" = false;
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
+        "services.sync.prefs.sync.browser.uiCustomization.state" = true;
       };
       userChrome = ''
        .browserContainer > findbar {

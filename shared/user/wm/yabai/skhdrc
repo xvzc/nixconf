@@ -2,7 +2,8 @@ cmd + alt + ctrl - r : sudo yabai --load-sa || true; \
                        launchctl kickstart -k "gui/$(id -u)/org.nixos.yabai" || true; \
                        launchctl kickstart -k "gui/$(id -u)/org.nixos.skhd" || true;
 
-alt - return : ~/.config/yabai/scripts/open-wezterm
+# alt - return : ~/.config/yabai/scripts/open-wezterm
+alt - return : ~/.config/yabai/scripts/open-kitty
                
 
 alt - h : yabai -m window --focus west

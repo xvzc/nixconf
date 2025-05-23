@@ -1,8 +1,4 @@
 #!/bin/zsh
 
-# if $(ps uxww | grep -v "open-wezterm" | grep -q "[w]ezterm"); then
-#   wezterm cli spawn --new-window
-# else
-  kitty_path="$(realpath "$HOME/Applications/Home Manager Apps/kitty.app/Contents/Macos")"
-  $kitty_path/kitty --single-instance -d $HOME
-# fi
+kitty_path="$(realpath "$HOME/Applications/Home Manager Apps/kitty.app/Contents/Macos")"
+$kitty_path/kitty --single-instance -d "$HOME"

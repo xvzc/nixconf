@@ -9,21 +9,25 @@
     # ┌────────┐
     # │ COMMON │
     # └────────┘
-    lib.lists.flatten [
+    [
       (final: prev: {
         nanum-square-neo = final.callPackage ../../pkgs/nanum-square-neo.nix { };
 
-        gh = final.unstable.gh;
         bash-language-server = final.unstable.bash-language-server;
+        gh = final.unstable.gh;
+        nodejs = final.unstable.nodejs_22;
         slack = final.unstable.slack;
         tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
         wezterm = final.unstable.wezterm;
+        _1password-gui = final.unstable._1password-gui;
+        _1password-cli = final.unstable._1password-cli;
       })
     ]
     # ┌────────┐
     # │ DARWIN │
     # └────────┘
     ++ lib.optionals ctx.isDarwin [
+      inputs.nixpkgs-firefox-darwin.overlay
       (final: prev: {
         im-select = final.callPackage ../../pkgs/im-select.nix { };
         skhd = final.unstable.skhd;
@@ -42,14 +46,13 @@
         hyprland = final.unstable.hyprland;
         discord = final.unstable.discord;
 
-        _1password-gui = final.unstable._1password-gui.overrideAttrs (old: {
+        _1password-gui = final._1password-gui.overrideAttrs (old: {
           postInstall = ''
             ${old.postInstall or ""}
             wrapProgram $out/share/1password/1password \
               --add-flags "--ozone-platform-hint=x11"
           '';
         });
-        _1password-cli = final.unstable._1password-cli;
 
         # pavucontrol = final.unstable.pavucontrol.overrideAttrs (old: {
         #

@@ -7,6 +7,7 @@ HOSTS := \
   quit
 
 UNAME := $(shell uname)
+HOST := $(shell hostname)
 
 ifeq ($(UNAME), Darwin)
 INSTALL_COMMAND := sh .cache/install.sh

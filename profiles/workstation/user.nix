@@ -37,7 +37,7 @@
     cargo
     clang_19
     go
-    nodejs_22
+    nodejs
     (pkgs.python312.withPackages (
       ps: with ps; [
         pip

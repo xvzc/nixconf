@@ -11,13 +11,13 @@
         }
 
         function sfs() {
-          nix build "$NIXCONF_DIR#darwinConfigurations.$NIX_HOST.system" \
+          nix build "$NIXCONF_DIR#darwinConfigurations.$HOST.system" \
             && "$NIXCONF_DIR/result/sw/bin/darwin-rebuild" switch \
-            --flake "$NIXCONF_DIR#$NIX_HOST";
+            --flake "$NIXCONF_DIR#$HOST";
         }
 
         function sft() {
-          nix build "$NIXCONF_DIR#darwinConfigurations.$NIX_HOST.system";
+          nix build "$NIXCONF_DIR#darwinConfigurations.$HOST.system";
         }
 
         function hfs() {

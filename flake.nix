@@ -17,6 +17,7 @@
     };
 
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
+    nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
 
     nvim-xvzc = {
       url = "github:xvzc/nvim";
@@ -47,7 +48,7 @@
           profile = "workstation";
           user = "kazusa";
           host = "macbook-air-m2";
-          os = "macos";
+          os = "darwin";
         }
         {
           system = "x86_64-linux";
