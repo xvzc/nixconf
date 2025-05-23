@@ -77,6 +77,7 @@ end
 
 if is_linux then
 	config.font_size = 12.2
+	config.window_decorations = "NONE"
 	config.window_padding = {
 		left = 0,
 		right = 0,

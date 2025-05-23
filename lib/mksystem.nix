@@ -4,6 +4,10 @@
   outputs,
 }:
 {
+  profile,
+  system,
+  user,
+  host,
   ...
 }@args:
 let
@@ -11,11 +15,17 @@ let
   inherit (lib) nixosSystem;
   inherit (inputs.nix-darwin.lib) darwinSystem;
 
-  ctx = import ./mkcontext.nix lib args;
+  ctx = rec {
+    inherit (args) system user host;
+    isDarwin = builtins.elem args.system lib.platforms.darwin;
+    isLinux = builtins.elem args.system lib.platforms.linux;
+    os = if isDarwin then "darwin" else "nixos";
+  };
+
   builder = if ctx.isDarwin then darwinSystem else nixosSystem;
 in
 builder {
-  inherit (ctx) system;
+  inherit system;
 
   specialArgs = { inherit ctx inputs outputs; };
   modules = lib.lists.flatten [
@@ -23,15 +33,22 @@ builder {
       nix.settings.experimental-features = "nix-command flakes";
       nix.optimise.automatic = true;
     }
+    { nixpkgs.config.allowUnfree = true; }
+    (lib.optionalAttrs ctx.isDarwin inputs.nix-homebrew.darwinModules.nix-homebrew)
+    (lib.optionalAttrs ctx.isDarwin inputs.home-manager.darwinModules.home-manager)
+    (lib.optionalAttrs ctx.isLinux inputs.home-manager.nixosModules.home-manager)
+    ../overlays.nix
+    ../profiles/${profile}/overlays.nix
+    ../profiles/${profile}/system.nix
+    ../hosts/${host}
     {
-      nixpkgs.config.allowUnfree = true;
-      nixpkgs.overlays = [
-        outputs.overlays.additions
-        outputs.overlays.nixpkgs-unstable
+      home-manager.extraSpecialArgs = { inherit ctx inputs outputs; };
+      home-manager.useGlobalPkgs = true;
+      home-manager.useUserPackages = true;
+      home-manager.users.${user} = lib.mkMerge [
+        ../profiles/${profile}/user.nix
+        ../users/${user}.nix
       ];
     }
-    (lib.optionalAttrs ctx.isDarwin inputs.nix-homebrew.darwinModules.nix-homebrew)
-    ../profiles/${ctx.profile}/host
-    ../hosts/${ctx.host}
   ];
 }

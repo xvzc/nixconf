@@ -16,6 +16,10 @@ in
       display-drun = "";
       display-run = "";
       display-window = "";
+      sync = true;
+      matching = "fuzzy";
+      no-sidebar-mode = true;
+      drun-match-fields = "GenericName";
     };
 
     theme = {

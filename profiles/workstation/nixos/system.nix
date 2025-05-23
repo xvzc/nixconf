@@ -6,24 +6,33 @@
 let
 in
 {
-  environment.systemPackages = with pkgs; [
-    wine
-    lm_sensors
-    chromedriver
-  ];
-
   # See `man nmcli`
   # See Connection details part  in `man nmcli-examples` for more examples
+  # fonts = {
+  #   enableDefaultFonts = true;
+  #   fontconfig = {
+  #     antialias = true;
+  #     hinting.enable = true;
+  #     hinting.autohint = true;
+  #   };
+  # };
+
+  environment.systemPackages = with pkgs; [
+    lm_sensors
+    pamixer
+  ];
+
+  virtualisation.docker.enable = true;
+
   i18n = {
     defaultLocale = "en_US.UTF-8";
     inputMethod = {
       enable = true;
       type = "kime";
       kime = {
+        iconColor = "White";
         extraConfig = # yaml
           ''
-            indicator:
-              icon_color: White
             log:
               global_level: DEBUG
             engine:

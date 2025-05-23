@@ -3,11 +3,11 @@
     "assets": {
       "flake": false,
       "locked": {
-        "lastModified": 1747762160,
-        "narHash": "sha256-uxHPiUV1yr5MPIXGcwYvwyYrqXkDg+oLSfs9EYSqFIw=",
+        "lastModified": 1747986841,
+        "narHash": "sha256-STAa84KW8J9oTDmdFm6/Il9GaVFqLrRU/8zVURkc1HE=",
         "owner": "xvzc",
         "repo": "assets",
-        "rev": "e5e4050027e6472b82df82d5728df21d461e0deb",
+        "rev": "a8e58e3f8a20e8a4ba88c164c9df60e032cb750e",
         "type": "github"
       },
       "original": {

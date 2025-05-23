@@ -5,8 +5,8 @@
 }:
 {
   imports = [
-    ../../_base/host.nix
-    ./for-${ctx.os}.nix
+    ../_base/system.nix
+    ./${ctx.os}/system.nix
   ];
 
   environment.pathsToLink = [

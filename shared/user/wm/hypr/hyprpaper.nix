@@ -16,7 +16,7 @@
       ];
 
       wallpaper = [
-        ", ${inputs.assets}/wallpapers/anime-girl-nun.jpg"
+        ", ${inputs.assets}/wallpapers/anime-cat-clouds.jpg"
       ];
     };
   };

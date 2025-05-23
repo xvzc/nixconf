@@ -1,6 +1,9 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
-  programs.zsh = {
+  # ┌──────────────────┐ 
+  # │ DARWIN_FUNCTIONS │ 
+  # └──────────────────┘ 
+  programs.zsh = lib.mkIf pkgs.stdenv.isDarwin {
     profileExtra = # sh
       ''
         function nfu() {

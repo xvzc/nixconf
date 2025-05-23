@@ -5,26 +5,27 @@
 }:
 {
   imports = [
-    ../../_base/user.nix
+    ../_base/user.nix
 
-    ../../../shared/user/app/jetbrains
-    ../../../shared/user/app/kitty
-    ../../../shared/user/app/wezterm
-    ../../../shared/user/app/1password.nix
+    ../../shared/user/app/jetbrains
+    ../../shared/user/app/kitty
+    ../../shared/user/app/wezterm
+    ../../shared/user/app/1password.nix
+    ../../shared/user/app/firefox.nix
 
-    ../../../shared/user/cli/git
-    ../../../shared/user/cli/zsh
-    ../../../shared/user/cli/bat.nix
-    ../../../shared/user/cli/direnv.nix
-    ../../../shared/user/cli/eza.nix
-    ../../../shared/user/cli/fd.nix
-    ../../../shared/user/cli/fzf.nix
-    ../../../shared/user/cli/ssh.nix
+    ../../shared/user/cli/git
+    ../../shared/user/cli/zsh
+    ../../shared/user/cli/bat.nix
+    ../../shared/user/cli/direnv.nix
+    ../../shared/user/cli/eza.nix
+    ../../shared/user/cli/fd.nix
+    ../../shared/user/cli/fzf.nix
+    ../../shared/user/cli/ssh.nix
 
-    ../../../shared/user/tui/tmux
-    ../../../shared/user/tui/neovim.nix
+    ../../shared/user/tui/tmux
+    ../../shared/user/tui/neovim.nix
 
-    ./for-${ctx.os}.nix
+    ./${ctx.os}/user.nix
   ];
 
   home.sessionPath = [

@@ -2,6 +2,7 @@
   lib,
   config,
   pkgs,
+  ctx,
   ...
 }:
 let
@@ -35,7 +36,7 @@ in
         with types;
         enum [
           "bspwm"
-          "hyprland"
+          "hypr"
         ];
     };
   };
@@ -121,14 +122,22 @@ in
         };
       })
 
-      (mkIf (cfg.windowManager == "hyprland") {
-        environment.sessionVariables = {
-          WLR_NO_HARDWARE_CURSORS = "1";
-          NIXOS_OZONE_WL = "1";
-        };
+      (mkIf (cfg.windowManager == "hypr") {
+        environment.sessionVariables =
+          {
+            WLR_NO_HARDWARE_CURSORS = "1";
+            NIXOS_OZONE_WL = "1";
+            ELECTRON_OZONE_PLATFORM_HINT = "auto";
+          }
+          // lib.optionals (cfg.gpu == "nvidia") {
+            NVD_BACKEND = "direct";
+            LIBVA_DRIVER_NAME = "nvidia";
+            __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+          };
 
-        environment.systemPackages = [
+        environment.systemPackages = with pkgs; [
           sddm-astronaut
+          wl-clipboard
         ];
 
         services = {
@@ -150,11 +159,11 @@ in
 
         programs.hyprland = {
           enable = true;
-          xwayland.enable = false;
+          xwayland.enable = true;
           withUWSM = true;
         };
-        programs.hyprlock.enable = true;
-        programs.waybar.enable = true;
+        # programs.hyprlock.enable = false;
+        # programs.waybar.enable = true;
       })
     ];
 }

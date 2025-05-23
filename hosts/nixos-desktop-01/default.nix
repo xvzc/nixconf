@@ -10,7 +10,7 @@ in
   imports = [
     ./hardware-configuration.nix
 
-    ../../modules/nixos/desktop.nix
+    ../../modules/system/nixos/desktop.nix
   ];
 
   boot.loader.systemd-boot.enable = true;
@@ -32,16 +32,9 @@ in
     ];
   };
 
-  desktop = {
-    cpu = "amd";
-    gpu = "nvidia";
-    audio.enable = true;
-    windowManager = "bspwm";
-  };
-
-  networking.useDHCP = false;
-  networking.hostName = ctx.host;
   networking = {
+    hostName = ctx.host;
+    useDHCP = false;
     networkmanager.enable = true;
     networkmanager.ensureProfiles.profiles = {
       # Run `nmcli con up wired` to enable this connection
@@ -62,34 +55,6 @@ in
           method = "auto";
         };
       };
-      home-wifi = {
-        connection = {
-          id = "home-wifi";
-          permissions = "";
-          type = "wifi";
-        };
-        ipv4 = {
-          dns-search = "";
-          method = "auto";
-        };
-        ipv6 = {
-          addr-gen-mode = "stable-privacy";
-          dns-search = "";
-          method = "auto";
-        };
-        wifi = {
-          mac-address-blacklist = "";
-          mode = "infrastructure";
-          ssid = "c8bad2e1";
-        };
-        wifi-security = {
-          # Run `nmcli con modify home-wifi 'wifi-sec.psk'`
-          # to set the wifi password. or via `nmtui`
-          auth-alg = "open";
-          key-mgmt = "wpa-psk";
-          psk = "$WIFI_PASSWORD";
-        };
-      };
     };
   };
 
@@ -100,5 +65,12 @@ in
       PermitRootLogin = "no";
       PasswordAuthentication = false;
     };
+  };
+
+  desktop = {
+    cpu = "amd";
+    gpu = "nvidia";
+    audio.enable = true;
+    windowManager = "hypr";
   };
 }

@@ -8,9 +8,7 @@ let
   customCompletionPath = ".local/share/zsh/site-functions";
 in
 {
-  imports = [
-    ./for-${ctx.os}.nix
-  ];
+  imports = [ ./func.nix ];
 
   home.file = {
     "${customCompletionPath}" = {

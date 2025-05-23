@@ -1,82 +1,121 @@
 {
   inputs,
+  config,
   pkgs,
   ...
 }:
-let
-  cursor-size = 24;
-in
 {
-  home.pointerCursor = {
-    gtk.enable = true;
-    x11.enable = true;
-    # hyprcursor.enable = true;
-    package = pkgs.unstable.adwaita-icon-theme;
-    name = "Adwaita";
-    size = 24;
-  };
-
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
+    settings = {
+      debug = {
+        disable_logs = false;
+      };
 
-    extraConfig = ''
-      $mod1 = SUPER
-      $mod2 = ALT
-      $terminal = kitty
+      "$mod1" = "SUPER";
+      "$mod2" = "ALT";
+      "$mod3" = "CONTROL";
+      "$terminal" = "kitty";
+      # "$terminal" = "wezterm";
+      # "$terminal" = "env -u WAYLAND_DISPLAY wezterm";
 
-      exec-once = hyprctl setcursor Adwaita ${toString cursor-size}
-      exec-once = dconf write /org/gnome/desktop/interface/cursor-size ${toString cursor-size}
-      exec-once = dconf write /org/gnome/desktop/interface/gtk-theme "'Adwaita-dark'"
-      exec-once = dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
-      exec-once = kime
+      bind = [
+        "$mod1 $mod2 $mod3, r, exec, hyprctl reload"
 
-      decoration {
-        active_opacity = 0.97
-        inactive_opacity = 0.90
-      }
+        "$mod1, Return, exec, $terminal"
+        "$mod2, w, killactive"
+        "$mod1, f, togglefloating,"
+        "$mod1, f, centerwindow,"
 
-      animation {
-        animation = workspaces, 1, 3, default, slidefade 10%
-        animation = windows, 1, 2, default, popin 80%
-      }
+        "$mod2, Space, exec, zsh -c 'rofi -show drun'"
 
-      bind = $mod1, Return, exec, $terminal
-      bind = $mod2, w, killactive
-      bind = $mod1, f, togglefloating,
-      bind = $mod2, Space, exec, rofi -show drun
+        "$mod1, h, movefocus, l"
+        "$mod1, j, movefocus, d"
+        "$mod1, k, movefocus, u"
+        "$mod1, l, movefocus, r"
 
-      bind = $mod1, h, movefocus, l
-      bind = $mod1, j, movefocus, d
-      bind = $mod1, k, movefocus, u
-      bind = $mod1, l, movefocus, r
+        "$mod1 $mod2, h, swapwindow, l"
+        "$mod1 $mod2, j, swapwindow, d"
+        "$mod1 $mod2, k, swapwindow, u"
+        "$mod1 $mod2, l, swapwindow, r"
 
-      bind = $mod1 $mod2, h, swapwindow, l
-      bind = $mod1 $mod2, j, swapwindow, d
-      bind = $mod1 $mod2, k, swapwindow, u
-      bind = $mod1 $mod2, l, swapwindow, r
+        "$mod1, 1, workspace, 1"
+        "$mod1, 2, workspace, 2"
+        "$mod1, 3, workspace, 3"
+        "$mod1, 4, workspace, 4"
+        "$mod1, 5, workspace, 5"
+        "$mod1, 6, workspace, 6"
+        "$mod1, 7, workspace, 7"
+        "$mod1, 8, workspace, 8"
+        "$mod1, 9, workspace, 9"
+        "$mod1, 0, workspace, 10"
 
-      bind = $mod1, 1, workspace, 1
-      bind = $mod1, 2, workspace, 2
-      bind = $mod1, 3, workspace, 3
-      bind = $mod1, 4, workspace, 4
-      bind = $mod1, 5, workspace, 5
-      bind = $mod1, 6, workspace, 6
-      bind = $mod1, 7, workspace, 7
-      bind = $mod1, 8, workspace, 8
-      bind = $mod1, 9, workspace, 9
-      bind = $mod1, 0, workspace, 10
+        "$mod1 $mod2, 1, movetoworkspace, 1"
+        "$mod1 $mod2, 2, movetoworkspace, 2"
+        "$mod1 $mod2, 3, movetoworkspace, 3"
+        "$mod1 $mod2, 4, movetoworkspace, 4"
+        "$mod1 $mod2, 5, movetoworkspace, 5"
+        "$mod1 $mod2, 6, movetoworkspace, 6"
+        "$mod1 $mod2, 7, movetoworkspace, 7"
+        "$mod1 $mod2, 8, movetoworkspace, 8"
+        "$mod1 $mod2, 9, movetoworkspace, 9"
+        "$mod1 $mod2, 0, movetoworkspace, 10"
 
-      bind = $mod1 $mod2, 1, movetoworkspace, 1
-      bind = $mod1 $mod2, 2, movetoworkspace, 2
-      bind = $mod1 $mod2, 3, movetoworkspace, 3
-      bind = $mod1 $mod2, 4, movetoworkspace, 4
-      bind = $mod1 $mod2, 5, movetoworkspace, 5
-      bind = $mod1 $mod2, 6, movetoworkspace, 6
-      bind = $mod1 $mod2, 7, movetoworkspace, 7
-      bind = $mod1 $mod2, 8, movetoworkspace, 8
-      bind = $mod1 $mod2, 9, movetoworkspace, 9
-      bind = $mod1 $mod2, 0, movetoworkspace, 10
-    '';
+        "$mod1 $mod3, s, exec, ${pkgs.hyprshot}/bin/hyprshot --mode -region --clipboard-only"
+        "$mod1 $mod2 $mod3, s, exec, ${pkgs.hyprshot}/bin/hyprshot --mode -region -o ~/.screenshot"
+      ];
+
+      bindm = [
+        "$mod1, mouse:272, movewindow"
+        "$mod1, mouse:273, resizewindow"
+        # "$mod ALT, mouse:272, resizewindow"
+      ];
+
+      misc = {
+        focus_on_activate = true;
+      };
+
+      xwayland = {
+        force_zero_scaling = true;
+      };
+
+      input = {
+        follow_mouse = 2;
+      };
+
+      animations = {
+        enabled = true;
+        animation = [
+          "workspaces, 1, 3, default, slidefade 10%"
+          "windows, 1, 2, default, popin 80%"
+        ];
+      };
+
+      decoration = {
+        active_opacity = 0.97;
+        inactive_opacity = 0.90;
+      };
+
+      exec = [
+        "pkill -9 kime; ${pkgs.kime}/bin/kime"
+        "pkill -9 waybar; ${pkgs.waybar}/bin/waybar"
+      ];
+
+      exec-once = [
+        "dunst"
+
+        "wl-paste --type text --watch cliphist store" # Stores only text data
+        "wl-paste --type image --watch cliphist store" # Stores only image data
+        "hyprctl setcursor Adwaita ${toString config.home.pointerCursor.size}"
+        "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
+      ];
+
+      windowrulev2 = [
+        "noblur,class:^()$,title:^()$"
+        "float,title:(Not\ titled.*)"
+        "size 300 200,title:(Not\ titled.*)"
+      ];
+    };
   };
 }

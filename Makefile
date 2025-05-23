@@ -80,21 +80,19 @@ else
 endif
 
 switch:
-	$(MAKE) update-dependencies
 ifeq ($(UNAME), Darwin)
-	nix build ".#darwinConfigurations.${NIX_HOST}.system"
-	./result/sw/bin/darwin-rebuild switch --flake ".#${NIX_HOST}"
+	nix build ".#darwinConfigurations.${HOST}.system"
+	./result/sw/bin/darwin-rebuild switch --flake ".#${HOST}"
 else
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${NIX_HOST}"
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${HOST}"
 endif
 
 test:
-	$(MAKE) update-dependencies
 ifeq ($(UNAME), Darwin)
 	nix build ".#darwinConfigurations.${NIX_HOST}.system" --show-trace
-	./result/sw/bin/darwin-rebuild build --flake ".#${NIX_HOST}"
+	./result/sw/bin/darwin-rebuild build --flake ".#${HOST}"
 else
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild test --flake ".#$(NIX_HOST)"
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild test --flake ".#${HOST}"
 endif
 
 

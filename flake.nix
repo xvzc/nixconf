@@ -40,7 +40,6 @@
       inherit (nixpkgs) lib;
 
       mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs outputs; };
-      mkHome = import ./lib/mkhome.nix { inherit nixpkgs inputs outputs; };
 
       configurations = [
         {
@@ -48,17 +47,20 @@
           profile = "workstation";
           user = "kazusa";
           host = "macbook-air-m2";
+          os = "macos";
         }
         {
           system = "x86_64-linux";
           profile = "workstation";
           user = "mizuki";
           host = "nixos-desktop-01";
+          os = "nixos";
         }
         {
           system = "x86_64-linux";
           user = "nezuko";
           host = "nixos-desktop-02";
+          os = "nixos";
         }
         # {
         #   system = "x86_64-linux";
@@ -97,12 +99,12 @@
         }) (lib.filter (x: builtins.elem x.system lib.platforms.linux) configurations)
       );
 
-      homeConfigurations = lib.listToAttrs (
-        lib.map (c: {
-          name = "${c.user}@${c.host}";
-          value = mkHome c;
-        }) configurations
-      );
+      # homeConfigurations = lib.listToAttrs (
+      #   lib.map (c: {
+      #     name = "${c.user}@${c.host}";
+      #     value = mkHome c;
+      #   }) configurations
+      # );
       # - OUTPUTS - 8< -----
     };
 }

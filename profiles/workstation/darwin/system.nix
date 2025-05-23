@@ -13,10 +13,10 @@
   ];
 
   imports = [
-    ../../../modules/darwin/programs/_1password.nix
-    ../../../modules/darwin/programs/_1password-gui.nix
+    ../../../modules/system/darwin/programs/_1password.nix
+    ../../../modules/system/darwin/programs/_1password-gui.nix
 
-    ../../../modules/darwin/services/yabai.nix
+    ../../../modules/system/darwin/services/yabai.nix
   ];
 
   services.yabai.enable = true;
@@ -46,6 +46,7 @@
 
   nix-homebrew = {
     enable = true;
+    user = ctx.user;
     enableRosetta = false;
     # mutableTaps = true; # disable `brew tap <name>`
   };
@@ -71,6 +72,7 @@
   system.stateVersion = 5;
 
   system.defaults.loginwindow = {
+    autoLoginUser = ctx.user;
     SHOWFULLNAME = false; # show full name in login window
     GuestEnabled = false; # disable guest user
   };
