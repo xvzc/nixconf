@@ -46,7 +46,7 @@
         hyprland = final.unstable.hyprland;
         discord = final.unstable.discord;
 
-        _1password-gui = final._1password-gui.overrideAttrs (old: {
+        _1password-gui = final.unstable._1password-gui.overrideAttrs (old: {
           postInstall = ''
             ${old.postInstall or ""}
             wrapProgram $out/share/1password/1password \

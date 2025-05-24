@@ -20,6 +20,7 @@ in
   environment.systemPackages = with pkgs; [
     lm_sensors
     pamixer
+    ventoy-full
   ];
 
   virtualisation.docker.enable = true;

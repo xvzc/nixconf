@@ -85,7 +85,7 @@ ifeq ($(UNAME), Darwin)
 	nix build ".#darwinConfigurations.${HOST}.system"
 	./result/sw/bin/darwin-rebuild switch --flake ".#${HOST}"
 else
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch --flake ".#${HOST}"
+	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 NIXPKGS_ALLOW_INSECURE=1 nixos-rebuild switch --flake ".#${HOST}"
 endif
 
 test:
