@@ -117,13 +117,13 @@
 
     style = # css
       ''
-        @define-color accent-bright rgb(247, 221, 171);
+        @define-color accent-bright rgb(249, 226, 176);
         @define-color accent-dim rgb(133, 118, 93);
 
         @define-color bg-bright rgb(54, 52, 48);
         @define-color bg-dim rgb(28, 27, 24);
 
-        @define-color border-dim rgb(48, 44, 36);
+        @define-color border-dim rgb(107, 112, 134);
         @define-color border-bright rgb(156, 149, 139);
 
         @define-color critical rgb(227, 105, 89);
@@ -142,7 +142,7 @@
 
         window#waybar {
             background: @bg-dim;
-            border: 2px solid @border-dim;
+            /* border: 2px solid @border-dim; */
         }
 
         tooltip {

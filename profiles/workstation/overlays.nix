@@ -15,6 +15,7 @@
 
         bash-language-server = final.unstable.bash-language-server;
         gh = final.unstable.gh;
+        jetbrains = final.unstable.jetbrains;
         nodejs = final.unstable.nodejs_22;
         slack = final.unstable.slack;
         tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;

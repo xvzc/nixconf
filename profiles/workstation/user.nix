@@ -56,6 +56,7 @@
     stylua
     tree-sitter
 
+    cava
     fastfetch
     jq
     ripgrep
@@ -64,6 +65,7 @@
     # GUI Applications
     discord
     google-chrome
+    jetbrains.idea-community-bin
     slack
     spotify
   ];

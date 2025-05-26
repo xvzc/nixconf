@@ -28,7 +28,7 @@
         "$mod1, f, togglefloating,"
         "$mod1, f, centerwindow,"
 
-        "$mod2, Space, exec, zsh -c 'rofi -show drun'"
+        "$mod2, Space, exec, rofi -show drun"
 
         "$mod1, h, movefocus, l"
         "$mod1, j, movefocus, d"
@@ -62,8 +62,9 @@
         "$mod1 $mod2, 9, movetoworkspace, 9"
         "$mod1 $mod2, 0, movetoworkspace, 10"
 
-        "$mod1 $mod3, s, exec, ${pkgs.hyprshot}/bin/hyprshot --mode -region --clipboard-only"
-        "$mod1 $mod2 $mod3, s, exec, ${pkgs.hyprshot}/bin/hyprshot --mode -region -o ~/.screenshot"
+        # "$mod1 $mod3, s, exec, rofi -show drun"
+        "$mod1 $mod3, s, exec, hyprshot -m region --clipboard-only"
+        "$mod1 $mod2 $mod3, s, exec, hyprshot -m region -o ~/.screenshot"
       ];
 
       bindm = [
