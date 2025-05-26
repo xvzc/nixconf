@@ -15,6 +15,7 @@
 
         bash-language-server = final.unstable.bash-language-server;
         gh = final.unstable.gh;
+        jetbrains = final.unstable.jetbrains;
         nodejs = final.unstable.nodejs_22;
         slack = final.unstable.slack;
         tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
@@ -46,7 +47,7 @@
         hyprland = final.unstable.hyprland;
         discord = final.unstable.discord;
 
-        _1password-gui = final._1password-gui.overrideAttrs (old: {
+        _1password-gui = final.unstable._1password-gui.overrideAttrs (old: {
           postInstall = ''
             ${old.postInstall or ""}
             wrapProgram $out/share/1password/1password \

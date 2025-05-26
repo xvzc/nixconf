@@ -8,7 +8,7 @@
 
   home.packages = with pkgs; [
     feh
-    chromedriver
+    electron-chromedriver_35
     wine
   ];
 }

@@ -13,9 +13,23 @@ in
     ../../modules/system/nixos/desktop.nix
   ];
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelPackages = pkgs.unstable.linuxPackages;
+
+  boot.loader = {
+    efi = {
+      canTouchEfiVariables = true;
+    };
+    grub = {
+      enable = true;
+      default = 0;
+      version = 2;
+      efiSupport = true;
+      configurationLimit = 5;
+      useOSProber = true;
+      devices = [ "nodev" ];
+      gfxmodeEfi = "1368x768";
+    };
+  };
 
   users.users.${ctx.user} = {
     shell = pkgs.zsh;

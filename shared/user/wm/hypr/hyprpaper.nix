@@ -1,5 +1,7 @@
 {
   inputs,
+  config,
+  lib,
   ...
 }:
 {
@@ -10,13 +12,22 @@
       splash = false;
       splash_offset = 2.0;
 
-      preload = [
-        "${inputs.assets}/wallpapers/anime-girl-nun.jpg"
-        "${inputs.assets}/wallpapers/anime-cat-clouds.jpg"
-      ];
+      preload =
+        [
+        config.wallpaper.source
 
-      wallpaper = [
-        ", ${inputs.assets}/wallpapers/anime-cat-clouds.jpg"
+        ];
+        # let
+        #   wallpapersDir = "${inputs.assets}/wallpapers";
+        #   fileNames = builtins.attrNames (builtins.readDir wallpapersDir);
+        # in
+        # builtins.map (name: "${wallpapersDir}/${name}") fileNames;
+      # [
+      #   "${inputs.assets}/wallpapers/anime-girl-nun.jpg"
+      #   "${inputs.assets}/wallpapers/anime-cat-clouds.jpg"
+      # ];
+      wallpaper = lib.mkIf (config.wallpaper != null) [
+        ", ${config.wallpaper.source}"
       ];
     };
   };

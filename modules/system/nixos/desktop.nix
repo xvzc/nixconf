@@ -142,19 +142,44 @@ in
 
         services = {
           xserver.enable = true;
-          displayManager.sddm = {
+          # displayManager.ly = {
+          #   enable = true;
+          #   settings = {
+          #     animation = "matrix";
+          #     blank_password = true;
+          #     bigclock = true;
+          #     hide_key_hints = true;
+          #   };
+          # };
+
+          greetd = {
             enable = true;
-            package = pkgs.unstable.kdePackages.sddm; # qt6 sddm version
-            extraPackages = [
-              sddm-astronaut
-            ];
-            theme = "sddm-astronaut-theme";
-            settings = {
-              Theme = {
-                Current = "sddm-astronaut-theme";
+            vt = 3;
+            settings =
+              let
+                tuigreetBin = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+              in
+              {
+                default_session = {
+                  user = "greeter";
+                  command = "${tuigreetBin} --asterisks --time --remember";
+                };
               };
-            };
           };
+
+          # displayManager.sddm = {
+          #   enable = true;
+          #   package = pkgs.unstable.kdePackages.sddm; # qt6 sddm version
+          #   extraPackages = [
+          #     sddm-astronaut
+          #   ];
+          #   theme = "sddm-astronaut-theme";
+          #   settings = {
+          #     Theme = {
+          #       Current = "sddm-astronaut-theme";
+          #     };
+          #   };
+          # };
         };
 
         programs.hyprland = {
