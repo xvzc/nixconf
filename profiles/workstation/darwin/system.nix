@@ -8,13 +8,13 @@
   # Disable pre-defined nix-darwin modules to override.
   disabledModules = [
     "services/yabai"
-    "programs/_1password-gui"
-    "programs/_1password"
+    # "programs/_1password-gui"
+    # "programs/_1password"
   ];
 
   imports = [
-    ../../../modules/system/darwin/programs/_1password-gui.nix
-    ../../../modules/system/darwin/programs/_1password.nix
+    # ../../../modules/system/darwin/programs/_1password-gui.nix
+    # ../../../modules/system/darwin/programs/_1password.nix
 
     ../../../modules/system/darwin/services/yabai.nix
   ];
@@ -28,13 +28,10 @@
     pkgs.pam-reattach
   ];
 
-  security.pam.enableSudoTouchIdAuth = true;
-
-  # Enable touch id authentication in tmux sessions.
-  environment.etc."pam.d/sudo_local".text = ''
-    auth       optional       ${pkgs.pam-reattach}/lib/pam/pam_reattach.so
-    auth       sufficient     pam_tid.so
-  '';
+  security.pam.services.sudo_local = {
+    touchIdAuth = true;
+    reattach = true;
+  };
   # - SECURITY - 8<
 
   # ┌──────────┐
@@ -69,8 +66,7 @@
   # │ SYSTEM_SETTINGS │
   # └─────────────────┘
   # ===================
-  system.stateVersion = 5;
-
+  system.primaryUser = ctx.user;
   system.defaults.loginwindow = {
     autoLoginUser = ctx.user;
     SHOWFULLNAME = false; # show full name in login window

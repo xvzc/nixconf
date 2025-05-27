@@ -65,7 +65,7 @@
     # GUI Applications
     discord
     google-chrome
-    jetbrains.idea-community-bin
+    # jetbrains.idea-community-bin
     slack
     spotify
   ];

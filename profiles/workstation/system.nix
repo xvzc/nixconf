@@ -26,11 +26,7 @@
     nanum-square-neo
     d2coding
 
-    (nerdfonts.override {
-      fonts = [
-        "JetBrainsMono"
-        "D2Coding"
-      ];
-    })
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.d2coding
   ];
 }

@@ -55,12 +55,12 @@ with lib;
       EOF
     '';
 
-    system.activationScripts.postUserActivation.text = # sh
+    system.activationScripts.postActivation.text = # sh
       ''
         # Restart `yabai` and `skhd`
         sudo ${pkgs.yabai}/bin/yabai --load-sa || true
-        launchctl kickstart -k "gui/$(id -u)/org.nixos.yabai" || true
-        launchctl kickstart -k "gui/$(id -u)/org.nixos.skhd" || true
+        launchctl kickstart -k "gui/$(id -u ${ctx.user})/org.nixos.yabai" || true
+        launchctl kickstart -k "gui/$(id -u ${ctx.user})/org.nixos.skhd" || true
       '';
 
     # ┌──────┐

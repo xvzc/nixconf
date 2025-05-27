@@ -30,4 +30,6 @@
       "${pkgs.wezterm}/Applications/WezTerm.app"
     ];
   };
+
+  system.stateVersion = 5;
 }

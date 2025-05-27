@@ -1,5 +1,8 @@
 { ... }:
 {
+  imports = [
+    ./jankyborders.nix
+  ];
   xdg.configFile = {
     "yabai/yabairc" = {
       source = ./yabairc;

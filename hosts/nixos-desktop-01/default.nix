@@ -87,4 +87,6 @@ in
     audio.enable = true;
     windowManager = "hypr";
   };
+
+  system.stateVersion = "24.11";
 }

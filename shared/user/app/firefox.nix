@@ -2,7 +2,7 @@
 {
   programs.firefox = {
     enable = true;
-    package = pkgs.firefox-bin;
+    # package = pkgs.firefox-unwrapped;
 
     profiles.default = {
       id = 0;

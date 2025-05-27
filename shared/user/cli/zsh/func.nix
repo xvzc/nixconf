@@ -12,7 +12,7 @@
 
         function sfs() {
           nix build "$NIXCONF_DIR#darwinConfigurations.$HOST.system" \
-            && "$NIXCONF_DIR/result/sw/bin/darwin-rebuild" switch \
+            && sudo "$NIXCONF_DIR/result/sw/bin/darwin-rebuild" switch \
             --flake "$NIXCONF_DIR#$HOST";
         }
 

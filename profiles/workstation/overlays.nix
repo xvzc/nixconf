@@ -28,7 +28,7 @@
     # │ DARWIN │
     # └────────┘
     ++ lib.optionals ctx.isDarwin [
-      inputs.nixpkgs-firefox-darwin.overlay
+      # inputs.nixpkgs-firefox-darwin.overlay
       (final: prev: {
         im-select = final.callPackage ../../pkgs/im-select.nix { };
         skhd = final.unstable.skhd;
