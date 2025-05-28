@@ -22,6 +22,10 @@
     hostName = ctx.host;
   };
 
+  environment.systemPackages = with pkgs; [
+    kotlin-lsp
+  ];
+
   system.defaults.dock = {
     persistent-others = lib.mkForce [ ];
     persistent-apps = [
@@ -31,5 +35,5 @@
     ];
   };
 
-  system.stateVersion = 5;
+  system.stateVersion = 6;
 }
