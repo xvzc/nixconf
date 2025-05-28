@@ -12,6 +12,7 @@
     [
       (final: prev: {
         nanum-square-neo = final.callPackage ../../pkgs/nanum-square-neo.nix { };
+        kotlin-lsp = final.callPackage ../../pkgs/kotlin-lsp.nix { };
 
         bash-language-server = final.unstable.bash-language-server;
         gh = final.unstable.gh;

@@ -88,5 +88,9 @@ in
     windowManager = "hypr";
   };
 
+  environment.systemPackages = with pkgs; [
+    kotlin-lsp
+  ];
+
   system.stateVersion = "25.05";
 }
