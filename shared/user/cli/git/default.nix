@@ -35,7 +35,7 @@ in
     extraConfig = {
       user = {
         name = "xvzc";
-        email = "dev.kwanghoo@gmail.com";
+        email = "me@xvzc.dev";
         signingKey = "${home}/${pubkeys.pers.path}";
       };
 
