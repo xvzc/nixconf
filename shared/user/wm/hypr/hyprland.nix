@@ -9,16 +9,65 @@
     enable = true;
     xwayland.enable = true;
     settings = {
-      debug = {
-        disable_logs = false;
-      };
-
       "$mod1" = "SUPER";
       "$mod2" = "ALT";
       "$mod3" = "CONTROL";
       "$terminal" = "kitty";
       # "$terminal" = "wezterm";
       # "$terminal" = "env -u WAYLAND_DISPLAY wezterm";
+
+      debug = {
+        disable_logs = false;
+      };
+
+      general = {
+        no_focus_fallback = true;
+      };
+
+      misc = {
+        focus_on_activate = true;
+      };
+
+      xwayland = {
+        force_zero_scaling = true;
+      };
+
+      input = {
+        follow_mouse = 2;
+      };
+
+      animations = {
+        enabled = true;
+        animation = [
+          "workspaces, 1, 3, default, slidefade 10%"
+          "windows, 1, 2, default, popin 80%"
+        ];
+      };
+
+      decoration = {
+        active_opacity = 0.97;
+        inactive_opacity = 0.90;
+      };
+
+      exec = [
+        "pkill -9 kime; ${pkgs.kime}/bin/kime"
+        "pkill -9 waybar; ${pkgs.waybar}/bin/waybar"
+      ];
+
+      exec-once = [
+        "dunst"
+
+        "wl-paste --type text --watch cliphist store" # Stores only text data
+        "wl-paste --type image --watch cliphist store" # Stores only image data
+        "hyprctl setcursor Adwaita ${toString config.home.pointerCursor.size}"
+        "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
+      ];
+
+      windowrulev2 = [
+        "noblur,class:^()$,title:^()$"
+        "float,title:(Not\ titled.*)"
+        "size 300 200,title:(Not\ titled.*)"
+      ];
 
       bind = [
         "$mod1 $mod2 $mod3, r, exec, hyprctl reload"
@@ -71,51 +120,6 @@
         "$mod1, mouse:272, movewindow"
         "$mod1, mouse:273, resizewindow"
         # "$mod ALT, mouse:272, resizewindow"
-      ];
-
-      misc = {
-        focus_on_activate = true;
-      };
-
-      xwayland = {
-        force_zero_scaling = true;
-      };
-
-      input = {
-        follow_mouse = 2;
-      };
-
-      animations = {
-        enabled = true;
-        animation = [
-          "workspaces, 1, 3, default, slidefade 10%"
-          "windows, 1, 2, default, popin 80%"
-        ];
-      };
-
-      decoration = {
-        active_opacity = 0.97;
-        inactive_opacity = 0.90;
-      };
-
-      exec = [
-        "pkill -9 kime; ${pkgs.kime}/bin/kime"
-        "pkill -9 waybar; ${pkgs.waybar}/bin/waybar"
-      ];
-
-      exec-once = [
-        "dunst"
-
-        "wl-paste --type text --watch cliphist store" # Stores only text data
-        "wl-paste --type image --watch cliphist store" # Stores only image data
-        "hyprctl setcursor Adwaita ${toString config.home.pointerCursor.size}"
-        "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
-      ];
-
-      windowrulev2 = [
-        "noblur,class:^()$,title:^()$"
-        "float,title:(Not\ titled.*)"
-        "size 300 200,title:(Not\ titled.*)"
       ];
     };
   };
