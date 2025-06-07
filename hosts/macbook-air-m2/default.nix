@@ -25,9 +25,10 @@
   system.defaults.dock = {
     persistent-others = lib.mkForce [ ];
     persistent-apps = [
-      "${pkgs.google-chrome}/Applications/Google Chrome.app"
+      # "${pkgs.fie}/Applications/Google Chrome.app"
+      "${pkgs.firefox}/Applications/Firefox.app"
       "${pkgs.spotify}/Applications/Spotify.app"
-      "${pkgs.wezterm}/Applications/WezTerm.app"
+      "${pkgs.kitty}/Applications/kitty.app"
     ];
   };
 
