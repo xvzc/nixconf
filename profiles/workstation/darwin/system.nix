@@ -294,6 +294,9 @@
   # │ MISC │
   # └──────┘
   system.defaults.menuExtraClock.Show24Hour = true;
+  system.defaults.menuExtraClock.ShowAMPM = false;
+  system.defaults.NSGlobalDomain.AppleICUForce24HourTime = true;
+
   system.nvram.variables = {
     "StartupMute" = "%01"; # Disable boot sound
   };
