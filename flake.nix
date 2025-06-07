@@ -17,7 +17,6 @@
     };
 
     neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
-    # nixpkgs-firefox-darwin.url = "github:bandithedoge/nixpkgs-firefox-darwin";
 
     nvim-xvzc = {
       url = "github:xvzc/nvim";
