@@ -50,11 +50,13 @@
       };
 
       exec = [
-        "pkill -9 kime; ${pkgs.kime}/bin/kime"
-        "pkill -9 waybar; ${pkgs.waybar}/bin/waybar"
+        # "pkill -9 kime; ${pkgs.kime}/bin/kime"
+        # "pkill -9 waybar; ${pkgs.waybar}/bin/waybar"
       ];
 
       exec-once = [
+        "${pkgs.kime}/bin/kime"
+        "${pkgs.waybar}/bin/waybar"
         "dunst"
 
         "wl-paste --type text --watch cliphist store" # Stores only text data
