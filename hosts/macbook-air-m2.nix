@@ -26,7 +26,7 @@
     persistent-others = lib.mkForce [ ];
     persistent-apps = [
       # "${pkgs.fie}/Applications/Google Chrome.app"
-      "${pkgs.firefox}/Applications/Firefox.app"
+      "${pkgs.firefox-bin}/Applications/Firefox.app"
       "${pkgs.spotify}/Applications/Spotify.app"
       "${pkgs.kitty}/Applications/kitty.app"
     ];

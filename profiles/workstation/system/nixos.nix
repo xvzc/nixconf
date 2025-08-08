@@ -3,8 +3,6 @@
   pkgs,
   ...
 }:
-let
-in
 {
   # See `man nmcli`
   # See Connection details part  in `man nmcli-examples` for more examples
@@ -16,6 +14,9 @@ in
   #     hinting.autohint = true;
   #   };
   # };
+  imports = [
+    ../../../shared/system/kime.nix
+  ];
 
   environment.systemPackages = with pkgs; [
     lm_sensors

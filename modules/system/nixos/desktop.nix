@@ -142,15 +142,6 @@ in
 
         services = {
           xserver.enable = true;
-          # displayManager.ly = {
-          #   enable = true;
-          #   settings = {
-          #     animation = "matrix";
-          #     blank_password = true;
-          #     bigclock = true;
-          #     hide_key_hints = true;
-          #   };
-          # };
 
           greetd = {
             enable = true;
@@ -166,20 +157,6 @@ in
                 };
               };
           };
-
-          # displayManager.sddm = {
-          #   enable = true;
-          #   package = pkgs.unstable.kdePackages.sddm; # qt6 sddm version
-          #   extraPackages = [
-          #     sddm-astronaut
-          #   ];
-          #   theme = "sddm-astronaut-theme";
-          #   settings = {
-          #     Theme = {
-          #       Current = "sddm-astronaut-theme";
-          #     };
-          #   };
-          # };
         };
 
         programs.hyprland = {
@@ -187,8 +164,6 @@ in
           xwayland.enable = true;
           withUWSM = true;
         };
-        # programs.hyprlock.enable = false;
-        # programs.waybar.enable = true;
       })
     ];
 }

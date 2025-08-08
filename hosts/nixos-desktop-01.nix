@@ -8,7 +8,7 @@ let
 in
 {
   imports = [
-    ./hardware-configuration.nix
+    ./hardware-configurations/nixos-desktop-01.nix
 
     ../../modules/system/nixos/desktop.nix
   ];
