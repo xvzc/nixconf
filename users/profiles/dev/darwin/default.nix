@@ -7,7 +7,7 @@
 with lib;
 {
   imports = [
-    ../../../shared/user/wm/yabai
+    ../../../shared/features/wm/yabai
   ];
 
   targets.darwin.keybindings = {

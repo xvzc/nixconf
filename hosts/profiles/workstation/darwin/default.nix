@@ -5,16 +5,9 @@
   ...
 }:
 {
-  # Disable pre-defined nix-darwin modules to override.
-  disabledModules = [
-    "services/yabai"
-  ];
-
   imports = [
-    ../../../modules/system/darwin/yabai.nix
+    ./overlays.nix
   ];
-
-  services.yabai.enable = true;
 
   # ┌──────────┐
   # │ SECURITY │

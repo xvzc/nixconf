@@ -44,14 +44,12 @@
       configurations = [
         {
           system = "aarch64-darwin";
-          profile = "workstation";
           user = "kazusa";
           host = "macbook-air-m2";
           os = "darwin";
         }
         {
           system = "x86_64-linux";
-          profile = "workstation";
           user = "mizuki";
           host = "nixos-desktop-01";
           os = "nixos";

@@ -7,7 +7,7 @@
 let
   darwinAgent = "\"~/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock\"";
   linuxAgent = "~/.1password/agent.sock";
-  pubkeys = import ../../../vars/pubkeys.nix;
+  pubkeys = import ../../../../vars/pubkeys.nix;
 in
 {
   home.file."${pubkeys.home.path}" = {

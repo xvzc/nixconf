@@ -7,7 +7,7 @@
 }:
 let
   home = config.home.homeDirectory;
-  pubkeys = import ../../../../vars/pubkeys.nix;
+  pubkeys = import ../../../../../vars/pubkeys.nix;
 in
 {
 

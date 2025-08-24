@@ -4,6 +4,8 @@
 }:
 {
   imports = [
+    ./profiles/dev
+
     ../modules/user/wallpaper.nix
   ];
 

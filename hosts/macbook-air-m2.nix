@@ -5,10 +5,20 @@
   ...
 }:
 {
+  # Disable pre-defined nix-darwin modules to override.
+  disabledModules = [
+    "services/yabai"
+  ];
+
+  imports = [
+    ./profiles/workstation
+
+    ../modules/host/darwin/yabai.nix
+  ];
+
   # The user should already exist, but we need to set
   # this up so Nix knows what our home directory is.
   # https://github.com/LnL7/nix-darwin/issues/423
-  # programs.fish.enable = true;
   users = {
     knownUsers = [ ctx.user ];
     users.${ctx.user} = {
@@ -31,6 +41,8 @@
       "${pkgs.kitty}/Applications/kitty.app"
     ];
   };
+
+  services.yabai.enable = true;
 
   system.stateVersion = 6;
 }

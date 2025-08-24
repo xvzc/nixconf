@@ -4,7 +4,6 @@
   outputs,
 }:
 {
-  profile,
   system,
   user,
   host,
@@ -38,15 +37,13 @@ builder {
     (lib.optionalAttrs ctx.isDarwin inputs.home-manager.darwinModules.home-manager)
     (lib.optionalAttrs ctx.isLinux inputs.home-manager.nixosModules.home-manager)
     ../overlays.nix
-    ../profiles/${profile}/overlays.nix
-    ../profiles/${profile}/system
+
     ../hosts/${host}.nix
     {
       home-manager.extraSpecialArgs = { inherit ctx inputs outputs; };
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
       home-manager.users.${user} = lib.mkMerge [
-        ../profiles/${profile}/user
         ../users/${user}.nix
       ];
     }

@@ -6,27 +6,27 @@
 }:
 {
   imports = [
-    ../../_base/user.nix
+    ../../shared/base.nix
 
-    ../../../shared/user/app/jetbrains
-    ../../../shared/user/app/kitty
-    ../../../shared/user/app/wezterm
-    ../../../shared/user/app/1password.nix
-    ../../../shared/user/app/firefox.nix
+    ../../shared/features/app/jetbrains
+    ../../shared/features/app/kitty
+    ../../shared/features/app/wezterm
+    ../../shared/features/app/1password.nix
+    ../../shared/features/app/firefox.nix
 
-    ../../../shared/user/cli/git
-    ../../../shared/user/cli/zsh
-    ../../../shared/user/cli/bat.nix
-    ../../../shared/user/cli/direnv.nix
-    ../../../shared/user/cli/eza.nix
-    ../../../shared/user/cli/fd.nix
-    ../../../shared/user/cli/fzf.nix
-    ../../../shared/user/cli/ssh.nix
+    ../../shared/features/cli/git
+    ../../shared/features/cli/zsh
+    ../../shared/features/cli/bat.nix
+    ../../shared/features/cli/direnv.nix
+    ../../shared/features/cli/eza.nix
+    ../../shared/features/cli/fd.nix
+    ../../shared/features/cli/fzf.nix
+    ../../shared/features/cli/ssh.nix
 
-    ../../../shared/user/tui/tmux
-    ../../../shared/user/tui/neovim.nix
+    ../../shared/features/tui/tmux
+    ../../shared/features/tui/neovim.nix
 
-    ./${ctx.os}.nix
+    ./${ctx.os}
   ];
 
   home.sessionPath = [

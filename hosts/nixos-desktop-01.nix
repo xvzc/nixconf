@@ -4,13 +4,14 @@
   ...
 }:
 let
-  pubkeys = import ../../vars/pubkeys.nix;
+  pubkeys = import ../vars/pubkeys.nix;
 in
 {
   imports = [
-    ./hardware-configurations/nixos-desktop-01.nix
+    ./hardware-configurations/${ctx.host}.nix
+    ./profiles/workstation
 
-    ../../modules/system/nixos/desktop.nix
+    ../../modules/host/nixos/desktop.nix
   ];
 
   boot.kernelPackages = pkgs.unstable.linuxPackages;

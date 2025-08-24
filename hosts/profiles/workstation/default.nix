@@ -5,8 +5,10 @@
 }:
 {
   imports = [
-    ../../_base/system.nix
-    ./${ctx.os}.nix
+    ./overlays.nix
+    ./${ctx.os}
+
+    ../../shared/base.nix
   ];
 
   environment.pathsToLink = [
