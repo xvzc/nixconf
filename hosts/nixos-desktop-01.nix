@@ -11,10 +11,10 @@ in
     ./hardware-configurations/${ctx.host}.nix
     ./profiles/workstation
 
-    ../../modules/host/nixos/desktop.nix
+    ../modules/host/nixos/desktop.nix
   ];
 
-  boot.kernelPackages = pkgs.unstable.linuxPackages;
+  boot.kernelPackages = pkgs.linuxPackages;
 
   boot.loader = {
     efi = {
@@ -23,7 +23,7 @@ in
     grub = {
       enable = true;
       default = 0;
-      version = 2;
+      # version = 2;
       efiSupport = true;
       configurationLimit = 5;
       useOSProber = true;
