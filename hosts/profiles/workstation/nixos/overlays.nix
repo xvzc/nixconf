@@ -17,11 +17,11 @@
       hyprland = final.unstable.hyprland;
       discord = final.unstable.discord;
 
-      _1password-gui = final.unstable._1password-gui.overrideAttrs (old: {
+      _1password-gui = prev._1password-gui.overrideAttrs (old: {
         postInstall = ''
           ${old.postInstall or ""}
           wrapProgram $out/share/1password/1password \
-            --add-flags "--ozone-platform-hint=x11"
+            --add-flags "--ozone-platform=x11"
         '';
       });
     })
