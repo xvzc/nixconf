@@ -20,6 +20,7 @@
       tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
       wezterm = final.unstable.wezterm;
       _1password-cli = final.unstable._1password-cli;
+      _1password-gui = final.unstable._1password-gui;
     })
   ];
 }

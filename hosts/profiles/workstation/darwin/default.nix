@@ -42,6 +42,7 @@
     casks = [
       "docker"
       "chatgpt"
+      "duckduckgo"
     ];
 
     masApps = {
