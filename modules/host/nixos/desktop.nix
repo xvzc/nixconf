@@ -153,7 +153,7 @@ in
               {
                 default_session = {
                   user = "greeter";
-                  command = "${tuigreetBin} --asterisks --time --remember";
+                  command = "${tuigreetBin} --asterisks --remember";
                 };
               };
           };

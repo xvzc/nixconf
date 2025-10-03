@@ -56,6 +56,7 @@
 
         clock = {
           format = "󰭧 {:%a %d %b %H:%M}";
+          interval = 5;
           tooltip = false;
         };
 

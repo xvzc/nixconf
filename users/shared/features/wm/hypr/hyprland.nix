@@ -26,6 +26,7 @@
 
       misc = {
         focus_on_activate = true;
+        disable_hyprland_logo = true;
       };
 
       xwayland = {
@@ -65,8 +66,12 @@
         "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
       ];
 
+      windowrule = [
+      ];
+
       windowrulev2 = [
         "noblur,class:^()$,title:^()$"
+
         "float,title:(Not\ titled.*)"
         "size 300 200,title:(Not\ titled.*)"
       ];
@@ -76,8 +81,15 @@
 
         "$mod1, Return, exec, $terminal"
         "$mod2, w, killactive"
-        "$mod1, f, togglefloating,"
-        "$mod1, f, centerwindow,"
+
+        #sh
+        ''
+          $mod1, f, exec, hyprctl dispatch togglefloating \
+           && (hyprctl activewindow | grep -q "floating: 1" \
+           && hyprctl dispatch resizeactive exact 1200 900 \
+           && hyprctl dispatch centerwindow) \
+           || true
+        ''
 
         "$mod2, Space, exec, rofi -show drun"
 
