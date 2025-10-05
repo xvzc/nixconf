@@ -8,18 +8,40 @@ let
   inherit (config.lib.formats.rasi) mkLiteral;
 in
 {
+  xdg.configFile."rofi/scripts/run-rofi.py".source = ./scripts/run_rofi.py;
+
   programs.rofi = {
     enable = true;
     font = "JetBrainsMono Nerd Font Medium 12";
     terminal = "${pkgs.kitty}/bin/kitty";
+    modes = [
+      "drun"
+      "calc"
+      "clipboard:cliphist-rofi"
+      "power:${pkgs.rofi-power-menu}/bin/rofi-power-menu"
+    ];
+
+    plugins = [
+      pkgs.rofi-calc
+      pkgs.rofi-power-menu
+    ];
     extraConfig = {
       display-drun = "";
-      display-run = "";
       display-window = "";
+      display-ssh = "󰴽";
+      display-calc = "";
+      display-clipboard = "";
+      entry-power = "⏻";
       sync = true;
       matching = "fuzzy";
-      no-sidebar-mode = true;
+      sidebar-mode = true;
       drun-match-fields = "GenericName";
+
+      # KEYBINDS
+      kb-element-next = "";
+      kb-element-prev = "";
+      kb-mode-next = mkLiteral "\"Tab\"";
+      kb-mode-previous = mkLiteral "\"ISO_Left_Tab\"";
     };
 
     theme = {
@@ -46,6 +68,7 @@ in
         children = map mkLiteral [
           "inputbar"
           "listview"
+          "mode-switcher"
         ];
       };
 
@@ -65,6 +88,25 @@ in
       prompt = {
         background-color = mkLiteral "inherit";
         padding = mkLiteral "12px";
+      };
+
+      mode-switcher = {
+        enabled = true;
+        expand = false;
+        spacing = mkLiteral "0px";
+        margin = mkLiteral "0px 200px";
+        padding = mkLiteral "12px";
+        # background-color = mkLiteral "#2E343B";
+      };
+
+      button = {
+        background-color = mkLiteral "@bg";
+        text-color = mkLiteral "@fg";
+      };
+
+      "button selected" = {
+        background-color = mkLiteral "@fg";
+        text-color = mkLiteral "@bg";
       };
 
       listview = {

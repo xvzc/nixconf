@@ -35,6 +35,7 @@
 
       input = {
         follow_mouse = 2;
+        float_switch_override_focus = 0;
       };
 
       animations = {
@@ -73,7 +74,11 @@
         "noblur,class:^()$,title:^()$"
 
         "float,title:(Not\ titled.*)"
+        "float,class:copyq"
+        "float,class:com.github.hluk.copyq"
         "size 300 200,title:(Not\ titled.*)"
+
+        # "stayfocused, class:^(Rofi)$"
       ];
 
       bind = [
@@ -91,7 +96,7 @@
            || true
         ''
 
-        "$mod2, Space, exec, rofi -show drun"
+        "$mod2, Space, exec, python3 ~/.config/rofi/scripts/run-rofi.py"
 
         "$mod1, h, movefocus, l"
         "$mod1, j, movefocus, d"
@@ -127,7 +132,7 @@
 
         # "$mod1 $mod3, s, exec, rofi -show drun"
         "$mod1 $mod3, s, exec, hyprshot -m region --clipboard-only"
-        "$mod1 $mod2 $mod3, s, exec, hyprshot -m region -o ~/.screenshot"
+        "$mod1 $mod2 $mod3, s, exec, hyprshot -m region -o ~/.screenshots"
       ];
 
       bindm = [

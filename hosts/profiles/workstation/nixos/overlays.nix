@@ -24,6 +24,13 @@
             --add-flags "--ozone-platform=x11"
         '';
       });
+
+      rofi-power-menu = final.unstable.rofi-power-menu.overrideAttrs (old: {
+        patches = (old.patches or [ ]) ++ [
+          ../../../../patches/rofi-power-menu.patch
+        ];
+      });
+
     })
   ];
 }

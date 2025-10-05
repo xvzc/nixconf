@@ -18,6 +18,7 @@
     ./overlays.nix
 
     ../../../shared/features/kime.nix
+    ../../../shared/features/chrony.nix
   ];
 
   environment.systemPackages = with pkgs; [
@@ -25,27 +26,6 @@
     pamixer
     dig
   ];
-
-  services.chrony = {
-    enable = true;
-    enableNTS = false;
-    servers = [
-      "time.cloudflare.com"
-      "time.google.com"
-      "time.aws.com"
-      "time.apple.com"
-      "time.facebook.com"
-    ];
-
-    initstepslew = {
-      enabled = true;
-      threshold = 5;
-    };
-  };
-
-  systemd.services.chronyd = {
-    after = [ "network-online.target" ];
-  };
 
   virtualisation.docker.enable = true;
 }

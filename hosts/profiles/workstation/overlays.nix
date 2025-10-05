@@ -19,6 +19,7 @@
       slack = final.unstable.slack;
       tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
       wezterm = final.unstable.wezterm;
+      copyq = final.unstable.copyq;
 
       _1password-cli = final.unstable._1password-cli;
       _1password-gui = final.unstable._1password-gui;

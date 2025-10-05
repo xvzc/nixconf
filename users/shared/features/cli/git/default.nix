@@ -11,7 +11,7 @@ let
 in
 {
 
-  home.file.".local/bin/git-auth".source = ./git-auth;
+  home.file.".local/bin/git-auth".source = ./scripts/git-auth;
 
   programs.gh = {
     enable = true;

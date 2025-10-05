@@ -50,6 +50,7 @@
 
     # Language Servers & Formatters
     bash-language-server
+    black
     clang-tools
     lua-language-server
     nixd
@@ -64,6 +65,7 @@
     jq
     ripgrep
     tree
+    socat
 
     # GUI Applications
     discord

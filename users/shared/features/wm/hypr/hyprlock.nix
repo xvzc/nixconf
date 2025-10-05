@@ -12,6 +12,9 @@
         grace = 0;
         hide_cursor = true;
         no_fade_in = false;
+
+        ignore_empty_input = true;
+        fail_timeout = 500;
       };
 
       background = [

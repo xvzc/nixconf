@@ -1,14 +1,15 @@
 { pkgs, ... }:
 {
   imports = [
-    # ../../../shared/user/wm/bspwm
     ../../../shared/features/wm/hypr
-    # ../../../shared/user/misc/kime.nix
+    ../../../shared/features/app/rofi
+    ../../../shared/features/cli/cliphist.nix
   ];
 
   home.packages = with pkgs; [
     feh
     electron-chromedriver_35
     wine
+    clipse
   ];
 }
