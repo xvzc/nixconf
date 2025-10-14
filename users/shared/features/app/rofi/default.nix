@@ -17,7 +17,6 @@ in
     modes = [
       "drun"
       "calc"
-      "clipboard:cliphist-rofi"
       "power:${pkgs.rofi-power-menu}/bin/rofi-power-menu"
     ];
 

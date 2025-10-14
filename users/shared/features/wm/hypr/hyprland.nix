@@ -61,8 +61,6 @@
         "${pkgs.waybar}/bin/waybar"
         "dunst"
 
-        "wl-paste --type text --watch cliphist store" # Stores only text data
-        "wl-paste --type image --watch cliphist store" # Stores only image data
         "hyprctl setcursor Adwaita ${toString config.home.pointerCursor.size}"
         "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
       ];
@@ -74,8 +72,6 @@
         "noblur,class:^()$,title:^()$"
 
         "float,title:(Not\ titled.*)"
-        "float,class:copyq"
-        "float,class:com.github.hluk.copyq"
         "size 300 200,title:(Not\ titled.*)"
 
         # "stayfocused, class:^(Rofi)$"
@@ -86,6 +82,7 @@
 
         "$mod1, Return, exec, $terminal"
         "$mod2, w, killactive"
+        ", Pause, exec, hyprlock"
 
         #sh
         ''

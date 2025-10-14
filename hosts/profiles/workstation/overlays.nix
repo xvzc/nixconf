@@ -19,7 +19,6 @@
       slack = final.unstable.slack;
       tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
       wezterm = final.unstable.wezterm;
-      copyq = final.unstable.copyq;
       discord = final.unstable.discord;
       firefox = final.unstable.firefox;
 

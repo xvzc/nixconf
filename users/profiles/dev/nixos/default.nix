@@ -3,7 +3,6 @@
   imports = [
     ../../../shared/features/wm/hypr
     ../../../shared/features/app/rofi
-    ../../../shared/features/cli/cliphist.nix
   ];
 
   home.packages = with pkgs; [
