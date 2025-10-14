@@ -30,13 +30,16 @@
 
   networking = {
     hostName = ctx.host;
+    computerName = ctx.host;
+    localHostName = ctx.host;
+    domain = ctx.host;
   };
 
   system.defaults.dock = {
     persistent-others = lib.mkForce [ ];
     persistent-apps = [
       # "${pkgs.fie}/Applications/Google Chrome.app"
-      "${pkgs.firefox-bin}/Applications/Firefox.app"
+      "${pkgs.firefox}/Applications/Firefox.app"
       "${pkgs.spotify}/Applications/Spotify.app"
       "${pkgs.kitty}/Applications/kitty.app"
     ];

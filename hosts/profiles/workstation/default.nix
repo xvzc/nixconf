@@ -9,6 +9,7 @@
     ./${ctx.os}
 
     ../../shared/base.nix
+    ../../shared/features/fish.nix
   ];
 
   environment.pathsToLink = [

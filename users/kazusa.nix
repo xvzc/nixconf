@@ -1,13 +1,24 @@
 {
-  inputs,
+  ctx,
   ...
 }:
 {
   imports = [
-    ./profiles/dev
-
-    ../modules/user/wallpaper.nix
+    ../hosts/shared/features/firefox.nix
   ];
 
-  wallpaper.source = "${inputs.assets}/wallpapers/shinra-kusakabe.jpg";
+  # ┌──────────────┐ 
+  # │ HOME_MANAGER │ 
+  # └──────────────┘ 
+  home-manager.users.${ctx.user} =
+    { inputs, ... }:
+    {
+      imports = [
+        ./profiles/dev
+
+        ../modules/user/wallpaper.nix
+      ];
+
+      wallpaper.source = "${inputs.assets}/wallpapers/shinra-kusakabe.jpg";
+    };
 }

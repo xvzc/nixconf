@@ -347,8 +347,21 @@
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "nvim-xvzc": "nvim-xvzc"
+        "nvim-xvzc": "nvim-xvzc",
+        "secrets": "secrets"
       }
+    },
+    "secrets": {
+      "flake": false,
+      "locked": {
+        "path": "secrets",
+        "type": "path"
+      },
+      "original": {
+        "path": "secrets",
+        "type": "path"
+      },
+      "parent": []
     },
     "treefmt-nix": {
       "inputs": {

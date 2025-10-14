@@ -15,7 +15,6 @@
       rofi = final.unstable.rofi;
       waybar = final.unstable.waybar;
       hyprland = final.unstable.hyprland;
-      discord = final.unstable.discord;
 
       _1password-gui = final.unstable._1password-gui.overrideAttrs (old: {
         postInstall = ''

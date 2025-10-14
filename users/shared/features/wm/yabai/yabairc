@@ -14,7 +14,7 @@ yabai -m config bottom_padding 8
 yabai -m config left_padding 8
 
 yabai -m config mouse_follows_focus off
-yabai -m config focus_follows_mouse autofocus
+yabai -m config focus_follows_mouse off
 
 yabai -m rule --add app="^System Settings$" manage=off
 yabai -m rule --add title="^Settings$" manage=off

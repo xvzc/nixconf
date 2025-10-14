@@ -54,12 +54,12 @@
           host = "nixos-desktop-01";
           os = "nixos";
         }
-        {
-          system = "x86_64-linux";
-          user = "nezuko";
-          host = "nixos-desktop-02";
-          os = "nixos";
-        }
+        # {
+        #   system = "x86_64-linux";
+        #   user = "nezuko";
+        #   host = "nixos-desktop-02";
+        #   os = "nixos";
+        # }
         # {
         #   system = "x86_64-linux";
         #   user = "nezuko";
@@ -81,8 +81,6 @@
       # ┌─────────┐
       # │ OUTPUTS │
       # └─────────┘
-      overlays = import ./overlays { inherit inputs; };
-
       darwinConfigurations = lib.listToAttrs (
         lib.map (c: {
           name = c.host;
@@ -96,13 +94,5 @@
           value = mkSystem c;
         }) (lib.filter (x: builtins.elem x.system lib.platforms.linux) configurations)
       );
-
-      # homeConfigurations = lib.listToAttrs (
-      #   lib.map (c: {
-      #     name = "${c.user}@${c.host}";
-      #     value = mkHome c;
-      #   }) configurations
-      # );
-      # - OUTPUTS - 8< -----
     };
 }

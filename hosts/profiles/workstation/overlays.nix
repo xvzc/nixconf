@@ -20,6 +20,8 @@
       tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
       wezterm = final.unstable.wezterm;
       copyq = final.unstable.copyq;
+      discord = final.unstable.discord;
+      firefox = final.unstable.firefox;
 
       _1password-cli = final.unstable._1password-cli;
       _1password-gui = final.unstable._1password-gui;

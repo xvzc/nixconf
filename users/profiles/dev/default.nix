@@ -1,5 +1,5 @@
 {
-  inputs,
+ inputs,
   pkgs,
   ctx,
   ...
@@ -12,7 +12,8 @@
     ../../shared/features/app/kitty
     ../../shared/features/app/wezterm
     ../../shared/features/app/1password.nix
-    ../../shared/features/app/firefox.nix
+    ../../shared/features/app/discord.nix
+    # ../../shared/features/app/firefox.nix
 
     ../../shared/features/cli/git
     ../../shared/features/cli/zsh
@@ -68,8 +69,8 @@
     socat
 
     # GUI Applications
-    discord
     google-chrome
+
     # jetbrains.idea-community-bin
     slack
     spotify
