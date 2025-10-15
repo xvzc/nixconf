@@ -15,7 +15,7 @@
     }:
     let
       home = config.home.homeDirectory;
-      pubkeys = import ../../../../vars/pubkeys.nix;
+      vars = import ../../../../vars.nix { inherit pkgs ctx; };
     in
     {
 
@@ -44,7 +44,7 @@
           user = {
             name = "xvzc";
             email = "me@xvzc.dev";
-            signingKey = "${home}/${pubkeys.pers.path}";
+            signingKey = "${home}/${vars.ssh.pubkeys.personal.path}";
           };
 
           core = {
@@ -61,13 +61,9 @@
 
           gpg = {
             format = "ssh";
-            ssh =
-              lib.optionalAttrs pkgs.stdenv.isDarwin {
-                program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
-              }
-              // lib.optionalAttrs pkgs.stdenv.isLinux {
-                program = "${pkgs._1password-gui}/bin/op-ssh-sign";
-              };
+            ssh = {
+              program = "${vars.ssh._1password.signer}";
+            };
           };
         };
       };

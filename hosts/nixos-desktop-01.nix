@@ -4,7 +4,7 @@
   ...
 }:
 let
-  pubkeys = import ../vars/pubkeys.nix;
+  vars = import ../vars.nix { inherit ctx pkgs; };
 in
 {
   imports = [
@@ -33,7 +33,7 @@ in
     shell = pkgs.zsh;
     isNormalUser = true;
     openssh.authorizedKeys.keys = [
-      pubkeys.home.text
+      vars.ssh.pubkeys.desktop.text
     ];
 
     extraGroups = [
