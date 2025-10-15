@@ -1,0 +1,17 @@
+#!/bin/sh
+
+selected=$( \
+  fd -L --type d \
+  --search-path $HOME \
+  --hidden | \
+  fzf-tmux \
+  -p80%,60% \
+  --preview 'eza --tree --only-dirs {}' \
+)
+
+if [[ -z $selected ]]; then
+  tmux new-window -c $HOME
+  exit 0
+fi
+
+tmux new-window -c "$(realpath --no-symlinks $selected)"

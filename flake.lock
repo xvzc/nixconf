@@ -308,11 +308,11 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1751211869,
-        "narHash": "sha256-1Cu92i1KSPbhPCKxoiVG5qnoRiKTgR5CcGSRyLpOd7Y=",
+        "lastModified": 1760423683,
+        "narHash": "sha256-Tb+NYuJhWZieDZUxN6PgglB16yuqBYQeMJyYBGCXlt8=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "b43c397f6c213918d6cfe6e3550abfe79b5d1c51",
+        "rev": "a493e93b4a259cd9fea8073f89a7ed9b1c5a1da2",
         "type": "github"
       },
       "original": {
@@ -347,21 +347,8 @@
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
-        "nvim-xvzc": "nvim-xvzc",
-        "secrets": "secrets"
+        "nvim-xvzc": "nvim-xvzc"
       }
-    },
-    "secrets": {
-      "flake": false,
-      "locked": {
-        "path": "secrets",
-        "type": "path"
-      },
-      "original": {
-        "path": "secrets",
-        "type": "path"
-      },
-      "parent": []
     },
     "treefmt-nix": {
       "inputs": {

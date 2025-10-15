@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+if $(ps uxww | grep -v "open-wezterm" | grep -q "[w]ezterm"); then
+  wezterm cli spawn --new-window
+else
+  eval "$(realpath "$HOME/Applications/Home Manager Apps/WezTerm.app")"/wezterm start
+fi

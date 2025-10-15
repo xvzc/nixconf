@@ -1,0 +1,3 @@
+#!/bin/sh
+
+echo "{\"text\": \"$USER@$(hostname)\", \"class\": \"normal\"}"

@@ -1,0 +1,38 @@
+#!/bin/sh
+
+HELP="usage: git auth --profile [profile name]"
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+	-p | --profile )
+		profile="$2"
+		shift
+		shift
+		;;
+	-h | --help)
+		shift
+		echo "$HELP"
+		exit 1
+		;;
+	*)
+		shift # past argument
+		;;
+	esac
+done
+
+if [ -z "$profile" ]; then
+	echo "$HELP"
+	exit 1
+fi
+
+origin=$(git remote get-url origin)
+if [[ "$origin" =~ ^git@.* ]]; then
+    owner="$(cut -d'/' -f1 <<<"$(cut -d':' -f2 <<<"$origin")")"
+    repo="$(cut -d'/' -f2 <<<"$origin")"
+elif [[ "$origin" =~ ^https://.* ]]; then
+    owner="$(cut -d'/' -f4 <<<"$origin")"
+    repo="$(cut -d'/' -f5 <<<"$origin")"
+fi
+
+git remote set-url --push origin "git@$profile.github.com:$owner/$repo"
+# git remote set-url origin "git@$profile.github.com:$owner/$repo"

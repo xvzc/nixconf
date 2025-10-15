@@ -5,17 +5,6 @@
   ...
 }:
 {
-  # Disable pre-defined nix-darwin modules to override.
-  disabledModules = [
-    "services/yabai"
-  ];
-
-  imports = [
-    ./profiles/workstation
-
-    ../modules/host/darwin/yabai.nix
-  ];
-
   # The user should already exist, but we need to set
   # this up so Nix knows what our home directory is.
   # https://github.com/LnL7/nix-darwin/issues/423
@@ -38,14 +27,16 @@
   system.defaults.dock = {
     persistent-others = lib.mkForce [ ];
     persistent-apps = [
-      # "${pkgs.fie}/Applications/Google Chrome.app"
-      "${pkgs.firefox}/Applications/Firefox.app"
+      "/Applications/Firefox.app"
       "${pkgs.spotify}/Applications/Spotify.app"
       "${pkgs.kitty}/Applications/kitty.app"
     ];
   };
 
-  services.yabai.enable = true;
+  wm.yabai = {
+    enable = true;
+    border = true;
+  };
 
   system.stateVersion = 6;
 }

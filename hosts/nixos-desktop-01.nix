@@ -8,10 +8,7 @@ let
 in
 {
   imports = [
-    ./hardware-configurations/${ctx.host}.nix
-    ./profiles/workstation
-
-    ../modules/host/nixos/desktop.nix
+    ../modules/host/linux/hardware-profiles.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages;
@@ -52,6 +49,8 @@ in
     useDHCP = false;
     networkmanager.enable = true;
     networkmanager.ensureProfiles.profiles = {
+      # See `man nmcli`
+      # See Connection details part  in `man nmcli-examples` for more examples
       # Run `nmcli con up wired` to enable this connection
       wired = {
         connection = {
@@ -85,8 +84,7 @@ in
   desktop = {
     cpu = "amd";
     gpu = "nvidia";
-    audio.enable = true;
-    windowManager = "hypr";
+    audio = "pipewire";
   };
 
   system.stateVersion = "25.05";

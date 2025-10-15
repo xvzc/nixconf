@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+kitty_path="$(realpath "$HOME/Applications/Home Manager Apps/kitty.app/Contents/Macos")"
+$kitty_path/kitty --single-instance -d "$HOME"

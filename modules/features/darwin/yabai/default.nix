@@ -1,20 +1,26 @@
 {
-  config,
+  lib,
   pkgs,
   ctx,
-  lib,
+  config,
   ...
 }:
 let
-  cfg = config.services.yabai;
+  cfg = config.wm.yabai;
 in
 with lib;
 {
-  options.services.yabai = {
+  options.wm.yabai = {
     enable = mkEnableOption "Whether to enable yabai";
+    border = mkEnableOption "Whether to enable border";
   };
 
+  imports = [
+    ./jankyborders.nix
+  ];
+
   config = mkIf cfg.enable {
+
     system.activationScripts.preActivation.text = ''
       csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
     '';
@@ -82,5 +88,23 @@ with lib;
     system.nvram.variables = {
       "boot-args" = "-arm64e_preview_abi"; # Allow non-Apple signed binaries
     };
+
+    home-manager.users.${ctx.user} =
+      { ... }:
+      {
+        xdg.configFile = {
+          "yabai/yabairc" = {
+            source = ./yabairc;
+          };
+
+          "yabai/skhdrc" = {
+            source = ./skhdrc;
+          };
+          "yabai/scripts" = {
+            source = ./scripts;
+            recursive = true;
+          };
+        };
+      };
   };
 }

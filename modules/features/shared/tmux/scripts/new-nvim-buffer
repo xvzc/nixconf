@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if [[ $# -eq 1 ]]; then
+    selected=$1
+else
+    selected=$( \
+      fd -L \
+      --hidden \
+      --search-path ~ \
+      --search-path ~/.config \
+      --search-path ~/.scripts \
+      --search-path ~/personal \
+      --search-path ~/work \
+      --search-path ~/playground \
+      --type f \
+      | fzf-tmux \
+      --preview 'bat --style=numbers --color=always --line-range :500 {}' \
+      -p60%,60% \
+    )
+fi
+
+if [[ -z $selected ]]; then
+    exit 0
+fi
+
+tmux new-window "nvim $selected"

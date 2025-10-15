@@ -4,6 +4,7 @@
   outputs,
 }:
 {
+  profile,
   system,
   user,
   host,
@@ -37,23 +38,29 @@ platforms.${os}.builder {
   modules = lib.lists.flatten [
     {
       nix.settings.experimental-features = "nix-command flakes";
-      nix.settings.allow-unsafe-native-code-during-evaluation = true;
       nix.optimise.automatic = true;
       nixpkgs.config.allowUnfree = true;
     }
+
     platforms.${os}.modules
+
     ../overlays.nix
+    ../profiles/${profile}
     ../hosts/${host}.nix
+    (builtins.filter builtins.pathExists [
+      ../hosts/hardware-configurations/${host}.nix
+    ])
+
     {
       home-manager.extraSpecialArgs = {
         inherit ctx inputs outputs;
       };
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      # home-manager.users.${user} = lib.mkMerge [
-      # ];
+      home-manager.users.${user} = lib.mkMerge [
+        ../users/${user}.nix
+      ];
     }
-    ../users/${user}.nix
   ];
 
   specialArgs = {
