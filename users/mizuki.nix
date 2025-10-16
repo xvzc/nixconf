@@ -33,20 +33,19 @@ in
             ForwardAgent yes
             IdentitiesOnly yes
             IdentityFile ~/${pubkeys.personal.path}
-            # IdentityAgent ${vars.ssh._1password.agent}
 
           Host ${pubkeys.work.name}.github.com
             HostName github.com
             ForwardAgent yes
             IdentitiesOnly yes
             IdentityFile ~/${pubkeys.work.path}
-            # IdentityAgent ${vars.ssh._1password.agent}
 
 
+          # Add the option below when "test -z $SSH_TTY" evaluates to true 
+          # (i.e., when the string length of $SSH_TTY is zero),
+          # indicating that the current shell is not running in an SSH session.
           Match Host * exec "test -z $SSH_TTY"
             IdentityAgent ${_1password.agent}
-
         '';
-
     };
 }
