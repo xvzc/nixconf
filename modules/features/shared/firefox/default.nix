@@ -1,9 +1,6 @@
+{ lib, ctx, ... }:
 {
-  lib,
-  ctx,
-  ...
-}:
-{
+
   imports = [
     ./host.nix
   ];

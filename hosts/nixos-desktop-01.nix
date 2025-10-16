@@ -81,11 +81,13 @@ in
     };
   };
 
-  desktop = {
+  hardware.profiles = {
     cpu = "amd";
     gpu = "nvidia";
     audio = "pipewire";
   };
+
+  wm.hyprland.enable = true;
 
   system.stateVersion = "25.05";
 }

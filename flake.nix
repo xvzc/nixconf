@@ -48,13 +48,15 @@
           user = "kazusa";
           host = "macbook-air-m2";
           os = "darwin";
+          wm = "yabai";
         }
         {
           profile = "dev";
           system = "x86_64-linux";
           user = "mizuki";
           host = "nixos-desktop-01";
-          os = "nixos";
+          os = "linux";
+          wm = "hyprland";
         }
         # {
         #   system = "x86_64-linux";

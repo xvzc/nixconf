@@ -13,21 +13,21 @@
     ../../modules/features/shared/jetbrains
     ../../modules/features/shared/kitty
     ../../modules/features/shared/wezterm
-    ../../modules/features/shared/1password.nix
-    ../../modules/features/shared/discord.nix
-    ../../modules/features/shared/firefox.nix
+    ../../modules/features/shared/1password
+    ../../modules/features/shared/discord
+    ../../modules/features/shared/firefox
 
     ../../modules/features/shared/git
     ../../modules/features/shared/zsh
-    ../../modules/features/shared/bat.nix
-    ../../modules/features/shared/direnv.nix
-    ../../modules/features/shared/eza.nix
-    ../../modules/features/shared/fd.nix
-    ../../modules/features/shared/fzf.nix
+    ../../modules/features/shared/bat
+    ../../modules/features/shared/direnv
+    ../../modules/features/shared/eza
+    ../../modules/features/shared/fd
+    ../../modules/features/shared/fzf
     # ../../modules/features/shared/ssh.nix
 
     ../../modules/features/shared/tmux
-    ../../modules/features/shared/neovim.nix
+    ../../modules/features/shared/neovim
 
   ];
 

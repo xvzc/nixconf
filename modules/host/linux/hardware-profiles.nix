@@ -9,7 +9,7 @@ let
   cfg = config.hardware.profiles;
 in
 {
-  options.hdarware.profiles = with lib; {
+  options.hardware.profiles = with lib; {
     cpu = mkOption {
       type =
         with types;

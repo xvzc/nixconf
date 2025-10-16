@@ -8,9 +8,9 @@
   imports = [
     ./overlays.nix
 
-    ../../../modules/features/linux/kime.nix
-    ../../../modules/features/linux/chrony.nix
+    ../../../modules/features/linux/chrony
     ../../../modules/features/linux/hypr
+    ../../../modules/features/linux/kime
     ../../../modules/features/linux/rofi
   ];
 

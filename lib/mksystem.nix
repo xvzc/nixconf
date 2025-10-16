@@ -13,7 +13,14 @@
 }@args:
 let
   inherit (nixpkgs) lib;
-  ctx = { inherit (args) user host os; };
+  ctx = {
+    inherit (args)
+      user
+      host
+      os
+      wm
+      ;
+  };
 
   platforms = {
     darwin = {
@@ -24,7 +31,7 @@ let
       ];
     };
 
-    nixos = {
+    linux = {
       builder = nixpkgs.lib.nixosSystem;
       modules = [
         inputs.home-manager.nixosModules.home-manager
