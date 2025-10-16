@@ -37,7 +37,7 @@
         tmuxinator.enable = true;
 
         prefix = "C-a";
-        terminal = "wezterm";
+        terminal = "tmux-256color";
         baseIndex = 1;
         disableConfirmationPrompt = false;
         escapeTime = 10; # Default
