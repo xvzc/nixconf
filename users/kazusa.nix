@@ -44,7 +44,7 @@ in
             IdentityAgent ${_1password.agent}
 
           Host ${pubkeys.desktop.name}
-            HostName ${pubkeys.desktop.name}.xvzc.dev
+            HostName home.xvzc.dev
             User mizuki
             ForwardAgent yes
             IdentitiesOnly yes

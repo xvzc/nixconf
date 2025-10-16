@@ -24,7 +24,7 @@
     ../../modules/features/shared/eza.nix
     ../../modules/features/shared/fd.nix
     ../../modules/features/shared/fzf.nix
-    ../../modules/features/shared/ssh.nix
+    # ../../modules/features/shared/ssh.nix
 
     ../../modules/features/shared/tmux
     ../../modules/features/shared/neovim.nix
