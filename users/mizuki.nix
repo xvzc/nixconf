@@ -33,14 +33,14 @@ in
             ForwardAgent yes
             IdentitiesOnly yes
             IdentityFile ~/${pubkeys.personal.path}
-            IdentityAgent ${vars.ssh._1password.agent}
+            # IdentityAgent ${vars.ssh._1password.agent}
 
           Host ${pubkeys.work.name}.github.com
             HostName github.com
             ForwardAgent yes
             IdentitiesOnly yes
             IdentityFile ~/${pubkeys.work.path}
-            IdentityAgent ${vars.ssh._1password.agent}
+            # IdentityAgent ${vars.ssh._1password.agent}
 
 
           Match Host * exec "test -z $SSH_TTY"
