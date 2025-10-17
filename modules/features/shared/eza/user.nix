@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ lib, pkgs, ... }:
 {
   programs.eza = {
     enable = true;
@@ -10,9 +10,9 @@
   };
 
   programs.zsh.shellAliases = {
-    l = "ls";
-    ll = "eza -alX";
-    la = "eza -a";
+    l = "${pkgs.eza}/bin/eza";
+    ll = "${pkgs.eza}/bin/eza -alX";
+    la = "${pkgs.eza}/bin/eza -a";
   };
 
   home.sessionVariables = {

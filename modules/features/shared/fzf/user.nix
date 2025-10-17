@@ -67,12 +67,15 @@
   };
 
   programs.zsh.initContent =
-    lib.mkOrder 1500 # sh
+    let
+      zshOrder = 1002;
+    in
+    lib.mkOrder zshOrder # sh
       ''
         function fvi() {
           out=$( \
-            fd -L --type f --hidden --relative-path --follow --exclude .git $1 \
-              | fzf \
+            ${pkgs.fd}/bin/fd -L --type f --hidden --relative-path --follow --exclude .git $1 \
+              | ${pkgs.fzf}/bin/fzf \
               --preview 'bat --style=numbers --color=always --line-range :500 {}' \
               --query=$1 \
           )
@@ -82,8 +85,8 @@
 
         function fcd() {
           out=$( \
-            fd -L --type d --hidden --relative-path \
-              | fzf \
+            ${pkgs.fd}/bin/fd -L --type d --hidden --relative-path \
+              | ${pkgs.fzf}/bin/fzf \
               --preview='eza --tree --only-dirs {}' \
               --query=$1 \
           )

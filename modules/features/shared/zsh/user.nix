@@ -2,6 +2,7 @@
   lib,
   pkgs,
   ctx,
+  config,
   ...
 }:
 let
@@ -67,7 +68,7 @@ in
 
     envExtra = # sh
       ''
-        setopt no_global_rcs
+        # setopt no_global_rcs
         setopt AUTO_PUSHD
         setopt pushdsilent # Omit printing directory stack
         setopt pushdminus  # Invert meanings of +N and -N arguments to pushd
@@ -76,12 +77,6 @@ in
     shellAliases = lib.genAttrs (builtins.map toString (lib.range 0 9)) (n: "cd -${n} &> /dev/null");
 
     initContent = lib.mkMerge [
-      (lib.mkBefore # sh
-        ''
-          [[ -n "$ZPROF" ]] && zmodload zsh/zprof
-        ''
-      )
-
       (lib.mkOrder 550 # sh
         ''
           fpath+=($HOME/${customCompletionPath})
@@ -160,7 +155,7 @@ in
           zstyle :prompt:pure:prompt:success color '#f5b5f4'
           zstyle :prompt:pure:execution_time color '#fadf32'
 
-          autoload -U promptinit; promptinit
+          # autoload -U is in /etc/zshrc
           prompt pure
         ''
       )
@@ -175,19 +170,11 @@ in
         ''
       )
 
-      (lib.mkOrder 1500 # sh
+      (lib.mkOrder 1001 # sh
         ''
           function timezsh() {
             shell=''${1-$SHELL}
             for i in $(seq 1 100); do time $shell -i -c exit; done
-          }
-        ''
-      )
-
-      (lib.mkOrder 1500 # sh
-        ''
-          function nfu() {
-            nix flake update nvim-xvzc assets --flake $NIXCONF_DIR
           }
         ''
       )
@@ -203,12 +190,6 @@ in
               . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
             fi
           fi
-        ''
-      )
-
-      (lib.mkOrder 9999 # sh
-        ''
-          [[ -n "$ZPROF" ]] && zprof
         ''
       )
     ];

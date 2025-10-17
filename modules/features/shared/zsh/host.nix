@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   environment.pathsToLink = [
     "/share/zsh"
@@ -10,24 +10,33 @@
 
   programs.zsh = {
     enable = true;
-    enableCompletion = true;
+    enableCompletion = false;
+    enableLsColors = false;
     shellAliases = {
-      nic = "nix flake check";
+      nic = "${pkgs.nix}/bin/nix flake check";
+      nfu = "${pkgs.nix}/bin/nix flake update nvim-xvzc assets --flake $NIXCONF_DIR";
     };
     shellInit = # sh
       ''
-        function nis() {
-          platform=$(uname)
-          if [[ "$platform" == 'Darwin' ]]; then
-            nix build \
-              "$NIXCONF_DIR#darwinConfigurations.$HOST.system" \
-              -o $NIXCONF_DIR/result &&
-              sudo "$NIXCONF_DIR/result/sw/bin/darwin-rebuild" switch \
-                --flake "$NIXCONF_DIR#$HOST"
-          elif [[ "$platform" == 'Linux' ]]; then
-            sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 \
-              nixos-rebuild switch --flake "$NIXCONF_DIR#$HOST"
-          fi
+        ${lib.optionalString pkgs.stdenv.isDarwin # sh
+          ''
+            function nis() {
+              ${pkgs.nix}/bin/nix build \
+                "$NIXCONF_DIR#darwinConfigurations.$HOST.system" \
+                -o $NIXCONF_DIR/result \
+                && sudo "$NIXCONF_DIR/result/sw/bin/darwin-rebuild" switch \
+                  --flake "$NIXCONF_DIR#$HOST"
+            }
+          ''
+        }
+
+        ${lib.optionalString pkgs.stdenv.isLinux # sh
+          ''
+            function nis() {
+              sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 \
+                ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake "$NIXCONF_DIR#$HOST"
+            }
+          ''
         }
       '';
   };
