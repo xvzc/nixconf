@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   xdg.configFile."tmux/scripts" = {
     source = ./_files/scripts;
@@ -19,10 +19,16 @@
     tks = "tmux kill-session -t";
     tss = "tmux -u switch -t";
     tns = "tmux -u new -c ~ -A -s";
-    tls = "tmux ls";
-    tis = "tmuxinator start";
-    til = "tmuxinator ls";
+    tls = "tmux ls ";
   };
+
+  programs.zsh.initContent =
+    lib.mkOrder 1003 # sh
+      ''
+        function tis() {
+          tmuxinator start $1 --suppress-tmux-version-warning;
+        }
+      '';
 
   programs.tmux = {
     enable = true;
@@ -30,6 +36,7 @@
 
     prefix = "C-a";
     terminal = "tmux-256color";
+    # terminal = "kitty";
     baseIndex = 1;
     disableConfirmationPrompt = false;
     escapeTime = 10; # Default

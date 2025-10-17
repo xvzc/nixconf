@@ -68,7 +68,7 @@ in
 
     envExtra = # sh
       ''
-        # setopt no_global_rcs
+        setopt no_global_rcs
         setopt AUTO_PUSHD
         setopt pushdsilent # Omit printing directory stack
         setopt pushdminus  # Invert meanings of +N and -N arguments to pushd
@@ -156,6 +156,7 @@ in
           zstyle :prompt:pure:execution_time color '#fadf32'
 
           # autoload -U is in /etc/zshrc
+          autoload -U promptinit; promptinit
           prompt pure
         ''
       )

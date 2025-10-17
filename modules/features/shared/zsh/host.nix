@@ -11,13 +11,17 @@
   programs.zsh = {
     enable = true;
     enableCompletion = false;
-    enableLsColors = false;
-    shellAliases = {
-      nic = "${pkgs.nix}/bin/nix flake check";
-      nfu = "${pkgs.nix}/bin/nix flake update nvim-xvzc assets --flake $NIXCONF_DIR";
-    };
+    promptInit = "";
     shellInit = # sh
       ''
+        function nfu() {
+          ${pkgs.nix}/bin/nix flake update nvim-xvzc assets --flake $NIXCONF_DIR
+        }
+
+        function nic() {
+          ${pkgs.nix}/bin/nix flake check
+        }
+
         ${lib.optionalString pkgs.stdenv.isDarwin # sh
           ''
             function nis() {
