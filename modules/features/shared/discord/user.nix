@@ -19,7 +19,7 @@
     in
     # sh
     ''
-      TARGET_DIR="${configDir.${ctx.os}}";
+      TARGET_DIR="${configDir.${ctx.platform}}";
       SETTINGS_FILE="$TARGET_DIR/settings.json"
 
       run mkdir -p "$TARGET_DIR"

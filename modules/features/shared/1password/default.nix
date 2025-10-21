@@ -1,16 +1,11 @@
 {
-  config,
   ctx,
   lib,
   ...
 }:
 {
   imports = [
-    ./host.nix
+    ./system.nix
+    { home-manager.users.${ctx.user} = ./user.nix; }
   ];
-
-  home-manager.users.${ctx.user} = lib.mkMerge [
-    ./user.nix
-  ];
-
 }

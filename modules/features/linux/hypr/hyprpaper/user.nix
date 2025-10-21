@@ -16,7 +16,6 @@ lib.mkIf osConfig.wm.hyprland.enable {
 
       preload = [
         config.wallpaper.source
-
       ];
       # let
       #   wallpapersDir = "${inputs.assets}/wallpapers";

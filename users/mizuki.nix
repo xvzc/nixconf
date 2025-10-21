@@ -23,7 +23,8 @@ in
       "${pubkeys.personal.path}".text = pubkeys.personal.text;
       "${pubkeys.work.path}".text = pubkeys.work.text;
       "${pubkeys.desktop.path}".text = pubkeys.desktop.text;
-      ".ssh/config".text = # sshconfig
+      ".ssh/config".text =
+        # sshconfig
         ''
 
           Include ~/.ssh/config.d/*
@@ -41,7 +42,7 @@ in
             IdentityFile ~/${pubkeys.work.path}
 
 
-          # Add the option below when "test -z $SSH_TTY" evaluates to true 
+          # Add the option below when "test -z $SSH_TTY" evaluates to true
           # (i.e., when the string length of $SSH_TTY is zero),
           # indicating that the current shell is not running in an SSH session.
           Match Host * exec "test -z $SSH_TTY"

@@ -5,7 +5,8 @@
   ...
 }:
 {
-  xdg.configFile."1Password/ssh/agent.toml".text = # toml
+  xdg.configFile."1Password/ssh/agent.toml".text =
+    # toml
     ''
       [[ssh-keys]]
       vault = "Personal"

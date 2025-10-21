@@ -1,4 +1,7 @@
-{ stdenv, fetchzip }:
+{
+  stdenv,
+  fetchzip,
+}:
 (stdenv.mkDerivation {
   pname = "nanum-square-neo";
   version = "0.0";

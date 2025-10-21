@@ -1,13 +1,12 @@
-{ pkgs, lib, ... }:
 {
-
+  pkgs,
+  lib,
+  ...
+}:
+{
   programs.firefox = {
     enable = true;
     package = lib.mkIf pkgs.stdenv.isDarwin null;
-    nativeMessagingHosts = [
-      pkgs._1password-gui
-      pkgs._1password
-    ];
 
     profiles.default = {
       id = 0;

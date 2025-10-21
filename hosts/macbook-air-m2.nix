@@ -5,6 +5,10 @@
   ...
 }:
 {
+  imports = [
+   ../modules/system/darwin/preferences.nix
+  ];
+
   # The user should already exist, but we need to set
   # this up so Nix knows what our home directory is.
   # https://github.com/LnL7/nix-darwin/issues/423
@@ -27,7 +31,7 @@
   system.defaults.dock = {
     persistent-others = lib.mkForce [ ];
     persistent-apps = [
-      "/Applications/Firefox.app"
+      "/Applications/Firefox.app" # LEAVE THIS AS IT IS!!
       "${pkgs.spotify}/Applications/Spotify.app"
       "${pkgs.kitty}/Applications/kitty.app"
     ];

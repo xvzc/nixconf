@@ -1,6 +1,4 @@
-{
-  ...
-}:
+{ ... }:
 {
   i18n = {
     defaultLocale = "en_US.UTF-8";
@@ -9,7 +7,8 @@
       type = "kime";
       kime = {
         iconColor = "White";
-        extraConfig = # yaml
+        extraConfig =
+          # yaml
           ''
             log:
               global_level: DEBUG

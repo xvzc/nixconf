@@ -8,6 +8,7 @@
   # See, https://github.com/nix-darwin/nix-darwin/blob/master/modules/programs/_1password-gui.nix
   system.activationScripts.applications.text = lib.optionalString pkgs.stdenv.isDarwin (
     lib.mkAfter # sh
+
       ''
         install -o root -g wheel -m0555 -d "/Applications/Firefox.app"
 

@@ -1,4 +1,8 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  ...
+}:
 let
   inherit (config.lib.formats.rasi) mkLiteral;
 in

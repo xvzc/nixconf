@@ -30,19 +30,15 @@
         };
 
     _1password = {
-      signer =
-        {
-          darwin = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
-          linux = "${pkgs._1password-gui}/bin/op-ssh-sign";
-        }
-        .${ctx.os};
+      signer = builtins.getAttr ctx.platform {
+        darwin = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+        linux = "${pkgs._1password-gui}/bin/op-ssh-sign";
+      };
 
-      agent =
-        {
-          darwin = "\"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock\"";
-          linux = "~/.1password/agent.sock";
-        }
-        .${ctx.os};
+      agent = builtins.getAttr ctx.platform {
+        darwin = "\"~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock\"";
+        linux = "~/.1password/agent.sock";
+      };
     };
   };
 }

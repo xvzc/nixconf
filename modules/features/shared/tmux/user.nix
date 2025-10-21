@@ -1,4 +1,8 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 {
   xdg.configFile."tmux/scripts" = {
     source = ./_files/scripts;
@@ -24,6 +28,7 @@
 
   programs.zsh.initContent =
     lib.mkOrder 1003 # sh
+
       ''
         function tis() {
           tmuxinator start $1 --suppress-tmux-version-warning;
@@ -50,7 +55,8 @@
     plugins = [
       {
         plugin = pkgs.tmuxPlugins.catppuccin;
-        extraConfig = # tmux
+        extraConfig =
+          # tmux
           ''
             set -g @catppuccin_flavor "macchiato"
             set -g @catppuccin_status_background "none"

@@ -135,7 +135,8 @@
     AppleCapsLockSwitchToLastInputSource = false;
   };
 
-  system.activationScripts.userDefaults.text = # sh
+  system.activationScripts.userDefaults.text =
+    # sh
     ''
       # Disable dictation
       /usr/bin/defaults write \

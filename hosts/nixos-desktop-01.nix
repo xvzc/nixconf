@@ -8,7 +8,7 @@ let
 in
 {
   imports = [
-    ../modules/host/linux/hardware-profiles.nix
+    ../modules/system/linux/hardware-profiles.nix
   ];
 
   boot.kernelPackages = pkgs.linuxPackages;

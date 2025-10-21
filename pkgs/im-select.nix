@@ -1,4 +1,7 @@
-{ stdenv, fetchurl }:
+{
+  stdenv,
+  fetchurl,
+}:
 let
   baseurl = "https://raw.githubusercontent.com";
 

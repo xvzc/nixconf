@@ -9,7 +9,6 @@ let
   vars = import ../../../../vars.nix { inherit pkgs ctx; };
 in
 {
-
   home.file.".local/bin/git-auth".source = ./_files/scripts/git-auth;
 
   programs.gh = {

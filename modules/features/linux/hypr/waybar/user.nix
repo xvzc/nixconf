@@ -1,4 +1,8 @@
-{ osConfig, lib, ... }:
+{
+  osConfig,
+  lib,
+  ...
+}:
 {
   xdg.configFile."waybar/scripts/cputemp" = {
     source = ./_files/scripts/cputemp;
@@ -116,7 +120,8 @@
       }
     ];
 
-    style = # css
+    style =
+      # css
       ''
         @define-color accent-bright rgb(249, 226, 176);
         @define-color accent-dim rgb(133, 118, 93);

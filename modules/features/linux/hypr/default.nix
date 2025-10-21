@@ -1,17 +1,16 @@
 {
   lib,
   ctx,
-  config,
   ...
 }:
 {
   options.wm.hyprland = {
-    enable = lib.mkEnableOption "Whether to enable hyprland";
-    default = false;
+    enable = lib.mkEnableOption "Whether to enable 'hyprland'";
   };
 
   imports = [
-    ./host.nix
+    ./system.nix
+    { home-manager.users.${ctx.user} = ./user.nix; }
 
     ./hypridle
     ./hyprland
@@ -19,11 +18,4 @@
     ./hyprpaper
     ./waybar
   ];
-
-  config = lib.mkIf config.wm.hyprland.enable {
-    home-manager.users.${ctx.user} = lib.mkMerge [
-      ./user.nix
-    ];
-  };
-
 }

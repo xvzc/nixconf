@@ -71,6 +71,7 @@
       zshOrder = 1002;
     in
     lib.mkOrder zshOrder # sh
+
       ''
         function fvi() {
           out=$( \

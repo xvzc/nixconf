@@ -1,8 +1,6 @@
-{
-  ...
-}:
+{ ... }:
 {
   imports = [
-    ./host.nix
+    ./system.nix
   ];
 }

@@ -66,7 +66,8 @@ in
       };
     };
 
-    envExtra = # sh
+    envExtra =
+      # sh
       ''
         setopt no_global_rcs
         setopt AUTO_PUSHD
@@ -78,6 +79,7 @@ in
 
     initContent = lib.mkMerge [
       (lib.mkOrder 550 # sh
+
         ''
           fpath+=($HOME/${customCompletionPath})
           fpath+=(${pkgs.pure-prompt})
@@ -85,10 +87,11 @@ in
       )
 
       (lib.mkOrder 1000 # sh
+
         ''
-          # ┌─────────┐ 
-          # │ VI-MODE │ 
-          # └─────────┘ 
+          # ┌─────────┐
+          # │ VI-MODE │
+          # └─────────┘
           BLOCK='\e[1 q'
           BEAM='\e[5 q'
           function zle-line-init zle-keymap-select {
@@ -122,10 +125,11 @@ in
       )
 
       (lib.mkOrder 1000 # sh
+
         ''
-          # ┌────────┐ 
-          # │ STYLES │ 
-          # └────────┘ 
+          # ┌────────┐
+          # │ STYLES │
+          # └────────┘
           # Set LSCOLORS
           eval "$(dircolors -b)"
 
@@ -162,16 +166,18 @@ in
       )
 
       (lib.mkOrder 1000 # sh
+
         ''
-          # ┌──────────────────┐ 
-          # │ OPTIONAL SCRIPTS │ 
-          # └──────────────────┘ 
+          # ┌──────────────────┐
+          # │ OPTIONAL SCRIPTS │
+          # └──────────────────┘
           [ -f $HOME/.secrets ] && source "$HOME/.secrets"
           [ -f $HOME/.zmutable ] && source "$HOME/.zmutable"
         ''
       )
 
       (lib.mkOrder 1001 # sh
+
         ''
           function timezsh() {
             shell=''${1-$SHELL}
@@ -181,9 +187,10 @@ in
       )
 
       (lib.mkOrder 9999 # sh
+
         ''
           # When macOS is updated, it will typically overwrite '/etc/zshrc'.
-          # Because of this known issue, we check if nix-darwin environment 
+          # Because of this known issue, we check if nix-darwin environment
           # variables are properly loaded and source 'nix-daemon.sh' if not.
           # https://nix.dev/guides/troubleshooting#macos-update-breaks-nix-installation
           if [ -z "''${__NIX_DARWIN_SET_ENVIRONMENT_DONE-}" ]; then

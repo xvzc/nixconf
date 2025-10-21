@@ -25,7 +25,8 @@ in
       "${pubkeys.work.path}".text = pubkeys.work.text;
       "${pubkeys.desktop.path}".text = pubkeys.desktop.text;
 
-      ".ssh/config".text = # sshconfig
+      ".ssh/config".text =
+        # sshconfig
         ''
           Include ~/.ssh/config.d/*
 

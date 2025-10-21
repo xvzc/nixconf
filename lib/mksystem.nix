@@ -3,21 +3,21 @@
   inputs,
   outputs,
 }:
+host:
 {
+  platform,
   profile,
   system,
   user,
-  host,
-  os,
   ...
 }@args:
 let
   inherit (nixpkgs) lib;
   ctx = {
+    inherit host;
     inherit (args)
       user
-      host
-      os
+      platform
       wm
       ;
   };
@@ -39,7 +39,7 @@ let
     };
   };
 in
-platforms.${os}.builder {
+platforms.${platform}.builder {
   inherit system;
 
   modules = lib.lists.flatten [
@@ -49,7 +49,7 @@ platforms.${os}.builder {
       nixpkgs.config.allowUnfree = true;
     }
 
-    platforms.${os}.modules
+    platforms.${platform}.modules
 
     ../overlays.nix
     ../profiles/${profile}
@@ -64,9 +64,7 @@ platforms.${os}.builder {
       };
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      home-manager.users.${user} = lib.mkMerge [
-        ../users/${user}.nix
-      ];
+      home-manager.users.${user} = ../users/${user}.nix;
     }
   ];
 

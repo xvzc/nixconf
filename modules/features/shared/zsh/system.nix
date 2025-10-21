@@ -1,4 +1,8 @@
-{ pkgs, lib, ... }:
+{
+  pkgs,
+  lib,
+  ...
+}:
 {
   environment.pathsToLink = [
     "/share/zsh"
@@ -12,7 +16,8 @@
     enable = true;
     enableCompletion = false;
     promptInit = "";
-    shellInit = # sh
+    shellInit =
+      # sh
       ''
         function nfu() {
           ${pkgs.nix}/bin/nix flake update nvim-xvzc assets --flake $NIXCONF_DIR
@@ -23,6 +28,7 @@
         }
 
         ${lib.optionalString pkgs.stdenv.isDarwin # sh
+
           ''
             function nis() {
               ${pkgs.nix}/bin/nix build \
@@ -35,6 +41,7 @@
         }
 
         ${lib.optionalString pkgs.stdenv.isLinux # sh
+
           ''
             function nis() {
               sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 \

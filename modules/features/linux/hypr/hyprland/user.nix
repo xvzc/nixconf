@@ -82,7 +82,7 @@ lib.mkIf osConfig.wm.hyprland.enable {
         "$mod1 $mod2 $mod3, r, exec, hyprctl reload"
 
         "$mod1, Return, exec, $terminal"
-        "$mod2, w, killactive"
+        "$mod2, q, killactive"
         ", Pause, exec, hyprlock"
 
         #sh

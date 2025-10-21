@@ -1,6 +1,5 @@
 {
   lib,
-  pkgs,
   ctx,
   ...
 }:
@@ -14,23 +13,7 @@
     ../../../modules/features/linux/rofi
   ];
 
-  environment.systemPackages = with pkgs; [
-    lm_sensors
-    pamixer
-    dig
+  home-manager.users.${ctx.user} = lib.mkMerge [
+    ./user.nix
   ];
-
-  virtualisation.docker.enable = true;
-
-
-  home-manager.users.${ctx.user} =
-    { ... }:
-    {
-      home.packages = with pkgs; [
-        feh
-        electron-chromedriver_35
-        wine
-        clipse
-      ];
-    };
 }

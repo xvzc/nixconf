@@ -1,12 +1,8 @@
-{ inputs, pkgs, ... }:
-let
-  nightly = pkgs.neovim-nightly.overrideAttrs (old: {
-    meta = old.meta or { } // {
-      maintainers = [ ];
-    };
-  });
-
-in
+{
+  inputs,
+  pkgs,
+  ...
+}:
 {
   xdg.configFile."nvim-xvzc" = {
     source = inputs.nvim-xvzc;
@@ -20,11 +16,27 @@ in
 
   programs.neovim = {
     enable = true;
-    package = nightly;
     defaultEditor = true;
-    # extraPackages = with pkgs; [
-    # ];
-    extraPython3Packages = pyPkgs: with pyPkgs; [ pynvim ];
+    extraPackages = with pkgs; [
+      lua-language-server
+      stylua
+
+      nixd
+      nixfmt-rfc-style
+
+      bash-language-server
+      shellcheck
+      shfmt
+    ];
+
+    extraPython3Packages =
+      pyPkgs: with pyPkgs; [
+        pynvim
+        python-lsp-server
+        black
+        flake8
+      ];
+
     viAlias = true;
     withPython3 = true;
   };

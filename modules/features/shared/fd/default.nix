@@ -1,6 +1,10 @@
-{ lib, ctx, ... }:
 {
-  home-manager.users.${ctx.user} = lib.mkMerge [
-    ./user.nix
+  lib,
+  ctx,
+  ...
+}:
+{
+  imports = [
+    { home-manager.users.${ctx.user} = ./user.nix; }
   ];
 }

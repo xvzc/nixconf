@@ -16,7 +16,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    neovim-nightly.url = "github:nix-community/neovim-nightly-overlay";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
     nvim-xvzc = {
       url = "github:xvzc/nvim";
@@ -39,64 +39,33 @@
       inherit (self) outputs;
       inherit (nixpkgs) lib;
 
-      mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs outputs; };
-
-      configurations = [
-        {
-          profile = "dev";
-          system = "aarch64-darwin";
-          user = "kazusa";
-          host = "macbook-air-m2";
-          os = "darwin";
-          wm = "yabai";
-        }
-        {
-          profile = "dev";
-          system = "x86_64-linux";
-          user = "mizuki";
-          host = "nixos-desktop-01";
-          os = "linux";
-          wm = "hyprland";
-        }
-        # {
-        #   system = "x86_64-linux";
-        #   user = "nezuko";
-        #   host = "nixos-desktop-02";
-        #   os = "nixos";
-        # }
-        # {
-        #   system = "x86_64-linux";
-        #   user = "nezuko";
-        #   host = "kube-master-01";
-        # }
-        # {
-        #   system = "x86_64-linux";
-        #   user = "nezuko";
-        #   host = "kube-worker-01";
-        # }
-        # {
-        #   system = "x86_64-linux";
-        #   user = "nezuko";
-        #   host = "kube-worker-02";
-        # }
+      linuxSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
       ];
+      darwinSystems = [
+        "aarch64-darwin"
+      ];
+      allSystems = linuxSystems ++ darwinSystems;
+      forSystems = systems: f: nixpkgs.lib.genAttrs systems f;
+
+      mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs outputs; };
     in
     {
-      # ┌─────────┐
-      # │ OUTPUTS │
-      # └─────────┘
-      darwinConfigurations = lib.listToAttrs (
-        lib.map (c: {
-          name = c.host;
-          value = mkSystem c;
-        }) (lib.filter (x: builtins.elem x.system lib.platforms.darwin) configurations)
-      );
+      darwinConfigurations.macbook-air-m2 = mkSystem "macbook-air-m2" {
+        platform = "darwin";
+        profile = "dev";
+        system = "aarch64-darwin";
+        user = "kazusa";
+        wm = "yabai";
+      };
 
-      nixosConfigurations = lib.listToAttrs (
-        lib.map (c: {
-          name = c.host;
-          value = mkSystem c;
-        }) (lib.filter (x: builtins.elem x.system lib.platforms.linux) configurations)
-      );
+      nixosConfigurations.nixos-desktop-01 = mkSystem "nixos-desktop-01" {
+        platform = "linux";
+        profile = "dev";
+        system = "x86_64-linux";
+        user = "mizuki";
+        wm = "hyprland";
+      };
     };
 }

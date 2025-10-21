@@ -29,7 +29,6 @@
           ../../../patches/rofi-power-menu.patch
         ];
       });
-
     })
   ];
 }

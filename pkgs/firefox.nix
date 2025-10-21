@@ -6,7 +6,6 @@
   undmg,
   ...
 }:
-
 let
   pname = "Firefox web browser";
   version = "144.0";
@@ -24,13 +23,11 @@ let
         url = "${baseUrl}/${version}/mac/en-US/Firefox%20${version}.dmg";
         sha256 = "sha256-HkRLgJIbyZnVbAWn3swer4jAKXysW5BBYpmvLHf17Mk=";
       };
-
     };
   meta = {
     description = "Firefox browser";
   };
 in
-
 stdenv.mkDerivation {
   inherit pname version meta;
 
