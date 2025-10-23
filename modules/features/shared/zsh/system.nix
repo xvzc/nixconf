@@ -28,7 +28,6 @@
         }
 
         ${lib.optionalString pkgs.stdenv.isDarwin # sh
-
           ''
             function nis() {
               ${pkgs.nix}/bin/nix build \
@@ -41,13 +40,17 @@
         }
 
         ${lib.optionalString pkgs.stdenv.isLinux # sh
-
           ''
             function nis() {
               sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 \
-                ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch --flake "$NIXCONF_DIR#$HOST"
+                ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch \
+                --flake "$NIXCONF_DIR#$HOST"
             }
           ''
+        }
+
+        function nid() {
+          nix develop $NIXCONF_DIR#$1
         }
       '';
   };

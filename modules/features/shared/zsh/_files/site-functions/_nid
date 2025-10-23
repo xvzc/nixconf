@@ -1,0 +1,14 @@
+#compdef nid
+
+_nid() {
+  local -a options
+
+  options=( \
+    $( \
+    nix flake show $NIXCONF_DIR --json &> /dev/null \
+      | jq -r ".devShells[\"$NIXPKGS_SYSTEM\"] | keys[]" \
+      ) \
+    )
+
+  _describe "command" options
+}

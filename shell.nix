@@ -6,4 +6,9 @@ pkgs.mkShell {
     nixd
     nixfmt-rfc-style
   ];
+
+  shellHook = # sh
+    ''
+      export name="nix:config"
+    '';
 }

@@ -57,7 +57,6 @@
         profile = "dev";
         system = "aarch64-darwin";
         user = "kazusa";
-        wm = "yabai";
       };
 
       nixosConfigurations.nixos-desktop-01 = mkSystem "nixos-desktop-01" {
@@ -65,7 +64,35 @@
         profile = "dev";
         system = "x86_64-linux";
         user = "mizuki";
-        wm = "hyprland";
       };
+
+      devShells.aarch64-darwin.neovim-developer =
+        let
+          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+        in
+        pkgs.mkShell {
+          inputsFrom = [
+            inputs.neovim-nightly-overlay.devShells.aarch64-darwin.default
+          ];
+
+          buildInputs = with pkgs; [
+            python313Packages.pynvim
+            lua-language-server
+          ];
+
+          shellHook = # sh
+            ''
+              url="$(git config --get remote.origin.url 2>/dev/null || true)"
+              if ! printf '%s' "$url" | grep -Eq "github.com/.*/neovim.git"; then
+                [[ $(basename $(pwd)) != 'neovim' ]] && rm -rf runtime
+                echo "Not a neovim repository" >&2 
+                exit 1
+              fi
+
+              export name="nix:neovim-developer"
+              exec zsh
+            '';
+        };
+
     };
 }

@@ -6,11 +6,10 @@
   ...
 }:
 let
-  customCompletionPath = ".local/share/zsh/site-functions";
 in
 {
   home.file = {
-    "${customCompletionPath}" = {
+    ".local/share/zsh/site-functions" = {
       source = ./_files/site-functions;
       recursive = true;
     };
@@ -22,10 +21,9 @@ in
 
   programs.zsh = {
     enable = true;
-    zprof.enable = false;
     enableCompletion = true;
+    completionInit = "autoload -Uz compinit && zsh-defer compinit -C";
 
-    completionInit = "autoload -Uz compinit && compinit -C";
     history = {
       append = true;
       expireDuplicatesFirst = true;
@@ -78,16 +76,34 @@ in
     shellAliases = lib.genAttrs (builtins.map toString (lib.range 0 9)) (n: "cd -${n} &> /dev/null");
 
     initContent = lib.mkMerge [
-      (lib.mkOrder 550 # sh
-
+      (lib.mkOrder 00000 # sh
         ''
-          fpath+=($HOME/${customCompletionPath})
+          alias ztime="ENABLE_ZPROF=1 zsh -i -c exit"
+          [[ -n "$ENABLE_ZPROF" ]] && zmodload zsh/zprof || true
+        ''
+      )
+      (lib.mkOrder 10000 # sh
+        ''
+          [[ -n "$ENABLE_ZPROF" ]] && zprof || true
+          [[ -n "$ENABLE_ZPROF" ]] && zmodload -u zsh/zprof || true
+          unset ENABLE_ZPROF
+        ''
+      )
+
+      (lib.mkOrder 550 # sh
+        ''
+          fpath+=($HOME/.local/share/zsh/site-functions)
           fpath+=(${pkgs.pure-prompt})
         ''
       )
 
-      (lib.mkOrder 1000 # sh
+      (lib.mkOrder 551 # sh
+        ''
+          source "${pkgs.zsh-defer}/share/zsh-defer/zsh-defer.plugin.zsh"
+        ''
+      )
 
+      (lib.mkOrder 1000 # sh
         ''
           # ┌─────────┐
           # │ VI-MODE │
@@ -166,7 +182,6 @@ in
       )
 
       (lib.mkOrder 1000 # sh
-
         ''
           # ┌──────────────────┐
           # │ OPTIONAL SCRIPTS │
@@ -176,18 +191,7 @@ in
         ''
       )
 
-      (lib.mkOrder 1001 # sh
-
-        ''
-          function timezsh() {
-            shell=''${1-$SHELL}
-            for i in $(seq 1 100); do time $shell -i -c exit; done
-          }
-        ''
-      )
-
       (lib.mkOrder 9999 # sh
-
         ''
           # When macOS is updated, it will typically overwrite '/etc/zshrc'.
           # Because of this known issue, we check if nix-darwin environment

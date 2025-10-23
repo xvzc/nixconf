@@ -3,11 +3,11 @@
     "assets": {
       "flake": false,
       "locked": {
-        "lastModified": 1750209594,
-        "narHash": "sha256-ozSQTvQ/k1fHNh81ceOHjmwrXwHe6Z/YbrDp+8JALNE=",
+        "lastModified": 1760644083,
+        "narHash": "sha256-GcOiLqAjwdJl4b2pVxptgUI9qUK54v1z9D4KWMcZVJY=",
         "owner": "xvzc",
         "repo": "assets",
-        "rev": "c3c9e30d2a3664415a02f5fa56c9e0e7894028d0",
+        "rev": "4de6be2fc1b9d408977fd03d4d1a108c924b7f13",
         "type": "github"
       },
       "original": {
@@ -307,11 +307,11 @@
     "nvim-xvzc": {
       "flake": false,
       "locked": {
-        "lastModified": 1749387641,
-        "narHash": "sha256-peH3a/F2ketsYfG1cgnRchuqosV+2A5RXT3M1nX7P9g=",
+        "lastModified": 1761148277,
+        "narHash": "sha256-snFVy2jcbjvz+q/egnsOe0FZlVNVJXyInqDW5Lipq7E=",
         "owner": "xvzc",
         "repo": "nvim",
-        "rev": "7e66db62c1117b260306650bb20524eafc9faa5e",
+        "rev": "cb3d228f82544dc6c02e1871fb9ff2efbc6780e7",
         "type": "github"
       },
       "original": {

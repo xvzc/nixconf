@@ -203,6 +203,26 @@
         enabled = false;
       };
 
+      "79" = {
+        description = "Move left a Space (⌃ + ←)";
+        enabled = false;
+      };
+
+      "80" = {
+        description = "Move right a Space (⌃ + →)";
+        enabled = false;
+      };
+
+      "81" = {
+        description = "Mission Control – Show Dashboard";
+        enabled = false;
+      };
+
+      "82" = {
+        description = "Mission Control – Notification Center";
+        enabled = false;
+      };
+
       "118" = {
         description = "Trigger Spotlight finder search";
         enabled = true;
@@ -214,6 +234,25 @@
             262144
           ];
         };
+      };
+      "119" = {
+        description = "Mission Control – Show All Windows";
+        enabled = false;
+      };
+
+      "120" = {
+        description = "Mission Control – Application Windows";
+        enabled = false;
+      };
+
+      "121" = {
+        description = "Mission Control – Show Desktop";
+        enabled = false;
+      };
+
+      "122" = {
+        description = "Mission Control – Dashboard Toggle";
+        enabled = false;
       };
     };
   };
