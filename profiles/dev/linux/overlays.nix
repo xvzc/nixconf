@@ -16,6 +16,18 @@
       waybar = final.unstable.waybar;
       hyprland = final.unstable.hyprland;
 
+      discord = final.unstable.discord.overrideAttrs (old: {
+        postInstall = ''
+          ${old.postInstall or ""}
+          wrapProgram $out/bin/Discord \
+            --add-flags "--ozone-platform=x11"
+
+          ${old.postInstall or ""}
+          wrapProgram $out/bin/discord \
+            --add-flags "--ozone-platform=x11"
+        '';
+      });
+
       _1password-gui = final.unstable._1password-gui.overrideAttrs (old: {
         postInstall = ''
           ${old.postInstall or ""}

@@ -43,13 +43,24 @@ config.color_scheme = "Miami"
 config.font = wezterm.font_with_fallback({
 	"JetBrainsMonoNL NF",
 	"NanumSquare Neo",
-  "D2Coding",
+	"D2Coding",
 })
 
 config.keys = {
 	{ key = "-", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
 	{ key = "=", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
-	-- { key = "f", mods = "CTRL|CMD|ALT", action = wezterm.action.ToggleFullScreen },
+	{ key = "-", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "=", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
+	{
+		key = "Tab",
+		mods = "CTRL",
+		action = wezterm.action.SendKey({ key = "Tab", mods = "CTRL" }),
+	},
+	{
+		key = "Tab",
+		mods = "SHIFT|CTRL",
+		action = wezterm.action.SendKey({ key = "Tab", mods = "SHIFT|CTRL" }),
+	},
 }
 
 if is_darwin then
@@ -78,6 +89,7 @@ end
 if is_linux then
 	config.font_size = 12.2
 	config.window_decorations = "NONE"
+	config.enable_wayland = false
 	config.window_padding = {
 		left = 0,
 		right = 0,
