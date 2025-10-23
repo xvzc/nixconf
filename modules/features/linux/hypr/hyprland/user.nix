@@ -23,6 +23,7 @@ lib.mkIf osConfig.wm.hyprland.enable {
 
       general = {
         no_focus_fallback = true;
+        "col.active_border" = "rgba(68f938cc) rgba(68f938cc) 0deg";
       };
 
       misc = {
