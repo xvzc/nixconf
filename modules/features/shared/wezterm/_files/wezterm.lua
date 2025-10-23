@@ -66,6 +66,7 @@ config.keys = {
 if is_darwin then
 	config.font_size = 12.5
 	config.window_decorations = "RESIZE | MACOS_FORCE_SQUARE_CORNERS"
+	-- config.window_decorations = "RESIZE"
 	config.window_padding = {
 		left = is_darwin and 6 or 0,
 		right = 0,

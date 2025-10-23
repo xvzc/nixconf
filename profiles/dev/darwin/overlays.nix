@@ -14,6 +14,7 @@
       firefox = final.callPackage ../../../pkgs/firefox.nix { };
       skhd = final.unstable.skhd;
       yabai = final.unstable.yabai;
+      jankyborders = final.unstable.jankyborders;
     })
   ];
 }
