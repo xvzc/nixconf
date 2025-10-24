@@ -33,7 +33,7 @@
     persistent-apps = [
       "/Applications/Firefox.app" # LEAVE THIS AS IT IS!!
       "${pkgs.spotify}/Applications/Spotify.app"
-      "${pkgs.kitty}/Applications/kitty.app"
+      "${pkgs.wezterm}/Applications/WezTerm.app"
     ];
   };
 
