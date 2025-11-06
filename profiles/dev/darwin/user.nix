@@ -10,12 +10,6 @@
     "₩" = [ "insertText:" ] ++ [ "`" ];
   };
 
-  home.sessionVariables = {
-    NIXPKGS_SYSTEM = pkgs.system;
-    NIXCONF_DIR = "$HOME/nixconf";
-    PIP_REQUIRE_VIRTUALENV = "true";
-  };
-
   home.packages = with pkgs; [
     pngpaste
     im-select

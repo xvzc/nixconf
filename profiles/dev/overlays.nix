@@ -29,25 +29,9 @@
       tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
       wezterm = final.unstable.wezterm;
 
-      clang-tools = prev.clang-tools.overrideAttrs (old: {
-        installPhase = ''
-          export CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH:${inputs.assets}/clang/include"
-        ''
-        + old.installPhase;
-      });
-
-      # python312 = prev.python312.override {
-      #   packageOverrides = pyfinal: pyprev: {
-      #     python-lsp-server = pyprev.python-lsp-server.overridePythonAttrs (old: {
-      #       dependencies = old.dependencies ++ [
-      #         pyfinal.black
-      #       ];
-      #     });
-      #   };
-      # };
-      #
       _1password-cli = final.unstable._1password-cli;
       _1password-gui = final.unstable._1password-gui;
+      zjstatus = inputs.zjstatus.packages.${prev.system}.default;
     })
   ];
 }

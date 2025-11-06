@@ -61,6 +61,11 @@ config.keys = {
 		mods = "SHIFT|CTRL",
 		action = wezterm.action.SendKey({ key = "Tab", mods = "SHIFT|CTRL" }),
 	},
+	{
+		key = "Enter",
+		mods = "ALT",
+		action = wezterm.action.DisableDefaultAssignment,
+	},
 }
 
 if is_darwin then

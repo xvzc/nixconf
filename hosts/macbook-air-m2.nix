@@ -6,7 +6,7 @@
 }:
 {
   imports = [
-   ../modules/system/darwin/preferences.nix
+    ../modules/system/darwin/preferences.nix
   ];
 
   # The user should already exist, but we need to set

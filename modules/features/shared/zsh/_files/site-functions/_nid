@@ -5,8 +5,8 @@ _nid() {
 
   options=( \
     $( \
-    nix flake show $NIXCONF_DIR --json &> /dev/null \
-      | jq -r ".devShells[\"$NIXPKGS_SYSTEM\"] | keys[]" \
+    nix flake show $NIXOS_CONFIG --json &> /dev/null \
+      | jq -r ".devShells[\"$NIXOS_SYSTEM\"] | keys[]" \
       ) \
     )
 

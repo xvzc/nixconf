@@ -30,7 +30,7 @@ in
       }
     ];
 
-    extraConfig = {
+    settings = {
       user = {
         name = "xvzc";
         email = "me@xvzc.dev";

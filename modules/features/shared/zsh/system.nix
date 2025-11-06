@@ -20,7 +20,7 @@
       # sh
       ''
         function nfu() {
-          ${pkgs.nix}/bin/nix flake update nvim-xvzc assets --flake $NIXCONF_DIR
+          ${pkgs.nix}/bin/nix flake update nvim-xvzc assets --flake $NIXOS_CONFIG
         }
 
         function nic() {
@@ -31,10 +31,10 @@
           ''
             function nis() {
               ${pkgs.nix}/bin/nix build \
-                "$NIXCONF_DIR#darwinConfigurations.$HOST.system" \
-                -o $NIXCONF_DIR/result \
-                && sudo "$NIXCONF_DIR/result/sw/bin/darwin-rebuild" switch \
-                  --flake "$NIXCONF_DIR#$HOST"
+                "$NIXOS_CONFIG#darwinConfigurations.$HOST.system" \
+                -o $NIXOS_CONFIG/result \
+                && sudo "$NIXOS_CONFIG/result/sw/bin/darwin-rebuild" switch \
+                  --flake "$NIXOS_CONFIG#$HOST"
             }
           ''
         }
@@ -44,13 +44,13 @@
             function nis() {
               sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 \
                 ${pkgs.nixos-rebuild}/bin/nixos-rebuild switch \
-                --flake "$NIXCONF_DIR#$HOST"
+                --flake "$NIXOS_CONFIG#$HOST"
             }
           ''
         }
 
         function nid() {
-          nix develop $NIXCONF_DIR#$1
+          nix develop $NIXOS_CONFIG#$1
         }
       '';
   };

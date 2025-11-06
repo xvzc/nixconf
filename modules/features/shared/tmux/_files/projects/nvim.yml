@@ -1,12 +1,20 @@
+# order: 3
 name: nvim
 root: ~/.config/nvim
 
-pre_window: export NVIM_APPNAME=nvim && tmux setenv NVIM_APPNAME $NVIM_APPNAME
+pre_window: |
+  export NVIM_APPNAME=nvim \
+    && tmux setenv NVIM_APPNAME $NVIM_APPNAME \
+    && tmux setenv PROJECT_ROOT ~/.config/nvim
 windows:
-  - editor:
-      layout: main-vertical
-      panes:
-        - editor:
-          - nvim
-  - shell:
-      layout: main-vertical
+  - main:
+    # No panes defined, so it starts with one pane
+
+# windows:
+#   - editor:
+#       layout: main-vertical
+#       panes:
+#         - editor:
+#           - nvim
+#   - shell:
+#       layout: main-vertical

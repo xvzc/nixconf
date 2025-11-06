@@ -10,16 +10,14 @@
   };
 
   home.packages = with pkgs; [
-    jq
-    ripgrep
-    tree
-
-    clang-tools
-
-    # jetbrains.idea-community-bin
-    slack
-    spotify
     cava
     fastfetch
+    gemini-cli
+    jq
+    ripgrep
+    slack
+    spotify
+    tree
+    vscode
   ];
 }

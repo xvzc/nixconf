@@ -12,11 +12,14 @@
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.05";
+      # url = "github:nix-community/home-manager/release-25.05";
+      url = "github:nix-community/home-manager?rev=64020f453bdf3634bf88a6bbce7f3e56183c8b2b";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+
+    zjstatus.url = "github:dj95/zjstatus";
 
     nvim-xvzc = {
       url = "github:xvzc/nvim";

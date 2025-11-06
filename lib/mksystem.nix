@@ -64,7 +64,10 @@ platforms.${platform}.builder {
       };
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
-      home-manager.users.${user} = ../users/${user}.nix;
+      home-manager.users.${user} = lib.mkMerge [
+        ../users/${user}.nix
+        { home.enableNixpkgsReleaseCheck = false; }
+      ];
     }
   ];
 

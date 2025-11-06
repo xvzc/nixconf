@@ -28,10 +28,14 @@
 
   programs.zsh.initContent =
     lib.mkOrder 1003 # sh
-
       ''
         function tis() {
-          tmuxinator start $1 --suppress-tmux-version-warning;
+          if [ -z "$1" ]; then
+            session='general'
+          else
+            session=$1
+          fi
+          tmuxinator start $session --suppress-tmux-version-warning;
         }
       '';
 
@@ -41,7 +45,6 @@
 
     prefix = "C-a";
     terminal = "tmux-256color";
-    # terminal = "kitty";
     baseIndex = 1;
     disableConfirmationPrompt = false;
     escapeTime = 10; # Default

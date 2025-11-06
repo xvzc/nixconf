@@ -138,6 +138,9 @@
   system.activationScripts.userDefaults.text =
     # sh
     ''
+      # Disable input source switch popup
+      /usr/bin/defaults write kCFPreferencesAnyApplication TSMLanguageIndicatorEnabled 0
+
       # Disable dictation
       /usr/bin/defaults write \
         com.apple.HIToolbox \

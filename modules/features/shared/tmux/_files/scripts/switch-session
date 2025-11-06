@@ -1,15 +1,21 @@
-#!/bin/sh
+#!/bin/zsh
 
-selected=$( \
-  tmux ls -f '#{&&:#{!=:#{session_name},scratch},#{==:#{session_attached},0}}' \
-    | awk '{ print substr($1, 0, length($1) - 1) }' \
-    | fzf-tmux \
-      -p20%,20% \
-      --preview ''
+tmux if-shell -F '#{==:#{session_name},scratch}' detach-client
+
+selected=$(
+  for f in ~/.config/tmux/projects/*; do
+    [ -f "$f" ] || continue
+    order=$(head -n1 "$f" | awk -F': ' '/^# *order:/ {print $2}')
+    basename="$(basename ${f%.*})"
+    echo "${order:-9999} $basename"
+  done | sort -n | awk '{print $2}' |
+    fzf-tmux \
+    -p40,13 \
+    --preview ''
 )
 
-if [[ -z $selected ]]; then
+if [[ -z "$selected" ]]; then
   exit 0
 fi
 
-tmux switch -t "$selected"
+tmuxinator start "$selected" --suppress-tmux-version-warning

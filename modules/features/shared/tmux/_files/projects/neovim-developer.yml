@@ -1,0 +1,6 @@
+name: neovim
+root: ~/personal/neovim
+
+pre_window: tmux setenv PROJECT_ROOT ~/personal/neovim
+windows:
+  - main:

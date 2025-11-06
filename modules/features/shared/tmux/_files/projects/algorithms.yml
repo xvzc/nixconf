@@ -1,0 +1,8 @@
+# order: 100
+name: algorithms
+root: ~/personal/algorithms
+
+pre_window: tmux setenv PROJECT_ROOT ~/personal/algorithms
+windows:
+  - main:
+    # No panes defined, so it starts with one pane

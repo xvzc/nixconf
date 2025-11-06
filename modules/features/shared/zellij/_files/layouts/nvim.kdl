@@ -1,0 +1,20 @@
+env {
+    PROJECT_DIR "~/.config/nvim"
+}
+
+layout {
+    // cwd "~/.config/nvim"
+    cwd "~/.config/nvim"
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="zjstatus"
+        }
+        children
+    }
+    tab {
+        pane split_direction="vertical" {
+            pane
+            pane command="nvim" close_on_exit=true
+        }
+    }
+}
