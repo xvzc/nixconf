@@ -12,7 +12,7 @@
     gnupg
     home-manager
     htop
-    openssh
+    unstable.openssh
     unzip
     vim
     wget

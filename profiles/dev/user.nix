@@ -16,6 +16,7 @@
     jq
     ripgrep
     slack
+    spoofdpi
     spotify
     tree
     vscode

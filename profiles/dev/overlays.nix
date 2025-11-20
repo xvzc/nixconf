@@ -10,6 +10,7 @@
   nixpkgs.overlays = lib.mkBefore [
     (final: prev: {
       nanum-square-neo = final.callPackage ../../pkgs/nanum-square-neo.nix { };
+      spoofdpi = final.callPackage ../../pkgs/spoofdpi.nix { };
 
       bash-language-server = final.unstable.bash-language-server;
       firefox = final.unstable.firefox-bin;

@@ -200,7 +200,6 @@
         description = "Trigger Spotlight";
         enabled = false;
       };
-
       "65" = {
         description = "Trigger Spotlight finder search";
         enabled = false;
@@ -225,39 +224,17 @@
         description = "Mission Control – Notification Center";
         enabled = false;
       };
-
-      "118" = {
-        description = "Trigger Spotlight finder search";
-        enabled = true;
-        value = {
-          type = "standard";
-          parameters = [
-            65535
-            18
-            262144
-          ];
-        };
-      };
-      "119" = {
-        description = "Mission Control – Show All Windows";
+    }
+    // lib.genAttrs (builtins.genList (i: builtins.toString (i + 118)) 10) (
+      name:
+      let
+        seq = lib.strings.toInt name - 118 + 1;
+      in
+      {
         enabled = false;
-      };
-
-      "120" = {
-        description = "Mission Control – Application Windows";
-        enabled = false;
-      };
-
-      "121" = {
-        description = "Mission Control – Show Desktop";
-        enabled = false;
-      };
-
-      "122" = {
-        description = "Mission Control – Dashboard Toggle";
-        enabled = false;
-      };
-    };
+        description = "Disable move to space ${builtins.toString seq}";
+      }
+    );
   };
 
   # - MISC - #
