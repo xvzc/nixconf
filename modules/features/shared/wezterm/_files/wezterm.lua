@@ -68,6 +68,43 @@ config.keys = {
 	},
 }
 
+local kor_to_eng = {
+	["ㅂ"] = "q",
+	["ㅈ"] = "w",
+	["ㄷ"] = "e",
+	["ㄱ"] = "r",
+	["ㅅ"] = "t",
+	["ㅛ"] = "y",
+	["ㅕ"] = "u",
+	["ㅑ"] = "i",
+	["ㅐ"] = "o",
+	["ㅔ"] = "p",
+	["ㅁ"] = "a",
+	["ㄴ"] = "s",
+	["ㅇ"] = "d",
+	["ㄹ"] = "f",
+	["ㅎ"] = "g",
+	["ㅗ"] = "h",
+	["ㅓ"] = "j",
+	["ㅏ"] = "k",
+	["ㅣ"] = "l",
+	["ㅋ"] = "z",
+	["ㅌ"] = "x",
+	["ㅊ"] = "c",
+	["ㅍ"] = "v",
+	["ㅠ"] = "b",
+	["ㅜ"] = "n",
+	["ㅡ"] = "m",
+}
+
+for kor, eng in pairs(kor_to_eng) do
+	table.insert(config.keys, {
+		key = kor,
+		mods = "CTRL",
+		action = wezterm.action.SendKey({ key = eng, mods = "CTRL" }),
+	})
+end
+
 if is_darwin then
 	config.font_size = 12.5
 	config.window_decorations = "RESIZE | MACOS_FORCE_SQUARE_CORNERS"

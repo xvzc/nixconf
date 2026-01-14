@@ -2,18 +2,18 @@
   description = "NixOS configurations";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     nix-darwin = {
-      url = "github:LnL7/nix-darwin/nix-darwin-25.05";
+      url = "github:LnL7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
 
     home-manager = {
-      # url = "github:nix-community/home-manager/release-25.05";
-      url = "github:nix-community/home-manager?rev=64020f453bdf3634bf88a6bbce7f3e56183c8b2b";
+      url = "github:nix-community/home-manager/release-25.11";
+      # url = "github:nix-community/home-manager?rev=64020f453bdf3634bf88a6bbce7f3e56183c8b2b";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 

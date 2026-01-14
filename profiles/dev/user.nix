@@ -10,15 +10,16 @@
   };
 
   home.packages = with pkgs; [
-    cava
+    # cava
     fastfetch
     gemini-cli
     jq
     ripgrep
     slack
-    spoofdpi
+    # spoofdpi
     spotify
     tree
     vscode
+    antigravity
   ];
 }

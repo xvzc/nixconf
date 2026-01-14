@@ -11,8 +11,8 @@
 
   fonts.packages = with pkgs; [
     noto-fonts
+    noto-fonts-color-emoji
     font-awesome
-    noto-fonts-emoji
     material-design-icons
     nanum-square-neo
     d2coding

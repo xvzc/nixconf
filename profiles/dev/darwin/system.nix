@@ -20,7 +20,7 @@
     enable = true;
 
     casks = [
-      "docker"
+      # "docker"
       "duckduckgo"
     ];
 

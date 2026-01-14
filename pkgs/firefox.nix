@@ -8,7 +8,7 @@
 }:
 let
   pname = "Firefox web browser";
-  version = "144.0";
+  version = "145.0.2";
 
   message = {
     notSupported = "${stdenv.hostPlatform.system} is not supported";
@@ -21,7 +21,7 @@ let
     {
       aarch64-darwin = fetchurl {
         url = "${baseUrl}/${version}/mac/en-US/Firefox%20${version}.dmg";
-        sha256 = "sha256-HkRLgJIbyZnVbAWn3swer4jAKXysW5BBYpmvLHf17Mk=";
+        sha256 = "sha256-gPWFH5DeiNG40nKZywo/87n/N3TCdd4mdfZRg0vZIos=";
       };
     };
   meta = {
