@@ -20,7 +20,7 @@
     ../../modules/features/shared/fd
     ../../modules/features/shared/firefox
     ../../modules/features/shared/fzf
-    ../../modules/features/shared/ghostty
+    # ../../modules/features/shared/ghostty
     ../../modules/features/shared/git
     ../../modules/features/shared/jetbrains
     ../../modules/features/shared/kitty

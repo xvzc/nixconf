@@ -1,4 +1,5 @@
 {
+  pkgs,
   ...
 }:
 {
@@ -6,10 +7,13 @@
 
   programs.ghostty = {
     enable = true;
+    package = if pkgs.stdenv.isDarwin then null else pkgs.ghostty;
     # clearDefaultKeybinds = true;
     settings = {
       theme = "miami";
       custom-shader = "shaders/cursor_warp.glsl";
+      window-decoration = false;
+      macos-titlebar-style = "hidden";
       # font-size = 10;
       # keybind = [
       #   "ctrl+h=goto_split:left"
