@@ -132,13 +132,14 @@ end
 if is_linux then
 	config.font_size = 12.2
 	config.window_decorations = "NONE"
-	config.enable_wayland = false
 	config.window_padding = {
 		left = 0,
 		right = 0,
 		top = 0,
 		bottom = 0,
 	}
+
+	config.enable_wayland = false
 end
 
 return recursive_merge(config, mutable)

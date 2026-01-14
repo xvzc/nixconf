@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env zsh
 
 tmux if-shell -F '#{==:#{session_name},scratch}' detach-client
 

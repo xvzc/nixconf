@@ -2,7 +2,8 @@
 {
   home.packages = with pkgs; [
     feh
-    electron-chromedriver_35
+    # electron-chromedriver_35
+    desktop-file-utils
     wine
     clipse
   ];

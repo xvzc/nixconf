@@ -13,9 +13,14 @@ lib.mkIf osConfig.wm.hyprland.enable {
       "$mod1" = "SUPER";
       "$mod2" = "ALT";
       "$mod3" = "CONTROL";
-      "$terminal" = "wezterm";
+      "$terminal" = "ghostty";
       # "$terminal" = "wezterm";
       # "$terminal" = "env -u WAYLAND_DISPLAY wezterm";
+
+      ecosystem = {
+        no_update_news = true;
+        no_donation_nag = true;
+      };
 
       debug = {
         disable_logs = false;

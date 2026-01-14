@@ -13,6 +13,7 @@
     # cava
     fastfetch
     gemini-cli
+    google-chrome
     jq
     ripgrep
     slack

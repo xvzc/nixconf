@@ -18,16 +18,17 @@
 
   environment.systemPackages = with pkgs; [
     dunst
-    nautilus
+    xfce.thunar
     wl-clipboard
   ];
+
+  services.dbus.packages = with pkgs; [ xfce.xfconf ];
 
   services = {
     xserver.enable = true;
 
     greetd = {
       enable = true;
-      vt = 3;
       settings =
         let
           tuigreetBin = "${pkgs.greetd.tuigreet}/bin/tuigreet";

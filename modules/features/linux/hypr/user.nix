@@ -5,6 +5,27 @@
     hyprshot
   ];
 
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      # "inode/directory" = "org.gnome.Nautilus.desktop";
+      "inode/directory" = "thunar.desktop";
+    };
+  };
+
+  xdg.portal = {
+    enable = true;
+    config = {
+      common = {
+        default = "gtk"; # Use the GTK (GNOME) file picker
+        # "org.freedesktop.impl.portal.FileChooser" = "org.gnome.Nautilus";
+        "org.freedesktop.impl.portal.FileChooser" = "thunar";
+      };
+    };
+    # Define a portal backend for Gnome
+    extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
+  };
+
   home.pointerCursor = {
     gtk.enable = true;
     x11.enable = true;
@@ -16,6 +37,10 @@
 
   gtk = {
     enable = true;
+    theme = {
+      package = pkgs.unstable.orchis-theme;
+      name = "Orchis-Grey-Dark";
+    };
     iconTheme = {
       package = pkgs.unstable.tela-icon-theme;
       name = "Tela";
