@@ -13,9 +13,21 @@ lib.mkIf osConfig.wm.hyprland.enable {
       "$mod1" = "SUPER";
       "$mod2" = "ALT";
       "$mod3" = "CONTROL";
-      "$terminal" = "ghostty";
+      "$terminal" = "wezterm";
       # "$terminal" = "wezterm";
       # "$terminal" = "env -u WAYLAND_DISPLAY wezterm";
+
+      general = {
+        layout = "master";
+        no_focus_fallback = true;
+        "col.active_border" = "rgba(68f938cc) rgba(68f938cc) 0deg";
+      };
+
+      master = {
+        new_status = "slave";
+        orientation = "left";
+        mfact = "0.70";
+      };
 
       ecosystem = {
         no_update_news = true;
@@ -24,11 +36,6 @@ lib.mkIf osConfig.wm.hyprland.enable {
 
       debug = {
         disable_logs = false;
-      };
-
-      general = {
-        no_focus_fallback = true;
-        "col.active_border" = "rgba(68f938cc) rgba(68f938cc) 0deg";
       };
 
       misc = {
@@ -48,14 +55,15 @@ lib.mkIf osConfig.wm.hyprland.enable {
       animations = {
         enabled = true;
         animation = [
-          "workspaces, 1, 3, default, slidefade 10%"
+          "workspaces, 1, 1.5, default, slidefade 10%"
           "windows, 1, 2, default, popin 80%"
+          "fadeIn, 1, 0.5, default"
         ];
       };
 
       decoration = {
-        active_opacity = 0.97;
-        inactive_opacity = 0.90;
+        active_opacity = 0.98;
+        inactive_opacity = 0.93;
       };
 
       exec = [
@@ -73,16 +81,28 @@ lib.mkIf osConfig.wm.hyprland.enable {
       ];
 
       windowrule = [
+        {
+          name = "noblur";
+          "match:class" = "^()$";
+          "match:title" = "^()$";
+          no_blur = "on";
+        }
+        {
+          name = "untitled float";
+          "match:title" = "Not\ titled.*";
+          float = "on";
+          size = "300 200";
+        }
       ];
 
-      windowrulev2 = [
-        "noblur,class:^()$,title:^()$"
+      # windowrulev2 = [
+      # "noblur,class:^()$,title:^()$"
 
-        "float,title:(Not\ titled.*)"
-        "size 300 200,title:(Not\ titled.*)"
+      # "float,title:(Not\ titled.*)"
+      # "size 300 200,title:(Not\ titled.*)"
 
-        # "stayfocused, class:^(Rofi)$"
-      ];
+      # "stayfocused, class:^(Rofi)$"
+      # ];
 
       bind = [
         "$mod1 $mod2 $mod3, r, exec, hyprctl reload"

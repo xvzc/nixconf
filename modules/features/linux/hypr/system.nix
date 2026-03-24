@@ -31,7 +31,7 @@
       enable = true;
       settings =
         let
-          tuigreetBin = "${pkgs.greetd.tuigreet}/bin/tuigreet";
+          tuigreetBin = "${pkgs.tuigreet}/bin/tuigreet";
         in
         {
           default_session = {

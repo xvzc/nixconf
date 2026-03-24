@@ -4,7 +4,8 @@
   ...
 }:
 let
-  timeout = 3600;
+  screen_off_timeout = 3600;
+  lock_session_timeout = 3600 + 300;
 in
 lib.mkIf osConfig.wm.hyprland.enable {
   services.hypridle = {
@@ -27,12 +28,12 @@ lib.mkIf osConfig.wm.hyprland.enable {
 
       listener = [
         {
-          timeout = timeout;
+          timeout = screen_off_timeout;
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on";
         }
         {
-          timeout = timeout + 300;
+          timeout = lock_session_timeout;
           on-timeout = "loginctl lock-session";
         }
       ];

@@ -6,6 +6,7 @@
 {
   imports = [
     ./overlays.nix
+    ./system.nix
 
     ../../../modules/features/linux/chrony
     ../../../modules/features/linux/hypr

@@ -12,6 +12,9 @@ in
   ];
 
   boot.kernelPackages = pkgs.linuxPackages;
+  boot.kernelParams = [
+    "console=tty2"
+  ];
 
   boot.loader = {
     efi = {
