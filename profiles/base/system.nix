@@ -28,9 +28,9 @@
     (pkgs.python312.withPackages (
       ppkgs: with ppkgs; [
         pip
-        python-lsp-server
-        black
-        flake8
+        # python-lsp-server
+        # black
+        # flake8
       ]
     ))
   ];

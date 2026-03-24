@@ -9,6 +9,7 @@
   # └────────┘
   nixpkgs.overlays = lib.mkBefore [
     (final: prev: {
+      antigravity = final.unstable.antigravity;
       nanum-square-neo = final.callPackage ../../pkgs/nanum-square-neo.nix { };
       spoofdpi = final.callPackage ../../pkgs/spoofdpi.nix { };
 

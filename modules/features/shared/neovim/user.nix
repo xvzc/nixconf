@@ -33,7 +33,7 @@
       pyPkgs: with pyPkgs; [
         pynvim
         python-lsp-server
-        black
+        # black
         flake8
       ];
 

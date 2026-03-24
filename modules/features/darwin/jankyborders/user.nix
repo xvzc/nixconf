@@ -13,7 +13,7 @@
       hidpi = "on";
       active_color = "0xff7ffa5c";
       inactive_color = "0x00000000";
-      whitelist = "\"wezterm-gui,wezterm,WezTerm\"";
+      whitelist = "\"wezterm-gui,wezterm,WezTerm,Ghostty,ghostty,Ghostty.app\"";
       ax_focus = "on";
     };
   };

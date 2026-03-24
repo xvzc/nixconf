@@ -14,6 +14,7 @@
       custom-shader = "shaders/cursor_warp.glsl";
       window-decoration = false;
       macos-titlebar-style = "hidden";
+      # mouse-bind = "shift+left=open-link";
       # font-size = 10;
       # keybind = [
       #   "ctrl+h=goto_split:left"
