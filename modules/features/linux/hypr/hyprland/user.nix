@@ -88,8 +88,14 @@ lib.mkIf osConfig.wm.hyprland.enable {
           no_blur = "on";
         }
         {
-          name = "untitled float";
+          name = "force float for untitled windows";
           "match:title" = "Not\ titled.*";
+          float = "on";
+          size = "300 200";
+        }
+        {
+          name = "force float for setting windows";
+          "match:title" = "(?i)(setting|preference)";
           float = "on";
           size = "300 200";
         }
