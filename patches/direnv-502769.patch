@@ -1,0 +1,27 @@
+From a4fb16db2751d9c9e5f3512c697d2ac49d406789 Mon Sep 17 00:00:00 2001
+From: Omar Jatoi <git@omarjatoi.com>
+Date: Mon, 23 Mar 2026 14:54:54 -0400
+Subject: [PATCH] direnv: no external linkmode
+
+---
+ pkgs/by-name/di/direnv/package.nix | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/pkgs/by-name/di/direnv/package.nix b/pkgs/by-name/di/direnv/package.nix
+index 97f11d335be6d..096de4eec6a5c 100644
+--- a/pkgs/by-name/di/direnv/package.nix
++++ b/pkgs/by-name/di/direnv/package.nix
+@@ -28,6 +28,13 @@ buildGoModule (finalAttrs: {
+   # Build a static executable to avoid environment runtime impurities
+   env.CGO_ENABLED = 0;
+ 
++  # With CGO disabled the internal linker is used by default; remove the
++  # explicit -linkmode=external flag from the Makefile which is incompatible
++  # with CGO_ENABLED=0 (see https://github.com/NixOS/nixpkgs/pull/486452)
++  postPatch = ''
++    substituteInPlace GNUmakefile --replace-fail " -linkmode=external" ""
++  '';
++
+   # replace the build phase to use the GNUMakefile instead
+   buildPhase = ''
+     make BASH_PATH=$BASH_PATH

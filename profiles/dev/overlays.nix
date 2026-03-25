@@ -31,7 +31,7 @@
           else
             oldAttrs.src;
       });
-      tmux = prev.tmux.overrideAttrs (old: {
+      tmux = prev.tmux.overrideAttrs (oldAttrs: {
         src = prev.fetchFromGitHub {
           owner = "tmux";
           repo = "tmux";
@@ -44,7 +44,11 @@
 
       _1password-cli = final.unstable._1password-cli;
       _1password-gui = final.unstable._1password-gui;
-      # zjstatus = inputs.zjstatus.packages.${prev.system}.default;
+      direnv = prev.direnv.overrideAttrs (oldAttrs: {
+        postPatch = ''
+          substituteInPlace GNUmakefile --replace-fail " -linkmode=external" ""
+        '';
+      });
     })
   ];
 }
