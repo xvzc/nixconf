@@ -1,12 +1,12 @@
 {
+  osConfig,
   config,
   pkgs,
-  ctx,
   ...
 }:
 let
+  inherit (osConfig) vars;
   home = config.home.homeDirectory;
-  vars = import ../../../../vars.nix { inherit pkgs ctx; };
 in
 {
   home.file.".local/bin/git-auth".source = ./_files/scripts/git-auth;
@@ -52,7 +52,7 @@ in
       gpg = {
         format = "ssh";
         ssh = {
-          program = "${vars.ssh._1password.signer}";
+          program = "${vars._1password.signer}";
         };
       };
     };

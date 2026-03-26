@@ -52,6 +52,7 @@ platforms.${platform}.builder {
     platforms.${platform}.modules
 
     ../overlays.nix
+    ../modules/vars.nix
     ../profiles/${profile}
     ../hosts/${host}.nix
     (builtins.filter builtins.pathExists [

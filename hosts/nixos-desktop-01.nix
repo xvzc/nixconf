@@ -1,11 +1,9 @@
 {
   pkgs,
   ctx,
+  config,
   ...
 }:
-let
-  vars = import ../vars.nix { inherit ctx pkgs; };
-in
 {
   imports = [
     ../modules/system/linux/hardware-profiles.nix
@@ -36,7 +34,7 @@ in
     shell = pkgs.zsh;
     isNormalUser = true;
     openssh.authorizedKeys.keys = [
-      vars.ssh.pubkeys.desktop.text
+      config.vars.ssh.pubkeys.desktop.text
     ];
 
     extraGroups = [

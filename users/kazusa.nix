@@ -1,14 +1,8 @@
 {
-  ctx,
-  pkgs,
-  lib,
   inputs,
-  config,
+  osConfig,
   ...
 }:
-let
-  vars = import ../vars.nix { inherit pkgs ctx; };
-in
 {
   imports = [
     ../modules/user/wallpaper.nix
@@ -18,39 +12,39 @@ in
 
   home.file =
     let
-      inherit (vars.ssh) pubkeys _1password;
+      inherit (osConfig.vars) ssh _1password;
     in
     {
-      "${pubkeys.personal.path}".text = pubkeys.personal.text;
-      "${pubkeys.work.path}".text = pubkeys.work.text;
-      "${pubkeys.desktop.path}".text = pubkeys.desktop.text;
+      "${ssh.pubkeys.personal.path}".text = ssh.pubkeys.personal.text;
+      "${ssh.pubkeys.work.path}".text = ssh.pubkeys.work.text;
+      "${ssh.pubkeys.desktop.path}".text = ssh.pubkeys.desktop.text;
 
       ".ssh/config".text =
         # sshconfig
         ''
           Include ~/.ssh/config.d/*
 
-          Host ${pubkeys.personal.name}.github.com
+          Host ${ssh.pubkeys.personal.name}.github.com
             HostName github.com
             ForwardAgent yes
             IdentitiesOnly yes
-            IdentityFile ~/${pubkeys.personal.path}
+            IdentityFile ~/${ssh.pubkeys.personal.path}
             IdentityAgent ${_1password.agent}
 
-          Host ${pubkeys.work.name}.github.com
+          Host ${ssh.pubkeys.work.name}.github.com
             HostName github.com
             ForwardAgent yes
             IdentitiesOnly yes
-            IdentityFile ~/${pubkeys.work.path}
+            IdentityFile ~/${ssh.pubkeys.work.path}
             IdentityAgent ${_1password.agent}
 
-          Host ${pubkeys.desktop.name}
+          Host ${ssh.pubkeys.desktop.name}
             HostName home.xvzc.dev
             User mizuki
             ForwardAgent yes
             IdentitiesOnly yes
             StrictHostKeyChecking no
-            IdentityFile ~/${pubkeys.desktop.path}
+            IdentityFile ~/${ssh.pubkeys.desktop.path}
             IdentityAgent ${_1password.agent}
         '';
     };
