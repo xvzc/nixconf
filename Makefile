@@ -1,7 +1,6 @@
 SHELL := /bin/sh
 MAKEFLAGS += --no-print-directory
 
-SECRETS_DIR := .secrets
 CACHE_DIR := .cache
 
 HOSTS := \
@@ -88,40 +87,7 @@ update:
 # └───────────────┘ 
 clean: 
 	@rm -rf $(CACHE_DIR)
-	@rm -rf $(SECRETS_DIR)
-	@$(MAKE) _info MSG="Cleaned cache and secrets"
-
-# ┌───────────────┐ 
-# │ FETCH SECRETS │ 
-# └───────────────┘ 
-secrets: .secrets/loaded
-
-.secrets/loaded:
-	@$(MAKE) _load_secrets
-	@touch .secrets/loaded
-
-_load_secrets:
-	@$(MAKE) _info MSG="Fetching secrets into $(SECRETS_DIR)"
-	@mkdir -p "$(SECRETS_DIR)"
-	@$(MAKE) _check_1password
-	@mkdir -p "$(SECRETS_DIR)/cloudflare"
-	@op item get "Cloudflare" \
-		--vault "Personal" \
-		--field "token" \
-		--reveal >"$(SECRETS_DIR)/cloudflare/token" \
-		|| $(MAKE) _error "Cloudflare token fetch failed"
-	@$(MAKE) _info MSG="Secrets are all synced at $(SECRETS_DIR)"
-
-_check_1password:
-	@$(MAKE) _info MSG="Checking if 1Password CLI is installed"
-	@command -v op >/dev/null 2>&1 \
-		|| $(MAKE) _error MSG="1Password CLI (op) not found"
-	@$(MAKE) _info MSG="1Password is installed"
-
-	@$(MAKE) _info MSG="Checking login status"
-	@op whoami >/dev/null 2>&1 \
-		|| $(MAKE) _error MSG="Not signed into 1Password. Run 'op signin' first"
-	@$(MAKE) _info MSG="Login status confirmed"
+	@$(MAKE) _info MSG="Cleaned cache"
 
 _info:
 	@echo "[\033[0;32m\033[1mINFO\033[0m] $(MSG)"
