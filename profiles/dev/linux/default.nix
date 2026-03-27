@@ -8,10 +8,10 @@
     ./overlays.nix
     ./system.nix
 
-    ../../../modules/features/linux/chrony
-    ../../../modules/features/linux/hypr
-    ../../../modules/features/linux/kime
-    ../../../modules/features/linux/rofi
+    ../../../apps/linux/chrony
+    ../../../apps/linux/hypr
+    ../../../apps/linux/kime
+    ../../../apps/linux/rofi
   ];
 
   home-manager.users.${ctx.user} = lib.mkMerge [
