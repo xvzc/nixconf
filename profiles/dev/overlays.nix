@@ -44,6 +44,7 @@
 
       _1password-cli = final.unstable._1password-cli;
       _1password-gui = final.unstable._1password-gui;
+
       direnv = prev.direnv.overrideAttrs (oldAttrs: {
         postPatch = ''
           substituteInPlace GNUmakefile --replace-fail " -linkmode=external" ""
