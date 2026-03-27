@@ -30,6 +30,10 @@ in
       }
     ];
 
+    hooks = {
+      prepare-commit-msg = ./_files/hooks/prepare-commit-msg;
+    };
+
     settings = {
       user = {
         name = "xvzc";
