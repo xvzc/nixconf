@@ -5,7 +5,7 @@
   # │ GLOBAL OVERLAYS │
   # └─────────────────┘
   nixpkgs.overlays = [
-    inputs.neovim-nightly-overlay.overlays.default
+    # inputs.neovim-nightly-overlay.overlays.default
     (final: prev: {
       unstable =
         let
