@@ -7,10 +7,6 @@ let
   inherit (osConfig) vars;
 in
 {
-  imports = [
-    ../modules/user/wallpaper.nix
-  ];
-
   wallpaper.source = "${inputs.assets}/wallpapers/duckgirl-darkmode.jpg";
 
   home.file = {

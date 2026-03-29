@@ -1,5 +1,17 @@
-{ pkgs, inputs, ... }:
 {
+  pkgs,
+  inputs,
+  lib,
+  ...
+}:
+{
+  options.wallpaper = with lib; {
+    source = mkOption {
+      type = types.nullOr types.path;
+      default = null;
+    };
+  };
+
   home.sessionPath = [
     "$HOME/.local/share/JetBrains/Toolbox/scripts"
   ];
