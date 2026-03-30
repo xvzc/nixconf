@@ -40,17 +40,7 @@
     }@inputs:
     let
       inherit (self) outputs;
-      inherit (nixpkgs) lib;
-
-      linuxSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      darwinSystems = [
-        "aarch64-darwin"
-      ];
-      allSystems = linuxSystems ++ darwinSystems;
-      forSystems = systems: f: nixpkgs.lib.genAttrs systems f;
+      # inherit (nixpkgs) lib;
 
       mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs outputs; };
     in
@@ -67,6 +57,7 @@
         profile = "dev";
         system = "x86_64-linux";
         user = "mizuki";
+        useAge = false;
       };
 
       devShells.aarch64-darwin.neovim-developer =
