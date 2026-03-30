@@ -7,6 +7,7 @@
 {
   imports = [
     ../modules/system/linux/hardware-profiles.nix
+    ../apps/linux/tailscale
   ];
 
   boot.kernelPackages = pkgs.linuxPackages;
@@ -48,6 +49,8 @@
   networking = {
     hostName = ctx.host;
     useDHCP = false;
+    firewall.enable = true;
+    nftables.enable = true;
     networkmanager.enable = true;
     networkmanager.ensureProfiles.profiles = {
       # See `man nmcli`
