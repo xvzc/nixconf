@@ -10,7 +10,7 @@ in
   wallpaper.source = "${inputs.assets}/wallpapers/duckgirl-darkmode.jpg";
 
   home.file = {
-    "${vars.ssh.pubkeys.personal.path}".text = vars.ssh.pubkeys.personal.text;
+    "${vars.ssh.pubkeys.xvzc.path}".text = vars.ssh.pubkeys.xvzc.text;
     "${vars.ssh.pubkeys.work.path}".text = vars.ssh.pubkeys.work.text;
     "${vars.ssh.pubkeys.desktop.path}".text = vars.ssh.pubkeys.desktop.text;
     ".ssh/config".text =
@@ -19,11 +19,11 @@ in
 
         Include ~/.ssh/config.d/*
 
-        Host ${vars.ssh.pubkeys.personal.name}.github.com
+        Host ${vars.ssh.pubkeys.xvzc.name}.github.com
           HostName github.com
           ForwardAgent yes
           IdentitiesOnly yes
-          IdentityFile ~/${vars.ssh.pubkeys.personal.path}
+          IdentityFile ~/${vars.ssh.pubkeys.xvzc.path}
 
         Host ${vars.ssh.pubkeys.work.name}.github.com
           HostName github.com

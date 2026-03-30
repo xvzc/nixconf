@@ -31,7 +31,7 @@ with lib;
             text = "${v.algo} ${v.key}";
           })
           {
-            personal = {
+            xvzc = {
               algo = "ssh-ed25519";
               key = "AAAAC3NzaC1lZDI1NTE5AAAAIHZZ3IHZk+M07W5NhhKWLq0wmoFQ+xi4Mk8isnJcjVe5";
             };

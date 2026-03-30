@@ -11,7 +11,7 @@
       inherit (osConfig.vars) ssh _1password;
     in
     {
-      "${ssh.pubkeys.personal.path}".text = ssh.pubkeys.personal.text;
+      "${ssh.pubkeys.xvzc.path}".text = ssh.pubkeys.xvzc.text;
       "${ssh.pubkeys.work.path}".text = ssh.pubkeys.work.text;
       "${ssh.pubkeys.desktop.path}".text = ssh.pubkeys.desktop.text;
 
@@ -20,11 +20,11 @@
         ''
           Include ~/.ssh/config.d/*
 
-          Host ${ssh.pubkeys.personal.name}.github.com
+          Host ${ssh.pubkeys.xvzc.name}.github.com
             HostName github.com
             ForwardAgent yes
             IdentitiesOnly yes
-            IdentityFile ~/${ssh.pubkeys.personal.path}
+            IdentityFile ~/${ssh.pubkeys.xvzc.path}
             IdentityAgent ${_1password.agent}
 
           Host ${ssh.pubkeys.work.name}.github.com

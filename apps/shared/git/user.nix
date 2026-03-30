@@ -38,7 +38,7 @@ in
       user = {
         name = "xvzc";
         email = "me@xvzc.dev";
-        signingKey = "${home}/${vars.ssh.pubkeys.personal.path}";
+        signingKey = "${home}/${vars.ssh.pubkeys.xvzc.path}";
       };
 
       core = {
@@ -57,6 +57,11 @@ in
         format = "ssh";
         ssh = {
           program = "${vars._1password.signer}";
+        };
+      };
+      url = {
+        "git@xvzc.github.com:xvzc" = {
+          insteadOf = "git@github.com:xvzc";
         };
       };
     };
