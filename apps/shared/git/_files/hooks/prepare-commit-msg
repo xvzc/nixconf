@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
 TEMPLATE_FILE="$REPO_ROOT/.gitmessage"
