@@ -35,7 +35,7 @@
             IdentityAgent ${_1password.agent}
 
           Host ${ssh.pubkeys.desktop.name}
-            HostName home.xvzc.dev
+            HostName nixos-desktop-01.tailb7f463.ts.net
             User mizuki
             ForwardAgent yes
             IdentitiesOnly yes
