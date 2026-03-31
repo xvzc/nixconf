@@ -1,11 +1,10 @@
 {
-  osConfig,
+  auth,
   config,
   pkgs,
   ...
 }:
 let
-  inherit (osConfig) vars;
   home = config.home.homeDirectory;
 in
 {
@@ -38,7 +37,7 @@ in
       user = {
         name = "xvzc";
         email = "me@xvzc.dev";
-        signingKey = "${home}/${vars.ssh.pubkeys.xvzc.path}";
+        signingKey = "${home}/${auth.ssh.personal.path}";
       };
 
       core = {
@@ -56,14 +55,26 @@ in
       gpg = {
         format = "ssh";
         ssh = {
-          program = "${vars._1password.signer}";
+          program = (auth._1password { inherit pkgs; }).signer;
         };
       };
-      url = {
-        "git@xvzc.github.com:xvzc" = {
-          insteadOf = "git@github.com:xvzc";
-        };
-      };
+      url =
+        let
+          mkGithubUrlMappings =
+            names:
+            builtins.listToAttrs (
+              map (name: {
+                name = "git@${name}.github.com:${name}";
+                value = {
+                  insteadOf = "git@github.com:${name}";
+                };
+              }) names
+            );
+        in
+        mkGithubUrlMappings [
+          auth.ssh.personal.name
+          auth.ssh.work.name
+        ];
     };
   };
 }

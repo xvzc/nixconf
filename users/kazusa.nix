@@ -1,47 +1,52 @@
 {
   inputs,
-  osConfig,
+  auth,
+  pkgs,
   ...
 }:
 {
   wallpaper.source = "${inputs.assets}/wallpapers/shinra-kusakabe.jpg";
 
-  home.file =
-    let
-      inherit (osConfig.vars) ssh _1password;
-    in
-    {
-      "${ssh.pubkeys.xvzc.path}".text = ssh.pubkeys.xvzc.text;
-      "${ssh.pubkeys.work.path}".text = ssh.pubkeys.work.text;
-      "${ssh.pubkeys.desktop.path}".text = ssh.pubkeys.desktop.text;
+  programs.ssh = {
+    enable = true;
+    includes = [ "~/.ssh/config.d/*" ];
+    matchBlocks = {
+      "1password-agent" = {
+        host = "*";
+        match = ''exec "test -z $SSH_TTY"'';
+        identityAgent = (auth._1password { inherit pkgs; }).agent;
+      };
 
-      ".ssh/config".text =
-        # sshconfig
-        ''
-          Include ~/.ssh/config.d/*
+      "${auth.ssh.personal.name}.github.com" = {
+        hostname = "github.com";
+        forwardAgent = true;
+        identitiesOnly = true;
+        identityFile = "~/${auth.ssh.personal.path}";
+      };
 
-          Host ${ssh.pubkeys.xvzc.name}.github.com
-            HostName github.com
-            ForwardAgent yes
-            IdentitiesOnly yes
-            IdentityFile ~/${ssh.pubkeys.xvzc.path}
-            IdentityAgent ${_1password.agent}
+      "${auth.ssh.work.name}.github.com" = {
+        hostname = "github.com";
+        forwardAgent = true;
+        identitiesOnly = true;
+        identityFile = "~/${auth.ssh.work.path}";
+      };
 
-          Host ${ssh.pubkeys.work.name}.github.com
-            HostName github.com
-            ForwardAgent yes
-            IdentitiesOnly yes
-            IdentityFile ~/${ssh.pubkeys.work.path}
-            IdentityAgent ${_1password.agent}
-
-          Host ${ssh.pubkeys.desktop.name}
-            HostName nixos-desktop-01.tailb7f463.ts.net
-            User mizuki
-            ForwardAgent yes
-            IdentitiesOnly yes
-            StrictHostKeyChecking no
-            IdentityFile ~/${ssh.pubkeys.desktop.path}
-            IdentityAgent ${_1password.agent}
-        '';
+      "${auth.ssh.desktop.name}" = {
+        hostname = "nixos-desktop-01.tailb7f463.ts.net";
+        user = "mizuki";
+        forwardAgent = true;
+        identitiesOnly = true;
+        extraOptions = {
+          StrictHostKeyChecking = "no";
+        };
+        identityFile = "~/${auth.ssh.desktop.path}";
+      };
     };
+  };
+
+  home.file = {
+    "${auth.ssh.personal.path}".key = auth.ssh.personal.key;
+    "${auth.ssh.work.path}".key = auth.ssh.work.key;
+    "${auth.ssh.desktop.path}".key = auth.ssh.desktop.key;
+  };
 }

@@ -1,42 +1,41 @@
 {
   inputs,
-  osConfig,
+  auth,
+  pkgs,
   ...
 }:
-let
-  inherit (osConfig) vars;
-in
 {
   wallpaper.source = "${inputs.assets}/wallpapers/duckgirl-darkmode.jpg";
 
+  programs.ssh = {
+    enable = true;
+    includes = [ "~/.ssh/config.d/*" ];
+    matchBlocks = {
+      "1password-agent" = {
+        host = "*";
+        match = ''exec "test -z $SSH_TTY"'';
+        identityAgent = (auth._1password { inherit pkgs; }).agent;
+      };
+
+      "${auth.ssh.personal.name}.github.com" = {
+        hostname = "github.com";
+        forwardAgent = true;
+        identitiesOnly = true;
+        identityFile = "~/${auth.ssh.personal.path}";
+      };
+
+      "${auth.ssh.work.name}.github.com" = {
+        hostname = "github.com";
+        forwardAgent = true;
+        identitiesOnly = true;
+        identityFile = "~/${auth.ssh.work.path}";
+      };
+    };
+  };
+
   home.file = {
-    "${vars.ssh.pubkeys.xvzc.path}".text = vars.ssh.pubkeys.xvzc.text;
-    "${vars.ssh.pubkeys.work.path}".text = vars.ssh.pubkeys.work.text;
-    "${vars.ssh.pubkeys.desktop.path}".text = vars.ssh.pubkeys.desktop.text;
-    ".ssh/config".text =
-      # sshconfig
-      ''
-
-        Include ~/.ssh/config.d/*
-
-        Host ${vars.ssh.pubkeys.xvzc.name}.github.com
-          HostName github.com
-          ForwardAgent yes
-          IdentitiesOnly yes
-          IdentityFile ~/${vars.ssh.pubkeys.xvzc.path}
-
-        Host ${vars.ssh.pubkeys.work.name}.github.com
-          HostName github.com
-          ForwardAgent yes
-          IdentitiesOnly yes
-          IdentityFile ~/${vars.ssh.pubkeys.work.path}
-
-
-        # Add the option below when "test -z $SSH_TTY" evaluates to true
-        # (i.e., when the string length of $SSH_TTY is zero),
-        # indicating that the current shell is not running in an SSH session.
-        Match Host * exec "test -z $SSH_TTY"
-          IdentityAgent ${vars._1password.agent}
-      '';
+    "${auth.ssh.personal.path}".text = auth.ssh.personal.key;
+    "${auth.ssh.work.path}".text = auth.ssh.work.key;
+    "${auth.ssh.desktop.path}".text = auth.ssh.desktop.key;
   };
 }

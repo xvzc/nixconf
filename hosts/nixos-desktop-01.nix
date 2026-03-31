@@ -1,7 +1,7 @@
 {
   pkgs,
   ctx,
-  config,
+  auth,
   ...
 }:
 {
@@ -35,7 +35,7 @@
     shell = pkgs.zsh;
     isNormalUser = true;
     openssh.authorizedKeys.keys = [
-      config.vars.ssh.pubkeys.desktop.text
+      auth.ssh.desktop.key
     ];
 
     extraGroups = [
