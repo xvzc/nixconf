@@ -36,7 +36,7 @@
         {
           default_session = {
             user = "greeter";
-            command = "${tuigreetBin} --asterisks --remember";
+            command = "${tuigreetBin} --asterisks --remember --cmd ${pkgs.hyprland}/bin/start-hyprland";
           };
         };
     };

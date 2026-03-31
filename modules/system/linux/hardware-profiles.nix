@@ -66,10 +66,10 @@ in
         hardware = {
           nvidia = {
             modesetting.enable = true;
-            open = true;
-            package = config.boot.kernelPackages.nvidiaPackages.beta;
+            open = false;
+            package = config.boot.kernelPackages.nvidiaPackages.stable;
             nvidiaSettings = true;
-            powerManagement.enable = true;
+            powerManagement.enable = false;
           };
 
           graphics = {
