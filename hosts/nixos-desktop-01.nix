@@ -12,22 +12,33 @@
 
   boot.kernelPackages = pkgs.linuxPackages;
   boot.kernelParams = [
-    "console=tty2"
+    "console=tty3"
   ];
 
-  boot.loader = {
-    efi = {
-      canTouchEfiVariables = true;
-    };
-    grub = {
-      enable = true;
-      default = 0;
-      # version = 2;
-      efiSupport = true;
-      configurationLimit = 5;
-      useOSProber = true;
-      devices = [ "nodev" ];
-      gfxmodeEfi = "1368x768";
+  boot = {
+    plymouth.enable = false;
+    loader = {
+      efi = {
+        canTouchEfiVariables = true;
+      };
+      grub = {
+        enable = true;
+        default = 0;
+        version = 2;
+        efiSupport = true;
+        configurationLimit = 5;
+        useOSProber = true;
+        devices = [ "nodev" ];
+        gfxmodeEfi = "1024x768x32";
+        theme = "${pkgs.kdePackages.breeze-grub}/grub/themes/breeze";
+        splashImage = null;
+        # theme = pkgs.writeTextDir "theme.txt" ''
+        #   + boot_menu {
+        #     width = 65%
+        #     height = 45%
+        #   }
+        # '';
+      };
     };
   };
 
