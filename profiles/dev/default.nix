@@ -28,5 +28,6 @@
     ../../apps/shared/tmux
     ../../apps/shared/wezterm
     ../../apps/shared/zsh
+    ../../apps/shared/ssh
   ];
 }

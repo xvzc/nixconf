@@ -13,7 +13,7 @@
     };
 
     desktop = rec {
-      name = "nixos-desktop";
+      name = "desktop";
       path = ".ssh/${name}.pub";
       key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIIOn17UKMSvSOCQ6/XH+sqBjbpSbu+r0ECJEnVZ7niy";
     };
