@@ -5,8 +5,6 @@
   ...
 }:
 {
-  wallpaper.source = "${inputs.assets}/wallpapers/shinra-kusakabe.jpg";
-
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false;

@@ -62,7 +62,13 @@ platforms.${platform}.builder {
 
     {
       home-manager.extraSpecialArgs = {
-        inherit ctx inputs outputs auth;
+        inherit (args) wallpaper;
+        inherit
+          ctx
+          inputs
+          outputs
+          auth
+          ;
       };
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
@@ -74,6 +80,12 @@ platforms.${platform}.builder {
   ];
 
   specialArgs = {
-    inherit ctx inputs outputs auth;
+    inherit (args) wallpaper;
+    inherit
+      ctx
+      inputs
+      outputs
+      auth
+      ;
   };
 }

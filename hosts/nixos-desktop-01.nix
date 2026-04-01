@@ -16,7 +16,6 @@
   ];
 
   boot = {
-    plymouth.enable = false;
     loader = {
       efi = {
         canTouchEfiVariables = true;
@@ -24,7 +23,6 @@
       grub = {
         enable = true;
         default = 0;
-        version = 2;
         efiSupport = true;
         configurationLimit = 5;
         useOSProber = true;

@@ -7,7 +7,7 @@ let
   inherit (config.lib.formats.rasi) mkLiteral;
 in
 {
-  xdg.configFile."rofi/scripts/run-rofi.py".source = ./_files/scripts/run_rofi.py;
+  # xdg.configFile."rofi/scripts/run-rofi.py".source = ./_files/scripts/run_rofi.py;
 
   programs.rofi = {
     enable = true;
@@ -23,6 +23,7 @@ in
       pkgs.rofi-calc
       pkgs.rofi-power-menu
     ];
+
     extraConfig = {
       display-drun = "";
       display-window = "";

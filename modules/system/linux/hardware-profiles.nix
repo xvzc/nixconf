@@ -60,17 +60,28 @@ in
         environment.sessionVariables = {
           GBM_BACKEND = "nvidia-drm";
           __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-          # LIBVA_DRIVER_NAME = "nvidia";
+          LIBVA_DRIVER_NAME = "nvidia";
+          ELECTRON_OZONE_PLATFORM_HINT = "auto";
+          NVD_BACKEND = "direct";
         };
+
+        # environment.systemPackages = with pkgs; [
+        #   # nvidia-utils
+        #   egl-wayland
+        # ];
 
         services.xserver.videoDrivers = [ "nvidia" ];
         hardware = {
+          opengl.extraPackages = [
+            pkgs.nvidia-vaapi-driver
+          ];
+
           nvidia = {
             modesetting.enable = true;
             open = true;
-            package = config.boot.kernelPackages.nvidiaPackages.stable;
+            package = config.boot.kernelPackages.nvidiaPackages.beta;
             nvidiaSettings = true;
-            powerManagement.enable = false;
+            powerManagement.enable = true;
           };
 
           graphics = {

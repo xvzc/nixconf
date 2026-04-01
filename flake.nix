@@ -19,8 +19,6 @@
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
-    zjstatus.url = "github:dj95/zjstatus";
-
     nvim-xvzc = {
       url = "github:xvzc/nvim";
       flake = false;
@@ -50,6 +48,8 @@
         profile = "dev";
         system = "aarch64-darwin";
         user = "kazusa";
+        wallpaper = "${inputs.assets}/wallpapers/shinra-kusakabe.jpg";
+
       };
 
       nixosConfigurations.nixos-desktop-01 = mkSystem "nixos-desktop-01" {
@@ -57,7 +57,7 @@
         profile = "dev";
         system = "x86_64-linux";
         user = "mizuki";
-        useAge = false;
+        wallpaper = "${inputs.assets}/wallpapers/duckgirl-darkmode.jpg";
       };
 
       devShells.aarch64-darwin.neovim-developer =

@@ -5,25 +5,39 @@
     hyprshot
   ];
 
-  xdg.mimeApps = {
-    enable = true;
-    defaultApplications = {
-      # "inode/directory" = "org.gnome.Nautilus.desktop";
-      "inode/directory" = "thunar.desktop";
-    };
-  };
+  xdg = {
+    portal = {
+      enable = true;
 
-  xdg.portal = {
-    enable = true;
-    config = {
-      common = {
-        default = "gtk"; # Use the GTK (GNOME) file picker
-        # "org.freedesktop.impl.portal.FileChooser" = "org.gnome.Nautilus";
-        "org.freedesktop.impl.portal.FileChooser" = "thunar";
+      config = {
+        common = {
+          default = "gtk"; # Use the GTK (GNOME) file picker
+          # "org.freedesktop.impl.portal.FileChooser" = "org.gnome.Nautilus";
+          "org.freedesktop.impl.portal.FileChooser" = "thunar";
+        };
+        hyprland = {
+          default = [
+            "hyprland"
+            "gtk"
+          ];
+        };
+      };
+      # Define a portal backend for Gnome
+      extraPortals = with pkgs; [
+        xdg-desktop-portal-gtk
+        # xdg-desktop-portal-wlr
+        xdg-desktop-portal-hyprland
+        # xdg-desktop-portal
+      ];
+    };
+
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        # "inode/directory" = "org.gnome.Nautilus.desktop";
+        "inode/directory" = "thunar.desktop";
       };
     };
-    # Define a portal backend for Gnome
-    extraPortals = [ pkgs.xdg-desktop-portal-gnome ];
   };
 
   home.pointerCursor = {

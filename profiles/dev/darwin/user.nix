@@ -2,7 +2,7 @@
   lib,
   pkgs,
   config,
-  inputs,
+  wallpaper,
   ...
 }:
 {
@@ -16,11 +16,11 @@
   ];
 
   home.activation.setWallpaper =
-    lib.mkIf (config.wallpaper.source != null) # sh
+    lib.mkIf (wallpaper != null) # sh
       ''
         run /usr/bin/osascript <<EOF
           tell application "Finder"
-            set desktop picture to POSIX file "${config.wallpaper.source}"
+            set desktop picture to POSIX file "${wallpaper}"
           end tell
         EOF
       '';

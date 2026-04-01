@@ -7,8 +7,9 @@
 
   programs.ghostty = {
     enable = true;
-    package = if pkgs.stdenv.isDarwin then null else pkgs.ghostty;
-    # clearDefaultKeybinds = true;
+    package = if pkgs.stdenv.isDarwin then null else pkgs.unstable.ghostty;
+    systemd.enable = true;
+    clearDefaultKeybinds = false;
     settings = {
       theme = "miami";
       custom-shader = "shaders/cursor_warp.glsl";

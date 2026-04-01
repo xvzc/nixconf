@@ -50,6 +50,7 @@
           substituteInPlace GNUmakefile --replace-fail " -linkmode=external" ""
         '';
       });
+      kime = final.unstable.kime;
     })
   ];
 }

@@ -1,9 +1,7 @@
 {
   lib,
-  pkgs,
-  ctx,
   osConfig,
-  config,
+  wallpaper,
   ...
 }:
 lib.mkIf osConfig.wm.hyprland.enable {
@@ -23,7 +21,7 @@ lib.mkIf osConfig.wm.hyprland.enable {
 
       background = [
         {
-          path = config.wallpaper.source;
+          path = wallpaper;
           blur_passes = 3;
           blur_size = 3;
         }

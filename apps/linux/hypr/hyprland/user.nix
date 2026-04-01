@@ -2,19 +2,20 @@
   lib,
   pkgs,
   osConfig,
+  inputs,
   config,
   ...
 }:
 lib.mkIf osConfig.wm.hyprland.enable {
   wayland.windowManager.hyprland = {
     enable = true;
+    package = pkgs.unstable.hyprland;
     xwayland.enable = true;
     settings = {
       "$mod1" = "SUPER";
       "$mod2" = "ALT";
       "$mod3" = "CONTROL";
       "$terminal" = "wezterm";
-      # "$terminal" = "wezterm";
       # "$terminal" = "env -u WAYLAND_DISPLAY wezterm";
 
       general = {
@@ -55,9 +56,14 @@ lib.mkIf osConfig.wm.hyprland.enable {
       animations = {
         enabled = true;
         animation = [
-          "workspaces, 1, 1.5, default, slidefade 10%"
+          "workspaces, 1, 1.5, default, slide"
           "windows, 1, 2, default, popin 80%"
-          "fadeIn, 1, 0.5, default"
+          "fade, 0, 1, default"
+          "fadeIn, 0, 1, default"
+          "fadeOut, 0, 1, default"
+          "fadeShadow, 0, 1, default"
+          "fadeDim, 0, 1, default"
+          # "fadeIn, 1, 0.5, default"
         ];
       };
 
@@ -75,6 +81,8 @@ lib.mkIf osConfig.wm.hyprland.enable {
         "${pkgs.kime}/bin/kime"
         "${pkgs.waybar}/bin/waybar"
         "dunst"
+
+        "[workspace special:hidden silent] wezterm"
 
         "hyprctl setcursor Adwaita ${toString config.home.pointerCursor.size}"
         "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
@@ -99,6 +107,13 @@ lib.mkIf osConfig.wm.hyprland.enable {
           float = "on";
           size = "300 200";
         }
+        # {
+        #   name = "force float for setting windows";
+        #   "match:class" = "^(dev\.benz\.walker)$";
+        #   # animation = "fadeIn, 0, 1, default";
+        #   # float = "on";
+        #   # size = "300 200";
+        # }
       ];
 
       # windowrulev2 = [
@@ -115,6 +130,7 @@ lib.mkIf osConfig.wm.hyprland.enable {
 
         "$mod1, Return, exec, $terminal"
         "$mod2, q, killactive"
+        "$mod1, F12, togglespecialworkspace, hidden"
         ", Pause, exec, hyprlock"
 
         #sh
@@ -126,7 +142,7 @@ lib.mkIf osConfig.wm.hyprland.enable {
            || true
         ''
 
-        "$mod2, Space, exec, python3 ~/.config/rofi/scripts/run-rofi.py"
+        "$mod2, Space, exec, ${pkgs.rofi}/bin/rofi -show drun -calc-command \"echo -n '{result}' | wl-copy \""
 
         "$mod1, h, movefocus, l"
         "$mod1, j, movefocus, d"
