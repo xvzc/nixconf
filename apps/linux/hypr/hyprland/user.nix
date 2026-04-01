@@ -142,7 +142,7 @@ lib.mkIf osConfig.wm.hyprland.enable {
            || true
         ''
 
-        "$mod2, Space, exec, ${pkgs.rofi}/bin/rofi -show drun -calc-command \"echo -n '{result}' | wl-copy \""
+        "$mod2, Space, exec, rofi -show drun -calc-command \"echo -n '{result}' | wl-copy\""
 
         "$mod1, h, movefocus, l"
         "$mod1, j, movefocus, d"
