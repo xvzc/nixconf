@@ -12,7 +12,7 @@
 
   home.packages = with pkgs; [
     pngpaste
-    im-select
+    # im-select
   ];
 
   home.activation.setWallpaper =

@@ -12,7 +12,7 @@ in
 
   programs.gh = {
     enable = true;
-    package = pkgs.gh;
+    package = pkgs.unstable.gh;
     settings = {
       git_protocol = "ssh";
       prompt = "enabled";

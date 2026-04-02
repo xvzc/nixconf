@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    ./overlays.nix
     ./system.nix
 
     ../../../apps/darwin/yabai

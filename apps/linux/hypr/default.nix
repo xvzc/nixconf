@@ -1,6 +1,7 @@
 {
   lib,
   ctx,
+  pkgs,
   ...
 }:
 {
@@ -9,6 +10,7 @@
   };
 
   imports = [
+    ./overlays.nix
     ./system.nix
     { home-manager.users.${ctx.user} = ./user.nix; }
 
@@ -17,5 +19,12 @@
     ./hyprlock
     ./hyprpaper
     ./waybar
+  ];
+
+  assertions = [
+    {
+      assertion = pkgs.stdenv.isLinux;
+      message = "The module '${./default.nix}' can only be used on Linux systems.";
+    }
   ];
 }

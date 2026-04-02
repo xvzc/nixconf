@@ -20,5 +20,4 @@
     nerd-fonts.jetbrains-mono
     nerd-fonts.d2coding
   ];
-
 }

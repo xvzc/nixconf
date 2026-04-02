@@ -1,15 +1,20 @@
 {
   lib,
   ctx,
-  config,
+  pkgs,
   ...
 }:
 {
-  imports =
-    lib.optionals (builtins.pathExists ./system.nix) [
-      ./system.nix
-    ]
-    ++ lib.optionals (builtins.pathExists ./user.nix) [
-      { home-manager.users.${ctx.user} = ./user.nix; }
-    ];
+  imports = [
+    ./overlays.nix
+    ./system.nix
+    { home-manager.users.${ctx.user} = ./user.nix; }
+  ];
+
+  assertions = [
+    {
+      assertion = pkgs.stdenv.isDarwin;
+      message = "The module '${./default.nix}' can only be used on Darwin systems.";
+    }
+  ];
 }

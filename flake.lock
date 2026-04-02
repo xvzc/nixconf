@@ -201,11 +201,11 @@
     "nvim-xvzc": {
       "flake": false,
       "locked": {
-        "lastModified": 1768412088,
-        "narHash": "sha256-/et+KUmHOA88HUNrfyhTCk+E70uneVX1uy8ZMYTwCNo=",
+        "lastModified": 1775158118,
+        "narHash": "sha256-OyUjDvsHBSzFiJzGUswKi3tYKWxZCvppfWfiex/z3sc=",
         "owner": "xvzc",
         "repo": "nvim",
-        "rev": "7df98707655c805c971d3c84ff38e4a125b990df",
+        "rev": "1564b2eaf5d2a0d6d00bb2a777824b6f05b9d291",
         "type": "github"
       },
       "original": {

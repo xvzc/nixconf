@@ -15,8 +15,12 @@
       settings = {
         "browser.toolbars.bookmarks.visibility" = "always";
         "browser.translations.automaticallyPopup" = false;
+        "browser.warnOnQuitShortcut" = false;
+        "browser.warnOnQuit" = false;
+        "browser.tabs.firefox-view" = false;
         "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         "services.sync.prefs.sync.browser.uiCustomization.state" = true;
+        "ui.key.menuAccessKeyFocuses" = false;
         "sidebar.revamp" = false;
       };
       userChrome = ''

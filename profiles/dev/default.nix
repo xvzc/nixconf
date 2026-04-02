@@ -7,7 +7,6 @@
   imports = [
     ../base
 
-    ./overlays.nix
     ./system.nix
     { home-manager.users.${ctx.user} = lib.mkMerge [ ./user.nix ]; }
     ./${ctx.platform}

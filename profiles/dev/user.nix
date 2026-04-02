@@ -21,11 +21,16 @@
     google-chrome
     jq
     ripgrep
-    slack
+    unstable.slack
     # spoofdpi
     spotify
     tree
     vscode
-    antigravity
+    unstable.antigravity
+
+    unstable.bash-language-server
+    shellcheck
+    shfmt
+    tree-sitter
   ];
 }

@@ -18,19 +18,12 @@
     wget
     zip
 
-    bash-language-server
-    nixd
-    alejandra
-    nodejs
-    shellcheck
-    shfmt
-    tree-sitter
+    # nixd
+    # alejandra
+    unstable.nodejs
     (pkgs.python312.withPackages (
       ppkgs: with ppkgs; [
         pip
-        # python-lsp-server
-        # black
-        # flake8
       ]
     ))
   ];

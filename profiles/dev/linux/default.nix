@@ -5,7 +5,6 @@
 }:
 {
   imports = [
-    ./overlays.nix
     ./system.nix
 
     ../../../apps/linux/chrony

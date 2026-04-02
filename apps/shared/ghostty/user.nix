@@ -8,7 +8,7 @@
   programs.ghostty = {
     enable = true;
     package = if pkgs.stdenv.isDarwin then null else pkgs.unstable.ghostty;
-    systemd.enable = true;
+    systemd.enable = pkgs.stdenv.isLinux;
     clearDefaultKeybinds = false;
     settings = {
       theme = "miami";
