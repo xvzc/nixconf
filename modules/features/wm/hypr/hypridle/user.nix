@@ -7,7 +7,7 @@ let
   screen_off_timeout = 3600;
   lock_session_timeout = 3600 + 300;
 in
-lib.mkIf osConfig.wm.hyprland.enable {
+lib.mkIf (osConfig.features.wm.hypr.enable) {
   services.hypridle = {
     enable = true;
     settings = {

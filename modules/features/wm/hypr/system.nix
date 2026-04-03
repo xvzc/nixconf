@@ -5,18 +5,7 @@
   wallpaper,
   ...
 }:
-{
-  environment.sessionVariables = {
-    WLR_NO_HARDWARE_CURSORS = "1";
-    NIXOS_OZONE_WL = "1";
-    ELECTRON_OZONE_PLATFORM_HINT = "auto";
-  }
-  // lib.optionals (config.hardware.profiles.gpu == "nvidia") {
-    NVD_BACKEND = "direct";
-    LIBVA_DRIVER_NAME = "nvidia";
-    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-  };
-
+lib.mkIf (config.features.wm.hypr.enable) {
   environment.systemPackages = with pkgs; [
     dunst
     xfce.thunar

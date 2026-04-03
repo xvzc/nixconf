@@ -5,12 +5,9 @@
   ...
 }:
 assert ctx.isDarwin;
-let
-  cfg = config.wm.yabai;
-in
 with lib;
 {
-  options.wm.yabai = {
+  options.features.wm.yabai = {
     enable = mkEnableOption "Whether to enable 'yabai'";
     border = mkEnableOption "Whether to enable 'jankyborder'";
   };

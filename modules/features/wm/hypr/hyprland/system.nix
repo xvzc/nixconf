@@ -3,7 +3,7 @@
   config,
   ...
 }:
-lib.mkIf config.wm.hyprland.enable {
+lib.mkIf (config.features.wm.hypr.enable) {
   # environment.pathsToLink = [
   #   "/share/applications"
   #   "/share/xdg-desktop-portal"

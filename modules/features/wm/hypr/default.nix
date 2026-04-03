@@ -6,8 +6,9 @@
 }:
 assert ctx.isLinux;
 {
-  options.wm.hyprland = {
+  options.features.wm.hypr = {
     enable = lib.mkEnableOption "Whether to enable 'hyprland'";
+    withRofi = lib.mkEnableOption "Whether to enable 'hyprland'";
   };
 
   imports = [
@@ -21,12 +22,5 @@ assert ctx.isLinux;
     ./hyprpaper
     ./waybar
     ./rofi
-  ];
-
-  assertions = [
-    {
-      assertion = pkgs.stdenv.isLinux;
-      message = "The module '${./default.nix}' can only be used on Linux systems.";
-    }
   ];
 }

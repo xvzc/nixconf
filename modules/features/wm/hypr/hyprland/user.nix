@@ -2,11 +2,10 @@
   lib,
   pkgs,
   osConfig,
-  inputs,
   config,
   ...
 }:
-lib.mkIf osConfig.wm.hyprland.enable {
+lib.mkIf (osConfig.features.wm.hypr.enable) {
   wayland.windowManager.hyprland = {
     enable = true;
     package = pkgs.unstable.hyprland;

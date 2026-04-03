@@ -4,7 +4,7 @@
   wallpaper,
   ...
 }:
-lib.mkIf osConfig.wm.hyprland.enable {
+lib.mkIf (osConfig.features.wm.hypr.enable) {
   services.hyprpaper = {
     enable = true;
     settings = {

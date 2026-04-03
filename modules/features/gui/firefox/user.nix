@@ -6,7 +6,7 @@
 {
   programs.firefox = {
     enable = true;
-    package = lib.mkIf pkgs.stdenv.isDarwin null;
+    package = if pkgs.stdenv.isDarwin then null else pkgs.firefox-bin;
 
     profiles.default = {
       id = 0;

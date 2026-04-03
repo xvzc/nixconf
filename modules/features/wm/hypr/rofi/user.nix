@@ -1,12 +1,14 @@
 {
   config,
+  osConfig,
   pkgs,
+  lib,
   ...
 }:
 let
   inherit (config.lib.formats.rasi) mkLiteral;
 in
-{
+lib.mkIf (osConfig.features.wm.hypr.enable && osConfig.features.wm.hypr.withRofi) {
   # xdg.configFile."rofi/scripts/run-rofi.py".source = ./_files/scripts/run_rofi.py;
 
   programs.rofi = {

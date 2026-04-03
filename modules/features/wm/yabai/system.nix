@@ -5,7 +5,7 @@
   config,
   ...
 }:
-lib.mkIf config.wm.yabai.enable {
+lib.mkIf (config.features.wm.yabai.enable) {
   system.activationScripts.preActivation.text = ''
     csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
   '';

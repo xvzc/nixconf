@@ -1,5 +1,13 @@
-{ pkgs, ... }:
 {
+  lib,
+  pkgs,
+  osConfig,
+  ...
+}:
+let
+  cfg = osConfig.features.wm;
+in
+lib.optionalAttrs (cfg.enable && cfg.wm.provider == "aerospace") {
   home.file.".local/bin/_open-wezterm" = {
     source = ./_files/scripts/_open-wezterm;
     executable = true;

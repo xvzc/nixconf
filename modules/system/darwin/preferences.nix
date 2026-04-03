@@ -5,9 +5,9 @@
   ...
 }:
 {
-  # ┌───────────────────────┐
-  # │ MACOS_SYSTEM_SETTINGS │
-  # └───────────────────────┘
+  # ┏━━━━━━━┓
+  # ┃ LOGIN ┃
+  # ┗━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   system.primaryUser = ctx.user;
   system.defaults.loginwindow = {
     autoLoginUser = ctx.user;
@@ -15,7 +15,9 @@
     GuestEnabled = false; # disable guest user
   };
 
-  # - DOCK - #
+  # ┏━━━━━━┓
+  # ┃ DOCK ┃
+  # ┗━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   system.defaults.dock = {
     autohide = true; # automatically hide and show the dock
     tilesize = 46;
@@ -40,7 +42,9 @@
     wvous-tr-corner = 1;
   };
 
-  # - FINDER - #
+  # ┏━━━━━━━━┓
+  # ┃ FINDER ┃
+  # ┗━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   system.defaults.finder = {
     QuitMenuItem = false; # enable quit menu item
 
@@ -68,7 +72,9 @@
     NSNavPanelExpandedStateForSaveMode2 = true;
   };
 
-  # - DISPLAY - #
+  # ┏━━━━━━━━━┓
+  # ┃ DISPLAY ┃
+  # ┗━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   system.defaults.spaces = {
     # Displays have separate spaces
     #   true: disable this feature
@@ -95,7 +101,9 @@
     AppleSpacesSwitchOnActivate = true;
   };
 
-  # - TRACKPAD - #
+  # ┏━━━━━━━━━━┓
+  # ┃ TRACKPAD ┃
+  # ┗━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   system.defaults.trackpad = {
     Clicking = true; # enable tap to click
     Dragging = true;
@@ -107,7 +115,9 @@
     "com.apple.trackpad.scaling" = 1.3; # pointer speed
   };
 
-  # - KEYBOARD - #
+  # ┏━━━━━━━━━━┓
+  # ┃ KEYBOARD ┃
+  # ┗━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   system.keyboard = {
     enableKeyMapping = true;
     remapCapsLockToControl = true;
@@ -237,7 +247,9 @@
     );
   };
 
-  # - MISC - #
+  # ┏━━━━━━┓
+  # ┃ MISC ┃
+  # ┗━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   system.defaults.menuExtraClock.Show24Hour = true;
   system.defaults.menuExtraClock.ShowAMPM = false;
   system.defaults.NSGlobalDomain.AppleICUForce24HourTime = true;
@@ -271,4 +283,5 @@
     # Prevent Photos from opening automatically when devices are plugged in
     "com.apple.ImageCapture".disableHotPlug = true;
   };
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 }

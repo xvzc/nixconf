@@ -16,11 +16,7 @@
       waybar = final.unstable.waybar;
       hyprland = final.unstable.hyprland;
 
-      rofi-power-menu = final.unstable.rofi-power-menu.overrideAttrs (old: {
-        patches = (old.patches or [ ]) ++ [
-          ../../../patches/rofi-power-menu.patch
-        ];
-      });
+      rofi-power-menu = final.unstable.rofi-power-menu;
     })
   ];
 }

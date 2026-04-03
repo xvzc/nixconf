@@ -1,5 +1,10 @@
-{ pkgs, ... }:
 {
+  lib,
+  pkgs,
+  osConfig,
+  ...
+}:
+lib.mkIf osConfig.features.wm.hypr.enable {
   home.packages = with pkgs; [
     hyprpicker
     hyprshot

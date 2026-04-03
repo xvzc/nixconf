@@ -3,7 +3,7 @@
   lib,
   ...
 }:
-{
+lib.mkIf (osConfig.features.wm.hypr.enable) {
   xdg.configFile."waybar/scripts/cputemp" = {
     source = ./_files/scripts/cputemp;
     recursive = true;
