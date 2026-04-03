@@ -20,6 +20,9 @@ let
       platform
       wm
       ;
+
+    isDarwin = lib.elem system lib.platforms.darwin;
+    isLinux = lib.elem system lib.platforms.linux;
   };
 
   platforms = {

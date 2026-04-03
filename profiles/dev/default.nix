@@ -1,6 +1,7 @@
 {
   lib,
   ctx,
+  pkgs,
   ...
 }:
 {
@@ -9,24 +10,43 @@
 
     ./system.nix
     { home-manager.users.${ctx.user} = lib.mkMerge [ ./user.nix ]; }
-    ./${ctx.platform}
+    # ./${ctx.platform}
 
-    ../../apps/shared/1password
-    ../../apps/shared/bat
-    ../../apps/shared/direnv
-    ../../apps/shared/discord
-    ../../apps/shared/eza
-    ../../apps/shared/fd
-    ../../apps/shared/firefox
-    ../../apps/shared/fzf
-    ../../apps/shared/ghostty
-    ../../apps/shared/git
-    ../../apps/shared/jetbrains
-    ../../apps/shared/kitty
-    ../../apps/shared/neovim
-    ../../apps/shared/tmux
-    ../../apps/shared/wezterm
-    ../../apps/shared/zsh
-    ../../apps/shared/ssh
+    ../../modules/features/core/git
+    ../../modules/features/core/ssh
+    ../../modules/features/core/zsh
+
+    ../../modules/features/utils/bat
+    ../../modules/features/utils/direnv
+    ../../modules/features/utils/eza
+    ../../modules/features/utils/fd
+    ../../modules/features/utils/fzf
+
+    ../../modules/features/editors/jetbrains
+    ../../modules/features/editors/neovim
+
+    ../../modules/features/terms/ghostty
+    ../../modules/features/terms/kitty
+    ../../modules/features/terms/tmux
+    ../../modules/features/terms/wezterm
+
+    ../../modules/features/gui/1password
+    ../../modules/features/gui/discord
+    ../../modules/features/gui/firefox
+  ]
+  # ┌────────┐
+  # │ DARWIN │
+  # └────────┘
+  ++ lib.optionals ctx.isDarwin [
+    ../../modules/features/wm/yabai
+    ../../modules/features/utils/karabiner
+  ]
+  # ┌───────┐
+  # │ LINUX │
+  # └───────┘
+  ++ lib.optionals ctx.isLinux [
+    ../../modules/features/core/chrony
+    ../../modules/features/wm/hypr
+    ../../modules/features/utils/kime
   ];
 }

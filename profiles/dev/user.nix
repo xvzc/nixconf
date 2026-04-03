@@ -2,35 +2,79 @@
   pkgs,
   inputs,
   lib,
+  ctx,
+  wallpaper,
   ...
 }:
-{
-  home.sessionPath = [
-    "$HOME/.local/share/JetBrains/Toolbox/scripts"
-  ];
+lib.mkMerge [
+  # ┌────────┐
+  # │ COMMON │
+  # └────────┘
+  {
+    home.sessionPath = [
+      "$HOME/.local/share/JetBrains/Toolbox/scripts"
+    ];
 
-  xdg.configFile."assets" = {
-    source = inputs.assets;
-    recursive = true;
-  };
+    xdg.configFile."assets" = {
+      source = inputs.assets;
+      recursive = true;
+    };
 
-  home.packages = with pkgs; [
-    # cava
-    fastfetch
-    gemini-cli
-    google-chrome
-    jq
-    ripgrep
-    unstable.slack
-    # spoofdpi
-    spotify
-    tree
-    vscode
-    unstable.antigravity
+    home.packages = with pkgs; [
+      # cava
+      fastfetch
+      gemini-cli
+      google-chrome
+      jq
+      ripgrep
+      unstable.slack
+      # spoofdpi
+      spotify
+      tree
+      vscode
+      unstable.antigravity
 
-    unstable.bash-language-server
-    shellcheck
-    shfmt
-    tree-sitter
-  ];
-}
+      unstable.bash-language-server
+      shellcheck
+      shfmt
+      tree-sitter
+    ];
+  }
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ┌────────┐
+  # │ DARWIN │
+  # └────────┘
+  (lib.optionalAttrs ctx.isDarwin {
+    targets.darwin.keybindings = {
+      "₩" = [ "insertText:" ] ++ [ "`" ];
+    };
+
+    home.packages = with pkgs; [
+      pngpaste
+      # im-select
+    ];
+
+    home.activation.setWallpaper =
+      lib.mkIf (wallpaper != null) # sh
+        ''
+          run /usr/bin/osascript <<EOF
+            tell application "Finder"
+              set desktop picture to POSIX file "${wallpaper}"
+            end tell
+          EOF
+        '';
+  })
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # ┌───────┐
+  # │ LINUX │
+  # └───────┘
+  (lib.optionalAttrs ctx.isLinux {
+    home.packages = with pkgs; [
+      feh
+      # electron-chromedriver_35
+      desktop-file-utils
+      wine
+      clipse
+    ];
+  })
+]

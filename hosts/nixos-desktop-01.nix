@@ -7,7 +7,7 @@
 {
   imports = [
     ../modules/system/linux/hardware-profiles.nix
-    ../apps/linux/tailscale
+    ../modules/features/core/tailscale
   ];
 
   boot.kernelPackages = pkgs.linuxPackages;
@@ -30,12 +30,6 @@
         gfxmodeEfi = "1024x768x32";
         theme = "${pkgs.kdePackages.breeze-grub}/grub/themes/breeze";
         splashImage = null;
-        # theme = pkgs.writeTextDir "theme.txt" ''
-        #   + boot_menu {
-        #     width = 65%
-        #     height = 45%
-        #   }
-        # '';
       };
     };
   };

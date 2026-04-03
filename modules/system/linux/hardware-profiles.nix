@@ -65,10 +65,9 @@ in
           NVD_BACKEND = "direct";
         };
 
-        # environment.systemPackages = with pkgs; [
-        #   # nvidia-utils
-        #   egl-wayland
-        # ];
+        environment.systemPackages = with pkgs; [
+          egl-wayland
+        ];
 
         services.xserver.videoDrivers = [ "nvidia" ];
         hardware = {

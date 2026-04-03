@@ -4,6 +4,7 @@
   pkgs,
   ...
 }:
+assert ctx.isLinux;
 {
   options.wm.hyprland = {
     enable = lib.mkEnableOption "Whether to enable 'hyprland'";
@@ -19,6 +20,7 @@
     ./hyprlock
     ./hyprpaper
     ./waybar
+    ./rofi
   ];
 
   assertions = [

@@ -1,10 +1,10 @@
 {
   lib,
   ctx,
-  pkgs,
   config,
   ...
 }:
+assert ctx.isDarwin;
 let
   cfg = config.wm.yabai;
 in
@@ -22,17 +22,4 @@ with lib;
 
     ./jankyborders
   ];
-
-  config = {
-    assertions = [
-      {
-        assertion = pkgs.stdenv.isDarwin;
-        message = "The module '${./default.nix}' can only be used on Darwin systems.";
-      }
-      {
-        assertion = !(lib.trivial.xor cfg.enable cfg.border);
-        message = "'yabai' and 'border' must be enabled or disabled together.";
-      }
-    ];
-  };
 }
