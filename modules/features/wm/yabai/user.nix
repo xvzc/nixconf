@@ -1,5 +1,5 @@
 { lib, osConfig, ... }:
-lib.mkIf (osConfig.features.yabai.wm.enable) {
+lib.mkIf (osConfig.features.wm.yabai.enable) {
   xdg.configFile = {
     "yabai/yabairc" = {
       source = ./_files/yabairc;

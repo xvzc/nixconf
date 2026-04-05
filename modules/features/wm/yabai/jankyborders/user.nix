@@ -4,7 +4,7 @@
   pkgs,
   ...
 }:
-lib.mkIf (osConfig.wm.yabai.enable && osConfig.wm.yabai.border) {
+lib.mkIf (osConfig.features.wm.yabai.enable && osConfig.features.wm.yabai.border) {
   services.jankyborders = {
     enable = true;
     settings = {

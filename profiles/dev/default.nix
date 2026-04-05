@@ -21,6 +21,7 @@
     ../../modules/features/utils/eza
     ../../modules/features/utils/fd
     ../../modules/features/utils/fzf
+    ../../modules/features/utils/opencode
 
     ../../modules/features/editors/jetbrains
     ../../modules/features/editors/neovim
