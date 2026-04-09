@@ -34,6 +34,7 @@ lib.mkMerge [
       vscode
       unstable.antigravity
 
+      unstable.lazygit
       unstable.bash-language-server
       shellcheck
       shfmt
@@ -52,6 +53,7 @@ lib.mkMerge [
     home.packages = with pkgs; [
       pngpaste
       # im-select
+      unstable.macism
     ];
 
     home.activation.setWallpaper =

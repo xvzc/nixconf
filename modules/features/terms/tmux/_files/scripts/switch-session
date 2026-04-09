@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
 tmux if-shell -F '#{==:#{session_name},scratch}' detach-client
+tmux if-shell -F '#{m:opencode_*,#{session_name}}' detach-client
 
 selected=$(
   for f in ~/.config/tmux/projects/*; do

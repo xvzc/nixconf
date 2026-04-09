@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+# Resolves context identifiers from arguments or active environment
+CUR_SESSION_NAME="${1:-$(tmux display-message -p '#{session_name}')}"
+CUR_WIN_ID="${2:-$(tmux display-message -p '#{window_id}')}"
+
+# Identifies sessions that should bypass scratch terminal functionality
+IGNORE_SESSIONS=("opencode")
+
+# Validates whether the current session is explicitly excluded
+for IGNORED in "${IGNORE_SESSIONS[@]}"; do
+  [[ "$CUR_SESSION_NAME" == "$IGNORED" ]] && exit 0
+done
+
+# Provisions a persistent background session for scratch management
+HIDDEN_SESSION="__scratch_session"
+if ! tmux has-session -t "$HIDDEN_SESSION" 2>/dev/null; then
+  tmux new-session -d -s "$HIDDEN_SESSION" -n "__keepalive" "tail -f /dev/null"
+fi
+
+# Retrieves the scratch pane identifier from the explicit session scope
+SCRATCH_PANE_ID=$(tmux show-option -t "$CUR_SESSION_NAME" -v @scratch_pane_id 2>/dev/null)
+
+# Evaluates the presence of the scratch pane within the target window
+IS_VISIBLE=0
+if [ -n "$SCRATCH_PANE_ID" ]; then
+  if tmux list-panes -t "$CUR_WIN_ID" -F '#{pane_id}' 2>/dev/null | grep -q "^${SCRATCH_PANE_ID}$"; then
+    IS_VISIBLE=1
+  fi
+fi
+
+if [ "$IS_VISIBLE" -eq 1 ]; then
+  # --- [HIDE] Migrates the scratch pane to the background storage ---
+
+  # Persists current geometry for consistent restoration
+  CURRENT_HEIGHT=$(tmux display-message -p -t "$SCRATCH_PANE_ID" '#{pane_height}')
+  tmux set-option -t "$CUR_SESSION_NAME" @scratch_height "$CURRENT_HEIGHT"
+
+  # Removes existing storage window to prevent index conflicts
+  tmux kill-window -t "${HIDDEN_SESSION}:${CUR_SESSION_NAME}" 2>/dev/null
+
+  # Detaches the pane from the current window into the hidden session
+  tmux break-pane -d -s "$SCRATCH_PANE_ID" -t "${HIDDEN_SESSION}:" -n "${CUR_SESSION_NAME}"
+else
+  # --- [SHOW] Reattaches or initializes the scratch pane ---
+
+  # [FIX] Force target the left-most pane to protect sidebars from being split
+  TARGET_ATTACH_PANE="${CUR_WIN_ID}.{left}"
+
+  # Calculates target geometry based on historical data or default ratio
+  SAVED_HEIGHT=$(tmux show-option -t "$CUR_SESSION_NAME" -v @scratch_height 2>/dev/null)
+  if [ -z "$SAVED_HEIGHT" ]; then
+    WIN_HEIGHT=$(tmux display-message -p -t "$CUR_WIN_ID" '#{window_height}')
+    TARGET_HEIGHT=$((WIN_HEIGHT * 30 / 100))
+    [ "$TARGET_HEIGHT" -lt 2 ] && TARGET_HEIGHT=2
+  else
+    TARGET_HEIGHT="$SAVED_HEIGHT"
+  fi
+
+  # Verifies if the pane exists globally within the tmux server
+  PANE_EXISTS_GLOBALLY=0
+  if [ -n "$SCRATCH_PANE_ID" ] && tmux list-panes -a -F '#{pane_id}' | grep -q "^${SCRATCH_PANE_ID}$"; then
+    PANE_EXISTS_GLOBALLY=1
+  fi
+
+  if [ "$PANE_EXISTS_GLOBALLY" -eq 1 ]; then
+    # Moves the existing pane to the bottom (-v) of the left-most pane
+    tmux join-pane -v -s "$SCRATCH_PANE_ID" -t "$TARGET_ATTACH_PANE" -l "$TARGET_HEIGHT"
+    tmux select-pane -t "$SCRATCH_PANE_ID"
+  else
+    # Provisions a new scratch instance under the left-most pane
+
+    # Extracts PROJECT_ROOT from the target session environment
+    RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" PROJECT_ROOT 2>/dev/null | grep "^PROJECT_ROOT=")
+    TARGET_DIR="${RAW_ENV#PROJECT_ROOT=}"
+    TARGET_DIR=$(echo "$TARGET_DIR" | tr -d '\r\n' | sed 's/^"//;s/"$//' | xargs)
+
+    if [ -z "$TARGET_DIR" ] || [ ! -d "$TARGET_DIR" ]; then
+      TARGET_DIR=$(tmux display-message -p -t "$CUR_WIN_ID" '#{pane_current_path}')
+    fi
+
+    # Initializes a new pane under the left-most pane
+    NEW_ID=$(tmux split-window -t "$TARGET_ATTACH_PANE" -c "$TARGET_DIR" -v -P -F '#{pane_id}' -l "$TARGET_HEIGHT")
+
+    # Persists the newly generated identifier to the session scope
+    tmux set-option -t "$CUR_SESSION_NAME" @scratch_pane_id "$NEW_ID"
+    tmux select-pane -t "$NEW_ID"
+  fi
+fi

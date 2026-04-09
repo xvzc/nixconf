@@ -66,11 +66,11 @@ config.keys = {
 		mods = "ALT",
 		action = wezterm.action.DisableDefaultAssignment,
 	},
-	{
-		key = "m",
-		mods = "CTRL",
-		action = wezterm.action.SendKey({ key = "m", mods = "CTRL" }),
-	},
+	-- {
+	-- 	key = "m",
+	-- 	mods = "CTRL",
+	-- 	action = wezterm.action.SendKey({ key = "m", mods = "CTRL" }),
+	-- },
 	-- {
 	-- 	key = "Enter",
 	-- 	mods = "CTRL",

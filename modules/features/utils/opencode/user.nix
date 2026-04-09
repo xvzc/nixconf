@@ -4,25 +4,35 @@
   xdg.configFile."opencode/tui.jsonc".text = builtins.toJSON {
     theme = "system";
     keybinds = {
+      "leader" = "none";
       "input_submit" = "ctrl+return";
       "input_newline" = "return";
       "editor_open" = "ctrl+e";
       "input_line_home" = "none";
       "input_line_end" = "none";
+      "command_list" = "ctrl+x";
+      "agent_cycle" = "ctrl+n";
+      "agent_cycle_reverse" = "ctrl+p";
     };
 
   };
 
   xdg.configFile."opencode/opencode.jsonc".text = builtins.toJSON {
+    plugin = [
+      "@simonwjackson/opencode-direnv"
+    ];
+
     permission = {
       edit = "ask";
       bash = "ask";
     };
+
     compaction = {
       auto = true;
       prune = true;
       reserved = 10000;
     };
+
     command = {
       commit = {
         description = "Generate commit message and execute git commit";

@@ -1,7 +1,7 @@
-name: SpoofDPI
-root: ~/personal/SpoofDPI
+name: spoofdpi
+root: ~/personal/spoofdpi
 
-pre_window: tmux setenv PROJECT_ROOT ~/personal/SpoofDPI
+pre_window: tmux setenv PROJECT_ROOT ~/personal/spoofdpi
 windows:
   - main:
     # No panes defined, so it starts with one pane

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+CURRENT_SESSION=$(tmux display-message -p '#{session_name}')
+CURRENT_WINDOW=$(tmux display-message -p '#{window_name}')
+PANE_PATH=$(tmux display-message -p '#{pane_current_path}')
+TARGET_SESSION="opencode"
+CLIENT_FLAGS=$(tmux display-message -p '#{client_flags}')
+
+if echo "$CLIENT_FLAGS" | grep -q 'p'; then
+  tmux detach-client
+fi
+
+if [ "$CURRENT_SESSION" = "$TARGET_SESSION" ]; then
+  tmux switch-client -t "$CURRENT_WINDOW"
+  exit 0
+fi
+
+if ! tmux has-session -t "$TARGET_SESSION" 2>/dev/null; then
+  tmux new-session -d -s "$TARGET_SESSION" -n "$CURRENT_SESSION" -c "$PANE_PATH" "opencode . --port"
+else
+  if ! tmux list-windows -t "$TARGET_SESSION" -F '#{window_name}' | grep -q "^${CURRENT_SESSION}$"; then
+    tmux new-window -t "$TARGET_SESSION:" -n "$CURRENT_SESSION" -c "$PANE_PATH" "opencode . --port"
+  fi
+fi
+
+tmux select-window -t "${TARGET_SESSION}:${CURRENT_SESSION}"
+tmux switch-client -t "$TARGET_SESSION"
