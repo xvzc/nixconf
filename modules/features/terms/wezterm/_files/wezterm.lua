@@ -25,8 +25,10 @@ end
 
 config.term = "wezterm"
 
+config.enable_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = true
+
 config.window_close_confirmation = "NeverPrompt"
 config.window_decorations = "RESIZE"
 
@@ -39,6 +41,9 @@ config.audible_bell = "Disabled"
 
 config.color_scheme_dirs = { "~/.config/wezterm/colors" }
 config.color_scheme = "Miami"
+
+config.enable_kitty_keyboard = true
+config.enable_csi_u_key_encoding = true
 
 config.font = wezterm.font_with_fallback({
 	"JetBrainsMonoNL NF",
