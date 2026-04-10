@@ -23,9 +23,9 @@
         withRofi = true;
       };
     }
-    # ┏━━━━━━┓
-    # ┃ BOOT ┃
-    # ┗━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    # ┏━━━━━━━━┓
+    # ┃ SYSTEM ┃
+    # ┗━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     {
       boot.kernelPackages = pkgs.linuxPackages;
       boot.kernelParams = [
@@ -50,6 +50,9 @@
           };
         };
       };
+
+      security.pam.sshAgentAuth.enable = true;
+      security.pam.services.sudo.sshAgentAuth = true;
     }
     # ┏━━━━━┓
     # ┃ CPU ┃
