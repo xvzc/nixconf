@@ -73,6 +73,7 @@ lib.mkMerge [
       pamixer
       tcpdump
       dig
+      lsof
     ];
 
     virtualisation.docker.enable = true;
