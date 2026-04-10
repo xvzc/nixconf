@@ -16,8 +16,7 @@ lib.mkIf osConfig.features.wm.hypr.enable {
 
       config = {
         common = {
-          default = "gtk"; # Use the GTK (GNOME) file picker
-          # "org.freedesktop.impl.portal.FileChooser" = "org.gnome.Nautilus";
+          default = "gtk";
           "org.freedesktop.impl.portal.FileChooser" = "thunar";
         };
         hyprland = {
@@ -27,6 +26,7 @@ lib.mkIf osConfig.features.wm.hypr.enable {
           ];
         };
       };
+
       # Define a portal backend for Gnome
       extraPortals = with pkgs; [
         xdg-desktop-portal-gtk
@@ -39,7 +39,6 @@ lib.mkIf osConfig.features.wm.hypr.enable {
     mimeApps = {
       enable = true;
       defaultApplications = {
-        # "inode/directory" = "org.gnome.Nautilus.desktop";
         "inode/directory" = "thunar.desktop";
       };
     };
@@ -48,7 +47,6 @@ lib.mkIf osConfig.features.wm.hypr.enable {
   home.pointerCursor = {
     gtk.enable = true;
     x11.enable = true;
-    # hyprcursor.enable = true;
     package = pkgs.unstable.adwaita-icon-theme;
     name = "Adwaita";
     size = 24;
@@ -56,9 +54,13 @@ lib.mkIf osConfig.features.wm.hypr.enable {
 
   gtk = {
     enable = true;
+    gtk2.enable = true;
+    gtk3.enable = true;
+    # colorScheme = "dark";
+
     theme = {
       package = pkgs.unstable.orchis-theme;
-      name = "Orchis-Grey-Dark";
+      name = "Orchis-Dark-Compact";
     };
     iconTheme = {
       package = pkgs.unstable.tela-icon-theme;

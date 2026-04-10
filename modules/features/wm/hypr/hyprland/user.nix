@@ -83,7 +83,7 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
 
         "[workspace special:hidden silent] wezterm"
 
-        "hyprctl setcursor Adwaita ${toString config.home.pointerCursor.size}"
+        "hyprctl setcursor ${toString config.home.pointerCursor.name} ${toString config.home.pointerCursor.size}"
         "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
       ];
 
