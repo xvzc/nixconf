@@ -53,6 +53,23 @@
 
       security.pam.sshAgentAuth.enable = true;
       security.pam.services.sudo.sshAgentAuth = true;
+
+      virtualisation.libvirtd.enable = true;
+      programs.virt-manager.enable = true;
+      networking.firewall.interfaces = {
+        virbr0 = {
+          allowedUDPPorts = [
+            53
+            67
+          ];
+        };
+      };
+      networking.nat = {
+        enable = true;
+        internalInterfaces = [ "virbr0" ];
+      };
+      networking.firewall.checkReversePath = "loose";
+      networking.firewall.trustedInterfaces = [ "virbr0" ];
     }
     # ┏━━━━━┓
     # ┃ CPU ┃

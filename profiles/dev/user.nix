@@ -23,7 +23,7 @@ lib.mkMerge [
     home.packages = with pkgs; [
       # cava
       fastfetch
-      gemini-cli
+      unstable.gemini-cli
       google-chrome
       jq
       ripgrep

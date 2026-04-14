@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+
+# ==============================================================================
+# ⚙️ Default Configuration
+# ==============================================================================
+TOPIC=""
+LAUNCH_CMD=""
+SIZE=33          # Default size as a percentage (%)
+POSITION="right" # Default position: left, right, top, bottom
+F_FLAG=""        # Default: Do not span full window (nested pane)
+TARGET_PANE=""   # Default: empty (targets the currently active pane)
+
+# ==============================================================================
+# 📝 Parse Command Line Arguments
+# ==============================================================================
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+  --topic)
+    TOPIC="$2"
+    shift
+    ;;
+  --cmd)
+    LAUNCH_CMD="$2"
+    shift
+    ;;
+  --size)
+    SIZE="$2"
+    shift
+    ;;
+  --position)
+    POSITION="$2"
+    shift
+    ;;
+  --span)
+    F_FLAG="-f" # --span 옵션이 주어지면 -f 플래그 활성화 (값 필요 없음)
+    ;;
+  --target)
+    TARGET_PANE="$2" # 특정 패널 지정 (e.g., left, right, top, bottom)
+    shift
+    ;;
+  *)
+    echo "Error: Unknown parameter passed: $1"
+    exit 1
+    ;;
+  esac
+  shift
+done
+
+# ==============================================================================
+# 🚨 Validate Arguments & Set Flags
+# ==============================================================================
+if [ -z "$TOPIC" ]; then
+  echo "Error: --topic is required. Please specify a topic (e.g., --topic ai_agent)."
+  exit 1
+fi
+
+# Set tmux split flags and dimension variables based on the requested position
+case "$POSITION" in
+left)
+  SPLIT_FLAG="$F_FLAG -h -b"
+  DIM_PROP="width"
+  ;;
+right)
+  SPLIT_FLAG="$F_FLAG -h"
+  DIM_PROP="width"
+  ;;
+top)
+  SPLIT_FLAG="$F_FLAG -v -b"
+  DIM_PROP="height"
+  ;;
+bottom)
+  SPLIT_FLAG="$F_FLAG -v"
+  DIM_PROP="height"
+  ;;
+*)
+  echo "Error: Invalid --position '$POSITION'. Use left, right, top, or bottom."
+  exit 1
+  ;;
+esac
+
+# ==============================================================================
+# 📍 Context Resolution (Calculated automatically from active tmux env)
+# ==============================================================================
+CUR_SESSION_NAME="$(tmux display-message -p '#{session_name}')"
+CUR_WIN_ID="$(tmux display-message -p '#{window_id}')"
+
+# TARGET_PANE이 주어졌다면 분할 기준을 해당 패널로 고정
+if [ -n "$TARGET_PANE" ]; then
+  # 사용자가 'left'라고만 입력해도 자동으로 '{left}' 포맷으로 맞춰줌
+  if [[ "$TARGET_PANE" != {* ]]; then
+    TMUX_TARGET="${CUR_WIN_ID}.{${TARGET_PANE}}"
+  else
+    TMUX_TARGET="${CUR_WIN_ID}.${TARGET_PANE}"
+  fi
+else
+  TMUX_TARGET="$CUR_WIN_ID"
+fi
+
+# Dynamic variable names based on the defined TOPIC
+VAR_PANE_ID="@${TOPIC}_pane_id"
+VAR_PANE_SIZE="@${TOPIC}_size"
+HIDDEN_SESSION="__${TOPIC}_hidden"
+
+# Provisions a persistent background session for the topic
+if ! tmux has-session -t "$HIDDEN_SESSION" 2>/dev/null; then
+  tmux new-session -d -s "$HIDDEN_SESSION" -n "__keepalive" "tail -f /dev/null"
+fi
+
+# Retrieves the pane identifier from the explicit session scope
+SAVED_PANE_ID=$(tmux show-option -t "$CUR_SESSION_NAME" -v "$VAR_PANE_ID" 2>/dev/null)
+
+# Evaluates the presence of the pane within the target window
+IS_VISIBLE=0
+if [ -n "$SAVED_PANE_ID" ] && tmux list-panes -t "$CUR_WIN_ID" -F '#{pane_id}' 2>/dev/null | grep -q "^${SAVED_PANE_ID}$"; then
+  IS_VISIBLE=1
+fi
+
+if [ "$IS_VISIBLE" -eq 1 ]; then
+  # --- [HIDE] Migrates the pane to background storage ---
+  CURRENT_SIZE=$(tmux display-message -p -t "$SAVED_PANE_ID" "#{pane_${DIM_PROP}}")
+  tmux set-option -t "$CUR_SESSION_NAME" "$VAR_PANE_SIZE" "$CURRENT_SIZE"
+
+  tmux kill-window -t "${HIDDEN_SESSION}:${CUR_SESSION_NAME}" 2>/dev/null
+  tmux break-pane -d -s "$SAVED_PANE_ID" -t "${HIDDEN_SESSION}:" -n "${CUR_SESSION_NAME}"
+else
+  # --- [SHOW] Reattaches or initializes the pane ---
+
+  # Calculates target size
+  SAVED_SIZE=$(tmux show-option -t "$CUR_SESSION_NAME" -v "$VAR_PANE_SIZE" 2>/dev/null)
+  if [ -z "$SAVED_SIZE" ]; then
+    # -f 플래그 유무에 따라 퍼센트 계산의 기준 변경 (타겟 패널 기준)
+    if [ "$F_FLAG" = "-f" ]; then
+      BASE_DIM=$(tmux display-message -p -t "$CUR_WIN_ID" "#{window_${DIM_PROP}}")
+    else
+      BASE_DIM=$(tmux display-message -p -t "$TMUX_TARGET" "#{pane_${DIM_PROP}}")
+    fi
+
+    TARGET_SIZE=$((BASE_DIM * SIZE / 100))
+    [ "$TARGET_SIZE" -lt 10 ] && TARGET_SIZE=10
+  else
+    TARGET_SIZE="$SAVED_SIZE"
+  fi
+
+  # Target directory extraction (checks PROJECT_ROOT first, fallbacks to TARGET pane path)
+  RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" PROJECT_ROOT 2>/dev/null | grep "^PROJECT_ROOT=")
+  TARGET_DIR="${RAW_ENV#PROJECT_ROOT=}"
+  TARGET_DIR=$(echo "$TARGET_DIR" | tr -d '\r\n' | sed 's/^"//;s/"$//' | xargs)
+  [ -z "$TARGET_DIR" ] || [ ! -d "$TARGET_DIR" ] && TARGET_DIR=$(tmux display-message -p -t "$TMUX_TARGET" '#{pane_current_path}')
+
+  if [ -n "$SAVED_PANE_ID" ] && tmux list-panes -a -F '#{pane_id}' | grep -q "^${SAVED_PANE_ID}$"; then
+    # Reattach existing pane to the TARGET pane
+    tmux join-pane $SPLIT_FLAG -s "$SAVED_PANE_ID" -t "$TMUX_TARGET" -l "$TARGET_SIZE"
+    tmux select-pane -t "$SAVED_PANE_ID"
+  else
+    # Initialize a NEW pane targeting the TARGET pane
+    if [ -n "$LAUNCH_CMD" ]; then
+      NEW_ID=$(tmux split-window -t "$TMUX_TARGET" -c "$TARGET_DIR" $SPLIT_FLAG -P -F '#{pane_id}' -l "$TARGET_SIZE" "$LAUNCH_CMD")
+    else
+      NEW_ID=$(tmux split-window -t "$TMUX_TARGET" -c "$TARGET_DIR" $SPLIT_FLAG -P -F '#{pane_id}' -l "$TARGET_SIZE")
+    fi
+    tmux set-option -t "$CUR_SESSION_NAME" "$VAR_PANE_ID" "$NEW_ID"
+    tmux select-pane -t "$NEW_ID"
+  fi
+fi
