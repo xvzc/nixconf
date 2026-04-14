@@ -15,6 +15,8 @@
       custom-shader = "shaders/cursor_warp.glsl";
       window-decoration = false;
       macos-titlebar-style = "hidden";
+      cursor-style-blink = false;
+      shell-integration-features = "no-cursor";
       # mouse-bind = "shift+left=open-link";
       # font-size = 10;
       # keybind = [

@@ -103,7 +103,7 @@ HIDDEN_SESSION="__${TOPIC}_hidden"
 
 # Provisions a persistent background session for the topic
 if ! tmux has-session -t "$HIDDEN_SESSION" 2>/dev/null; then
-  tmux new-session -d -s "$HIDDEN_SESSION" -n "__keepalive" "tail -f /dev/null"
+  tmux new-session -d -s "$HIDDEN_SESSION" -n "__keepalive" "sleep infinity"
 fi
 
 # Retrieves the pane identifier from the explicit session scope
@@ -120,8 +120,22 @@ if [ "$IS_VISIBLE" -eq 1 ]; then
   CURRENT_SIZE=$(tmux display-message -p -t "$SAVED_PANE_ID" "#{pane_${DIM_PROP}}")
   tmux set-option -t "$CUR_SESSION_NAME" "$VAR_PANE_SIZE" "$CURRENT_SIZE"
 
-  tmux kill-window -t "${HIDDEN_SESSION}:${CUR_SESSION_NAME}" 2>/dev/null
-  tmux break-pane -d -s "$SAVED_PANE_ID" -t "${HIDDEN_SESSION}:" -n "${CUR_SESSION_NAME}"
+  if ! tmux list-windows -t "$HIDDEN_SESSION" -F '#{window_name}' 2>/dev/null | grep -q "^${CUR_SESSION_NAME}$"; then
+    tmux new-window -d -t "$HIDDEN_SESSION:" -n "$CUR_SESSION_NAME" "sleep infinity"
+  fi
+
+  tmux join-pane -d $SPLIT_FLAG -s "$SAVED_PANE_ID" -t "${HIDDEN_SESSION}:${CUR_SESSION_NAME}" -l "$CURRENT_SIZE"
+
+  # Restore window split layout if pane count has not been mutated by other toggles
+  CURRENT_PANES=$(tmux display-message -p -t "$CUR_WIN_ID" '#{window_panes}')
+  SAVED_PANES=$(tmux show-option -t "$CUR_SESSION_NAME" -v "@${TOPIC}_saved_panes" 2>/dev/null)
+  
+  if [ "$CURRENT_PANES" = "$SAVED_PANES" ]; then
+    SAVED_LAYOUT=$(tmux show-option -t "$CUR_SESSION_NAME" -v "@${TOPIC}_saved_layout" 2>/dev/null)
+    if [ -n "$SAVED_LAYOUT" ]; then
+      tmux select-layout -t "$CUR_WIN_ID" "$SAVED_LAYOUT" 2>/dev/null
+    fi
+  fi
 else
   # --- [SHOW] Reattaches or initializes the pane ---
 
@@ -140,6 +154,12 @@ else
   else
     TARGET_SIZE="$SAVED_SIZE"
   fi
+
+  # Save current window layout and pane count to restore proportions when hiding later
+  CURRENT_LAYOUT=$(tmux display-message -p -t "$CUR_WIN_ID" '#{window_layout}')
+  CURRENT_PANES=$(tmux display-message -p -t "$CUR_WIN_ID" '#{window_panes}')
+  tmux set-option -t "$CUR_SESSION_NAME" "@${TOPIC}_saved_layout" "$CURRENT_LAYOUT"
+  tmux set-option -t "$CUR_SESSION_NAME" "@${TOPIC}_saved_panes" "$CURRENT_PANES"
 
   # Target directory extraction (checks PROJECT_ROOT first, fallbacks to TARGET pane path)
   RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" PROJECT_ROOT 2>/dev/null | grep "^PROJECT_ROOT=")

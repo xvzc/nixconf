@@ -50,14 +50,12 @@ platforms.${platform}.builder {
 
   modules = lib.lists.flatten [
     {
-      nix.settings.experimental-features = "nix-command flakes";
-      nix.optimise.automatic = true;
       nixpkgs.config.allowUnfree = true;
     }
 
     platforms.${platform}.modules
 
-    ../overlays.nix
+    ../global.nix
     ../profiles/${profile}
     ../hosts/${host}.nix
     (builtins.filter builtins.pathExists [
