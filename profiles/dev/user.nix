@@ -36,6 +36,7 @@ lib.mkMerge [
 
       unstable.lazygit
       unstable.bash-language-server
+      unstable.typstyle
       shellcheck
       shfmt
       tree-sitter

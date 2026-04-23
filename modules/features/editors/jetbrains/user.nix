@@ -1,4 +1,4 @@
 { ... }:
 {
-  home.file.".ideavimrc".source = ./_files/ideavimrc;
+  home.file.".ideavimrc".source = ./dotfiles/ideavimrc;
 }

@@ -2,15 +2,15 @@
 lib.mkIf (osConfig.features.wm.yabai.enable) {
   xdg.configFile = {
     "yabai/yabairc" = {
-      source = ./_files/yabairc;
+      source = ./dotfiles/yabairc;
     };
 
     "yabai/skhdrc" = {
-      source = ./_files/skhdrc;
+      source = ./dotfiles/skhdrc;
     };
 
     "yabai/scripts" = {
-      source = ./_files/scripts;
+      source = ./dotfiles/scripts;
       recursive = true;
     };
   };

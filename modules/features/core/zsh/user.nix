@@ -10,7 +10,7 @@ in
 {
   home.file = {
     ".local/share/zsh/site-functions" = {
-      source = ./_files/site-functions;
+      source = ./dotfiles/site-functions;
       recursive = true;
     };
   };

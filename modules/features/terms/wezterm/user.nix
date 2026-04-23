@@ -9,11 +9,11 @@
 
   xdg.configFile = {
     "wezterm/wezterm.lua" = {
-      source = ./_files/wezterm.lua;
+      source = ./dotfiles/wezterm.lua;
     };
 
     "wezterm/colors" = {
-      source = ./_files/colors;
+      source = ./dotfiles/colors;
       recursive = true;
     };
   };

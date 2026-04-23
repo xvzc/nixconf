@@ -3,7 +3,7 @@
   ...
 }:
 {
-  xdg.configFile."ghostty/shaders/cursor_warp.glsl".source = ./_files/shaders/cursor_warp.glsl;
+  xdg.configFile."ghostty/shaders/cursor_warp.glsl".source = ./dotfiles/shaders/cursor_warp.glsl;
 
   programs.ghostty = {
     enable = true;

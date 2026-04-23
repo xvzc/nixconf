@@ -5,12 +5,12 @@
 }:
 {
   xdg.configFile."tmux/scripts" = {
-    source = ./_files/scripts;
+    source = ./dotfiles/scripts;
     recursive = true;
   };
 
   xdg.configFile."tmux/projects" = {
-    source = ./_files/projects;
+    source = ./dotfiles/projects;
     recursive = true;
   };
 
@@ -70,6 +70,6 @@
       }
     ];
 
-    extraConfig = builtins.readFile ./_files/tmux.extra.conf;
+    extraConfig = builtins.readFile ./dotfiles/tmux.extra.conf;
   };
 }

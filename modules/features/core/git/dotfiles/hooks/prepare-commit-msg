@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+COMMIT_MSG_FILE=$1
+COMMITLINT_CONFIG="$REPO_ROOT/.commitlintrc.js"
+
+if [ -z "$2" ]; then
+  if [ -f "$COMMITLINT_CONFIG" ] && command -v jq &>/dev/null; then
+    TYPES=$(node -e "console.log(JSON.stringify(require('$COMMITLINT_CONFIG').rules['type-enum'][2]))")
+    if [ -n "$TYPES" ] && [ "$TYPES" != "null" ]; then
+      TEMP_MSG=$(mktemp)
+      printf "\n# $TYPES\n" >"$TEMP_MSG"
+      cat "$COMMIT_MSG_FILE" >>"$TEMP_MSG"
+      mv "$TEMP_MSG" "$COMMIT_MSG_FILE"
+    fi
+  fi
+fi

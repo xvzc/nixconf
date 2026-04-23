@@ -8,7 +8,7 @@ let
   home = config.home.homeDirectory;
 in
 {
-  home.file.".local/bin/git-auth".source = ./_files/scripts/git-auth;
+  home.file.".local/bin/git-auth".source = ./dotfiles/scripts/git-auth;
 
   programs.gh = {
     enable = true;
@@ -30,7 +30,7 @@ in
     ];
 
     hooks = {
-      prepare-commit-msg = ./_files/hooks/prepare-commit-msg;
+      prepare-commit-msg = ./dotfiles/hooks/prepare-commit-msg;
     };
 
     settings = {

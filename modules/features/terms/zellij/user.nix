@@ -25,12 +25,12 @@ in
 {
 
   xdg.configFile."zellij/sessions" = {
-    source = ./_files/sessions;
+    source = ./dotfiles/sessions;
     recursive = true;
   };
 
   xdg.configFile."zellij/scripts" = {
-    source = ./_files/scripts;
+    source = ./dotfiles/scripts;
     recursive = true;
   };
 

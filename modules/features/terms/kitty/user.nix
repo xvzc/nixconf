@@ -4,11 +4,11 @@
 
   xdg.configFile = {
     "kitty/kitty.conf" = {
-      source = ./_files/kitty.conf;
+      source = ./dotfiles/kitty.conf;
     };
 
     "kitty/themes" = {
-      source = ./_files/themes;
+      source = ./dotfiles/themes;
       recursive = true;
     };
   };

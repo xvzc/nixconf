@@ -5,7 +5,7 @@
 }:
 lib.mkIf (osConfig.features.wm.hypr.enable) {
   xdg.configFile."waybar/scripts/cputemp" = {
-    source = ./_files/scripts/cputemp;
+    source = ./dotfiles/scripts/cputemp;
     recursive = true;
   };
 
