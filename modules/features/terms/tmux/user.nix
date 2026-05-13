@@ -16,6 +16,8 @@
 
   home.sessionVariables = {
     TMUXINATOR_CONFIG = "$HOME/.config/tmux/projects";
+    TMUX_SESSION_LOOKUP_DIRS = "$HOME/personal";
+    TMUX_SESSION_DIRS = "(main)~:~/nixconf:~/.config/nvim";
   };
 
   home.shellAliases = {

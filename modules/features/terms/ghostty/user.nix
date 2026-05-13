@@ -16,6 +16,7 @@
       window-decoration = false;
       macos-titlebar-style = "hidden";
       cursor-style-blink = false;
+      gtk-single-instance = false;
       shell-integration-features = "no-cursor";
       # mouse-bind = "shift+left=open-link";
       # font-size = 10;

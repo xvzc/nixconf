@@ -72,8 +72,8 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
       };
 
       exec = [
-        # "pkill -9 kime; ${pkgs.kime}/bin/kime"
-        # "pkill -9 waybar; ${pkgs.waybar}/bin/waybar"
+        # Ensure environment variable synchronization to prevent compatibility issues in applications such as kime and Ghostty
+        "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
       ];
 
       exec-once = [
