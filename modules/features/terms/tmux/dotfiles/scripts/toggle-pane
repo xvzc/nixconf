@@ -165,8 +165,8 @@ else
   tmux set-option -t "$CUR_SESSION_NAME" "@${TOPIC}_saved_panes" "$CURRENT_PANES"
 
   # Extracts target directory path
-  RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" PROJECT_ROOT 2>/dev/null | grep "^PROJECT_ROOT=")
-  TARGET_DIR="${RAW_ENV#PROJECT_ROOT=}"
+  RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" TMUX_SESSION_ROOT_DIR 2>/dev/null | grep "^TMUX_SESSION_ROOT_DIR=")
+  TARGET_DIR="${RAW_ENV#TMUX_SESSION_ROOT_DIR=}"
   TARGET_DIR=$(echo "$TARGET_DIR" | tr -d '\r\n' | sed 's/^"//;s/"$//' | xargs)
   [ -z "$TARGET_DIR" ] || [ ! -d "$TARGET_DIR" ] && TARGET_DIR=$(tmux display-message -p -t "$TMUX_TARGET" '#{pane_current_path}')
 

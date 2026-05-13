@@ -1,0 +1,141 @@
+#!/usr/bin/env zsh
+
+# TMUX_SESSION_DIRS: colon-separated entries, e.g. "(main)~:(pers)~/personal:~/dev"
+#   (name)path → explicit session name + path
+#   path       → basename of path used as session name
+# TMUX_SESSION_LOOKUP_DIRS: colon-separated dirs to scan for depth-1 subdirs
+#
+# All entries are unified: existing sessions prefixed with • and shown first.
+# On select: switch to existing session, or create new one at the given path.
+
+_start_ms=$(date +%s%3N)
+_log_file="$(dirname "$0")/log"
+trap 'printf "%s [switch-session.bak] %dms\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$(( $(date +%s%3N) - _start_ms ))" >> "$_log_file"' EXIT
+
+if [[ -n "$TMUX" ]]; then
+  tmux if-shell -F '#{==:#{session_name},scratch}' detach-client
+  tmux if-shell -F '#{m:opencode_*,#{session_name}}' detach-client
+fi
+
+existing=("${(@f)$(tmux list-sessions -F '#{session_name}' 2>/dev/null)}")
+current_session=$(tmux display-message -p '#S' 2>/dev/null)
+
+dirs_names=(); dirs_paths_raw=()
+lookup_names=(); lookup_paths_raw=()
+
+# Parse TMUX_SESSION_DIRS into dirs_names / dirs_paths_raw
+if [[ -n "$TMUX_SESSION_DIRS" ]]; then
+  for entry in "${(@s/:/)TMUX_SESSION_DIRS}"; do
+    entry="${entry## }"; entry="${entry%% }"
+    [[ -z "$entry" ]] && continue
+    if [[ "$entry" =~ '^\(([^)]+)\)(.+)$' ]]; then
+      name="${match[1]}"; dir="${match[2]}"
+    else
+      dir="$entry"; name="$(basename "${dir/#\~/$HOME}")"
+    fi
+    dir="${dir/#\~/$HOME}"
+    [[ -n "$name" && -d "$dir" ]] || continue
+    dirs_names+=("$name"); dirs_paths_raw+=("$dir")
+  done
+fi
+
+# Parse TMUX_SESSION_LOOKUP_DIRS into lookup_names / lookup_paths_raw
+if [[ -n "$TMUX_SESSION_LOOKUP_DIRS" ]]; then
+  for dir in "${(@s/:/)TMUX_SESSION_LOOKUP_DIRS}"; do
+    dir="${dir/#\~/$HOME}"
+    [[ -d "$dir" ]] || continue
+    for subdir in "$dir"/*/; do
+      [[ -d "$subdir" ]] || continue
+      lookup_names+=("$(basename "$subdir")"); lookup_paths_raw+=("$subdir")
+    done
+  done
+fi
+
+# Build final list in priority order:
+#   1. SESSION_DIRS existing  (SESSION_DIRS order)
+#   2. LOOKUP_DIRS existing   (discovery order)
+#   3. SESSION_DIRS non-existing
+#   4. LOOKUP_DIRS non-existing
+display_names=(); session_names=(); paths=()
+
+for (( i=1; i<=${#dirs_names[@]}; i++ )); do
+  session="${dirs_names[$i]//./_}"
+  (( ${existing[(Ie)$session]} )) || continue
+  [[ "$session" == "$current_session" ]] && continue
+  display_names+=("•${dirs_names[$i]}"); session_names+=("$session"); paths+=("${dirs_paths_raw[$i]}")
+done
+for (( i=1; i<=${#lookup_names[@]}; i++ )); do
+  session="${lookup_names[$i]//./_}"
+  (( ${existing[(Ie)$session]} )) || continue
+  [[ "$session" == "$current_session" ]] && continue
+  display_names+=("•${lookup_names[$i]}"); session_names+=("$session"); paths+=("${lookup_paths_raw[$i]}")
+done
+for (( i=1; i<=${#dirs_names[@]}; i++ )); do
+  session="${dirs_names[$i]//./_}"
+  (( ${existing[(Ie)$session]} )) && continue
+  display_names+=("${dirs_names[$i]}"); session_names+=("$session"); paths+=("${dirs_paths_raw[$i]}")
+done
+for (( i=1; i<=${#lookup_names[@]}; i++ )); do
+  session="${lookup_names[$i]//./_}"
+  (( ${existing[(Ie)$session]} )) && continue
+  display_names+=("${lookup_names[$i]}"); session_names+=("$session"); paths+=("${lookup_paths_raw[$i]}")
+done
+
+[[ ${#display_names[@]} -eq 0 ]] && exit 0
+
+session_name=""
+workdir=""
+
+if [[ -n "$1" ]]; then
+  query="$1"
+  for (( i=1; i<=${#display_names[@]}; i++ )); do
+    label="${display_names[$i]#•}"
+    if [[ "$label" == "$query" ]]; then
+      session_name="${session_names[$i]}"
+      workdir="${paths[$i]%/}"
+      break
+    fi
+  done
+  if [[ -z "$session_name" ]]; then
+    echo "switch-session: no session matching '$query'" >&2
+    exit 1
+  fi
+else
+  selected=$(
+    printf '%s\n' "${display_names[@]}" |
+      fzf-tmux \
+        -p40,13 \
+        --no-preview \
+        --no-sort
+  )
+
+  [[ -z "$selected" ]] && exit 0
+
+  selected_display="${selected#•}"
+
+  for (( i=1; i<=${#display_names[@]}; i++ )); do
+    label="${display_names[$i]#•}"
+    if [[ "$label" == "$selected_display" ]]; then
+      session_name="${session_names[$i]}"
+      workdir="${paths[$i]%/}"
+      break
+    fi
+  done
+fi
+
+if [[ -n "$TMUX" ]]; then
+  attach_cmd="switch-client"
+  new_session_flag="-ds"
+else
+  attach_cmd="attach-session"
+  new_session_flag="-s"
+fi
+
+if (( ${existing[(Ie)$session_name]} )); then
+  tmux $attach_cmd -t "$session_name"
+else
+  tmux new-session $new_session_flag "$session_name" -c "$workdir"
+  [[ "$workdir" != "$HOME" ]] && \
+    tmux setenv -t "$session_name" TMUX_SESSION_ROOT_DIR "$workdir"
+  [[ -n "$TMUX" ]] && tmux switch-client -t "$session_name"
+fi

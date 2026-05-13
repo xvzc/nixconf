@@ -70,9 +70,9 @@ else
   else
     # Provisions a new scratch instance under the left-most pane
 
-    # Extracts PROJECT_ROOT from the target session environment
-    RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" PROJECT_ROOT 2>/dev/null | grep "^PROJECT_ROOT=")
-    TARGET_DIR="${RAW_ENV#PROJECT_ROOT=}"
+    # Extracts TMUX_SESSION_ROOT_DIR from the target session environment
+    RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" TMUX_SESSION_ROOT_DIR 2>/dev/null | grep "^TMUX_SESSION_ROOT_DIR=")
+    TARGET_DIR="${RAW_ENV#TMUX_SESSION_ROOT_DIR=}"
     TARGET_DIR=$(echo "$TARGET_DIR" | tr -d '\r\n' | sed 's/^"//;s/"$//' | xargs)
 
     if [ -z "$TARGET_DIR" ] || [ ! -d "$TARGET_DIR" ]; then

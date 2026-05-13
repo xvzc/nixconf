@@ -15,5 +15,9 @@
         ];
       };
     };
+    stdlib = # sh
+      ''
+        export PROJECT_ROOT="$(pwd)"
+      '';
   };
 }

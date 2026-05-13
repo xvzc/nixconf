@@ -31,11 +31,10 @@
       ''
         function tis() {
           if [ -z "$1" ]; then
-            session='general'
+            ~/.config/tmux/scripts/switch-session main
           else
-            session=$1
+            ~/.config/tmux/scripts/switch-session $1
           fi
-          tmuxinator start $session --suppress-tmux-version-warning;
         }
       '';
 

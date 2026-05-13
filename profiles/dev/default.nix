@@ -10,8 +10,8 @@
 
     ./system.nix
     { home-manager.users.${ctx.user} = lib.mkMerge [ ./user.nix ]; }
-    ../../modules/features/ai/opencode
-    ../../modules/features/ai/claude-code
+
+    ../../modules/features/ai/agents
 
     ../../modules/features/core/git
     ../../modules/features/core/ssh

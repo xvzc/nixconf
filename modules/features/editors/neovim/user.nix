@@ -58,6 +58,7 @@ in
       bash-language-server
       shellcheck
       shfmt
+      tinymist
     ];
 
     extraPython3Packages =

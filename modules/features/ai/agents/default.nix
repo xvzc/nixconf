@@ -9,7 +9,7 @@
   # └────────┘
   nixpkgs.overlays = [
     (final: prev: {
-      claude-code = final.unstable.claude-code;
+      claude-code = final.master.claude-code;
     })
   ];
 }
