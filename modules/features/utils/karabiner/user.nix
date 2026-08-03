@@ -1,6 +1,7 @@
 { ... }:
 {
   xdg.configFile."karabiner/karabiner.json" = {
+    force = true;
     text = # json
       ''
         {

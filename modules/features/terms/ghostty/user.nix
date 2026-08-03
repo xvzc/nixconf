@@ -3,23 +3,28 @@
   ...
 }:
 {
-  xdg.configFile."ghostty/shaders/cursor_warp.glsl".source = ./dotfiles/shaders/cursor_warp.glsl;
+  xdg.configFile."ghostty/shaders/cursor.glsl".source = ./dotfiles/shaders/cursor.glsl;
 
   programs.ghostty = {
     enable = true;
-    package = if pkgs.stdenv.isDarwin then null else pkgs.unstable.ghostty;
+    package = if pkgs.stdenv.isDarwin then null else pkgs.master.ghostty;
     systemd.enable = pkgs.stdenv.isLinux;
     clearDefaultKeybinds = false;
     settings = {
       theme = "miami";
-      custom-shader = "shaders/cursor_warp.glsl";
+      custom-shader = "shaders/cursor.glsl";
       window-decoration = false;
       macos-titlebar-style = "hidden";
       cursor-style-blink = false;
       gtk-single-instance = false;
       shell-integration-features = "no-cursor";
+      font-family = [
+        "JetBrainsMonoNL NF"
+        "NanumSquare Neo"
+        "D2Coding"
+      ];
+      font-size = 12.5;
       # mouse-bind = "shift+left=open-link";
-      # font-size = 10;
       # keybind = [
       #   "ctrl+h=goto_split:left"
       #   "ctrl+l=goto_split:right"

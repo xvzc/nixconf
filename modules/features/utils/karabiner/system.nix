@@ -9,9 +9,5 @@
     casks = [
       "karabiner-elements"
     ];
-
-    masApps = {
-      "KakaoTalk" = 869223134;
-    };
   };
 }

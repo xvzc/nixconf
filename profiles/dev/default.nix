@@ -11,11 +11,9 @@
     ./system.nix
     { home-manager.users.${ctx.user} = lib.mkMerge [ ./user.nix ]; }
 
-    ../../modules/features/ai/agents
-
-    ../../modules/features/core/git
-    ../../modules/features/core/ssh
-    ../../modules/features/core/zsh
+    ../../modules/features/essentials/git
+    ../../modules/features/essentials/ssh
+    ../../modules/features/essentials/zsh
 
     ../../modules/features/utils/bat
     ../../modules/features/utils/direnv
@@ -23,8 +21,9 @@
     ../../modules/features/utils/fd
     ../../modules/features/utils/fzf
 
-    ../../modules/features/editors/jetbrains
-    ../../modules/features/editors/neovim
+    ../../modules/features/code/ai
+    ../../modules/features/code/jetbrains
+    ../../modules/features/code/neovim
 
     ../../modules/features/terms/ghostty
     ../../modules/features/terms/kitty
@@ -47,7 +46,7 @@
   # │ LINUX │
   # └───────┘
   ++ lib.optionals ctx.isLinux [
-    ../../modules/features/core/chrony
+    ../../modules/features/essentials/chrony
     ../../modules/features/wm/hypr
     ../../modules/features/utils/kime
   ];

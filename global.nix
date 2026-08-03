@@ -1,15 +1,25 @@
 # Original src: https://github.com/Misterio77/nix-config/blob/main/overlays/default.nix
-{ inputs, pkgs, ... }:
 {
-  # nix.gc = {
-  #   automatic = true;
-  #   interval = {
-  #     # Hour = 3;
-  #     # Minute = 15;
-  #     Weekday = 7;
-  #   };
-  #   options = "--delete-older-than 7d";
-  # };
+  inputs,
+  pkgs,
+  lib,
+  ...
+}:
+{
+  nix.gc = {
+    automatic = true;
+    options = "--delete-older-than 7d";
+  }
+  // lib.optionalAttrs pkgs.stdenv.isLinux {
+    dates = "16:30";
+  }
+  // lib.optionalAttrs pkgs.stdenv.isDarwin {
+    interval = {
+      Weekday = 1;
+      Hour = 16;
+      Minute = 30;
+    };
+  };
 
   nix.optimise.automatic = true;
   nix.settings = {

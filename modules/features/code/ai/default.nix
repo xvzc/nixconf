@@ -1,7 +1,12 @@
-{ ctx, ... }:
+{ ctx, lib, ... }:
 {
   imports = [
-    { home-manager.users.${ctx.user} = ./user.nix; }
+    {
+      home-manager.users.${ctx.user} = lib.mkMerge [
+        ./claude.nix
+        ./opencode.nix
+      ];
+    }
   ];
 
   # ┌────────┐
@@ -10,6 +15,7 @@
   nixpkgs.overlays = [
     (final: prev: {
       claude-code = final.master.claude-code;
+      opencode = final.unstable.opencode;
     })
   ];
 }

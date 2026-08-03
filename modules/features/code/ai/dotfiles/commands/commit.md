@@ -1,8 +1,8 @@
-# commit
-
-## When to apply
-
-Apply this skill whenever a commit is needed in a local version control system (git, jj, Fossil, etc.) — whether invoked explicitly via `/commit` or when the user asks to commit, save a checkpoint, or record changes in any VCS context.
+---
+description: Generate commit message and execute git commit
+agent: code
+model: opencode-go/kimi-k2.6
+---
 
 ## Steps
 
