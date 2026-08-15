@@ -3,10 +3,6 @@
   osConfig,
   ...
 }:
-let
-  screen_off_timeout = 3600;
-  lock_session_timeout = 3600 + 300;
-in
 lib.mkIf (osConfig.features.wm.hypr.enable) {
   services.hypridle = {
     enable = true;
@@ -14,8 +10,6 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
       general = {
         # avoid starting multiple hyprlock instances.
         lock_cmd = "pidof hyprlock || hyprlock";
-
-        # lock before suspend.
         before_sleep_cmd = "loginctl lock-session";
 
         # to avoid having to press a key twice to turn on the display.
@@ -28,13 +22,14 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
 
       listener = [
         {
-          timeout = screen_off_timeout;
-          on-timeout = "hyprctl dispatch dpms off";
-          on-resume = "hyprctl dispatch dpms on";
+          on-timeout = "hyprlock";
+          timeout = 3600;
+          condition_cmd = "! pidof hyprlock";
         }
         {
-          timeout = lock_session_timeout;
-          on-timeout = "loginctl lock-session";
+          timeout = 3600 + 3;
+          on-timeout = "hyprctl dispatch dpms off";
+          on-resume = "hyprctl dispatch dpms on";
         }
       ];
     };
