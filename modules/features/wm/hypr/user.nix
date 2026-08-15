@@ -5,9 +5,13 @@
   ...
 }:
 lib.mkIf osConfig.features.wm.hypr.enable {
+  programs.zsh.shellAliases = {
+    "open" = "nemo";
+  };
   home.packages = with pkgs; [
     hyprpicker
     hyprshot
+    nemo
   ];
 
   xdg = {
@@ -15,10 +19,6 @@ lib.mkIf osConfig.features.wm.hypr.enable {
       enable = true;
 
       config = {
-        common = {
-          default = "gtk";
-          "org.freedesktop.impl.portal.FileChooser" = "thunar";
-        };
         hyprland = {
           default = [
             "hyprland"
@@ -34,13 +34,6 @@ lib.mkIf osConfig.features.wm.hypr.enable {
         xdg-desktop-portal-hyprland
         # xdg-desktop-portal
       ];
-    };
-
-    mimeApps = {
-      enable = true;
-      defaultApplications = {
-        "inode/directory" = "thunar.desktop";
-      };
     };
   };
 

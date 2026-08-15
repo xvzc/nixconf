@@ -11,7 +11,7 @@
   nixpkgs.overlays = [
     (final: prev: {
       kdePackages = final.unstable.kdePackages;
-      wine = final.unstable.wine;
+      # wine = final.unstable.wine;
       rofi = final.unstable.rofi;
       waybar = final.unstable.waybar;
       hyprland = final.unstable.hyprland;

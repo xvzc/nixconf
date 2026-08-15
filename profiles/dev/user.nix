@@ -76,7 +76,7 @@ lib.mkMerge [
       feh
       # electron-chromedriver_35
       desktop-file-utils
-      wine
+      unstable.wine-staging
       clipse
     ];
   })
