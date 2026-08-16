@@ -22,16 +22,29 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
 
       listener = [
         {
-          on-timeout = "hyprlock";
+          on-timeout = "loginctl lock-session";
           timeout = 3600;
-          condition_cmd = "! pidof hyprlock";
         }
         {
-          timeout = 3600 + 3;
+          timeout = 3600 + 300;
           on-timeout = "hyprctl dispatch dpms off";
           on-resume = "hyprctl dispatch dpms on";
         }
       ];
     };
   };
+
+  systemd.user.services.hypridle =
+    let
+      target = "hyprland-session.target";
+    in
+    {
+      Install.WantedBy = [ target ];
+
+      Unit = {
+        # Start after Hyprland has imported WAYLAND_DISPLAY into the user systemd environment.
+        After = lib.mkForce [ target ];
+        PartOf = lib.mkForce [ target ];
+      };
+    };
 }

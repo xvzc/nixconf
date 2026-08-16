@@ -41,6 +41,8 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
       misc = {
         focus_on_activate = true;
         disable_hyprland_logo = true;
+        # Keep repainting consistently; VFR can leave flickering artifacts after Waybar tray popups close.
+        vfr = false;
       };
 
       xwayland = {
@@ -72,14 +74,23 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
       };
 
       exec = [
-        # Ensure environment variable synchronization to prevent compatibility issues in applications such as kime and Ghostty
-        "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
       ];
 
       exec-once = [
-        "${pkgs.kime}/bin/kime"
+        # Ensure environment variable synchronization to prevent compatibility issues in applications such as kime and Ghostty
+        "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
+
         "${pkgs.waybar}/bin/waybar"
-        "dunst"
+        "${pkgs.kime}/bin/kime"
+        "${pkgs._1password-gui}/bin/1password --silent"
+        "${pkgs.discord}/bin/Discord --start-minimized"
+
+        # Launch Spotify hidden so it can initialize in the background
+        "[workspace special:hidden silent] ${pkgs.spotify}/bin/spotify"
+        # Hide/close its window after startup; Spotify has no reliable Linux start-minimized flag
+        "for i in {1..100}; do hyprctl clients | grep -qi 'class: spotify' && hyprctl dispatch closewindow class:spotify && break; sleep 0.1; done"
+
+        "${pkgs.dunst}/bin/dunst" # notification backend
 
         "[workspace special:hidden silent] wezterm"
 

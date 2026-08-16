@@ -1,5 +1,6 @@
 {
   lib,
+  pkgs,
   osConfig,
   wallpaper,
   ...
@@ -7,13 +8,14 @@
 lib.mkIf (osConfig.features.wm.hypr.enable) {
   programs.hyprlock = {
     enable = true;
+    package = pkgs.unstable.hyprlock;
 
     settings = {
       general = {
-        disable_loading_bar = true;
-        grace = 0;
+        # disable_loading_bar = true;
+        # grace = 0;
+        # no_fade_in = false;
         hide_cursor = true;
-        no_fade_in = false;
 
         ignore_empty_input = true;
         fail_timeout = 500;

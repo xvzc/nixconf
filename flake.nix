@@ -17,7 +17,7 @@
 
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
-    zjstatus.url = "github:dj95/zjstatus";
+    # zjstatus.url = "github:dj95/zjstatus";
 
     nvim-xvzc = {
       url = "github:xvzc/nvim";
