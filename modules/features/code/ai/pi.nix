@@ -2,6 +2,7 @@
   pkgs,
   lib,
   inputs,
+  config,
   ...
 }:
 {
@@ -12,12 +13,20 @@
   # ┃ PI ┃
   # ┗━━━━┛
 
+  home.file.".pi/agent/settings.json" = {
+    enable = lib.mkForce false;
+    force = true;
+  };
+
   programs.pi-coding-agent = {
     enable = true;
-    # settings = {
-    #   model = "sonnet";
-    #   defaultShell = "bash";
-    #   includeCoAuthoredBy = false;
-    # };
+    package = pkgs.unstable.pi-coding-agent;
+    configDir = "${config.xdg.configHome}/pi/agent";
+    settings = {
+      # model = "sonnet";
+      defaultShell = "zsh";
+      includeCoAuthoredBy = false;
+      tuiMode = "fullscreen";
+    };
   };
 }
