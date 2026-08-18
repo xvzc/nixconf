@@ -5,6 +5,7 @@
       home-manager.users.${ctx.user} = lib.mkMerge [
         ./claude.nix
         ./opencode.nix
+        ./pi.nix
       ];
     }
   ];

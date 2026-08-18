@@ -18,8 +18,6 @@
     wget
     zip
 
-    # nixd
-    # alejandra
     unstable.nodejs
     (pkgs.python312.withPackages (
       ppkgs: with ppkgs; [

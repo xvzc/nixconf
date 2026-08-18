@@ -10,16 +10,13 @@
     enableDefaultConfig = false;
     includes = [ "~/.ssh/config.d/*" ];
 
-    matchBlocks = {
-      "${auth.ssh.desktop.name}" = {
+    settings = {
+      "Host ${auth.ssh.desktop.name}" = {
         hostname = "nixos-desktop-01.tailb7f463.ts.net";
         user = "mizuki";
         forwardAgent = true;
         identitiesOnly = true;
-        extraOptions = {
-          StrictHostKeyChecking = "no";
-        };
-
+        StrictHostKeyChecking = "no";
         identityFile = "~/${auth.ssh.desktop.path}";
       };
     };

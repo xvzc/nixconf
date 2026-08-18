@@ -9,20 +9,19 @@
     enableDefaultConfig = false;
     includes = [ "~/.ssh/config.d/*" ];
 
-    matchBlocks = {
-      "*" = {
-        match = ''exec "test -z $SSH_TTY"'';
+    settings = {
+      "Match exec \"test -z $SSH_TTY\"" = {
         identityAgent = (auth._1password { inherit pkgs; }).agent;
       };
 
-      "${auth.ssh.personal.name}.github.com" = {
+      "Host ${auth.ssh.personal.name}.github.com" = {
         hostname = "github.com";
         forwardAgent = true;
         identitiesOnly = true;
         identityFile = "~/${auth.ssh.personal.path}";
       };
 
-      "${auth.ssh.work.name}.github.com" = {
+      "Host ${auth.ssh.work.name}.github.com" = {
         hostname = "github.com";
         forwardAgent = true;
         identitiesOnly = true;

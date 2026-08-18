@@ -23,9 +23,9 @@
   #   recursive = true;
   # };
 
-  home.file.".claude/settings.json" = {
-    force = true;
-  };
+  # home.file.".claude/settings.json" = {
+  #   force = true;
+  # };
 
   programs.zsh.sessionVariables = {
     CLAUDE_CODE_NO_FLICKER = 1;

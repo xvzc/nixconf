@@ -10,9 +10,9 @@
     { home-manager.users.${ctx.user} = ./user.nix; }
   ];
 
-  nixpkgs.overlays = [
-    (final: prev: {
-      neovim-unwrapped = final.unstable.neovim-unwrapped;
-    })
-  ];
+  # nixpkgs.overlays = [
+  #   (final: prev: {
+  #     neovim-unwrapped = final.unstable.neovim-unwrapped;
+  #   })
+  # ];
 }
