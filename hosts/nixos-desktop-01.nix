@@ -2,7 +2,7 @@
   pkgs,
   lib,
   ctx,
-  auth,
+  pub,
   config,
   ...
 }:
@@ -138,7 +138,7 @@
         shell = pkgs.zsh;
         isNormalUser = true;
         openssh.authorizedKeys.keys = [
-          auth.ssh.desktop.key
+          pub.ssh.desktop.key
         ];
 
         extraGroups = [

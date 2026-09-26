@@ -1,6 +1,6 @@
 {
   pkgs,
-  auth,
+  pub,
   ...
 }:
 {
@@ -11,27 +11,27 @@
 
     settings = {
       "Match exec \"test -z $SSH_TTY\"" = {
-        identityAgent = (auth._1password { inherit pkgs; }).agent;
+        identityAgent = (pub._1password { inherit pkgs; }).agent;
       };
 
-      "Host ${auth.ssh.personal.name}.github.com" = {
+      "Host ${pub.ssh.personal.name}.github.com" = {
         hostname = "github.com";
         forwardAgent = true;
         identitiesOnly = true;
-        identityFile = "~/${auth.ssh.personal.path}";
+        identityFile = "~/${pub.ssh.personal.path}";
       };
 
-      "Host ${auth.ssh.work.name}.github.com" = {
+      "Host ${pub.ssh.work.name}.github.com" = {
         hostname = "github.com";
         forwardAgent = true;
         identitiesOnly = true;
-        identityFile = "~/${auth.ssh.work.path}";
+        identityFile = "~/${pub.ssh.work.path}";
       };
     };
   };
 
   home.file = {
-    "${auth.ssh.personal.path}".text = auth.ssh.personal.key;
-    "${auth.ssh.work.path}".text = auth.ssh.work.key;
+    "${pub.ssh.personal.path}".text = pub.ssh.personal.key;
+    "${pub.ssh.work.path}".text = pub.ssh.work.key;
   };
 }

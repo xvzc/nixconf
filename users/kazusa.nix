@@ -1,6 +1,6 @@
 {
   inputs,
-  auth,
+  pub,
   pkgs,
   ...
 }:
@@ -11,18 +11,28 @@
     includes = [ "~/.ssh/config.d/*" ];
 
     settings = {
-      "Host ${auth.ssh.desktop.name}" = {
-        hostname = "nixos-desktop-01.tailb7f463.ts.net";
+      "Host ${pub.ssh.desktop.name}" = {
+        hostname = "172.20.0.100";
         user = "mizuki";
         forwardAgent = true;
         identitiesOnly = true;
         StrictHostKeyChecking = "no";
-        identityFile = "~/${auth.ssh.desktop.path}";
+        identityFile = "~/${pub.ssh.desktop.path}";
+      };
+
+      "Host ${pub.ssh.router.name}" = {
+        hostname = "172.20.0.1";
+        user = "root";
+        forwardAgent = true;
+        identitiesOnly = true;
+        StrictHostKeyChecking = "no";
+        identityFile = "~/${pub.ssh.router.path}";
       };
     };
   };
 
   home.file = {
-    "${auth.ssh.desktop.path}".text = auth.ssh.desktop.key;
+    "${pub.ssh.desktop.path}".text = pub.ssh.desktop.key;
+    "${pub.ssh.router.path}".text = pub.ssh.router.key;
   };
 }

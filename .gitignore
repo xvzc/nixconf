@@ -1,6 +1,27 @@
+# OS / editor junk
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Local environment / secrets
+.env
+.env.*
+!.envrc
+.secrets/
+
+# Nix / direnv generated files
+.devenv/
+.cache/
 result
-.cache
-before.txt
-.secrets
-.direnv
+result-*
+
+# Logs / temporary files
+*.log
+*.tmp
+*.bak

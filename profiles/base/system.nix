@@ -12,7 +12,9 @@
     gnupg
     home-manager
     htop
+    jq
     unstable.openssh
+    openssl
     unzip
     vim
     wget

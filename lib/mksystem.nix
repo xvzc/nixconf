@@ -43,7 +43,7 @@ let
     };
   };
 
-  auth = import ../auth.nix;
+  pub = import ../pub.nix;
 in
 platforms.${platform}.builder {
   inherit system;
@@ -69,7 +69,7 @@ platforms.${platform}.builder {
           ctx
           inputs
           outputs
-          auth
+          pub
           ;
       };
       home-manager.useGlobalPkgs = true;
@@ -87,7 +87,7 @@ platforms.${platform}.builder {
       ctx
       inputs
       outputs
-      auth
+      pub
       ;
   };
 }

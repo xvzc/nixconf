@@ -67,6 +67,7 @@ ifeq ($(UNAME), Darwin)
     . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'; \
 	caffeinate -ids nix build \
 		--extra-experimental-features nix-command \
+		--extra-experimental-features fetch-closure \
 		--extra-experimental-features flakes \
 		".#darwinConfigurations.$$CURRENT_HOST.system" \
 		&& sudo ./result/sw/bin/darwin-rebuild switch --flake ".#$$CURRENT_HOST";

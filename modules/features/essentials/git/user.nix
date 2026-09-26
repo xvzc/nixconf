@@ -1,5 +1,5 @@
 {
-  auth,
+  pub,
   config,
   pkgs,
   ...
@@ -8,6 +8,9 @@ let
   home = config.home.homeDirectory;
 in
 {
+  home.packages = [
+    pkgs.commitlint
+  ];
   home.file.".local/bin/git-auth".source = ./dotfiles/scripts/git-auth;
 
   programs.gh = {
@@ -30,14 +33,18 @@ in
     ];
 
     hooks = {
-      prepare-commit-msg = ./dotfiles/hooks/prepare-commit-msg;
+      commit-msg = pkgs.writeShellScript "commit-msg" ''
+        exec ${pkgs.commitlint}/bin/commitlint \
+          --extends @commitlint/config-conventional \
+          --edit "$1"
+      '';
     };
 
     settings = {
       user = {
         name = "xvzc";
         email = "me@xvzc.dev";
-        signingKey = "${home}/${auth.ssh.personal.path}";
+        signingKey = "${home}/${pub.ssh.personal.path}";
       };
 
       core = {
@@ -55,7 +62,7 @@ in
       gpg = {
         format = "ssh";
         ssh = {
-          program = (auth._1password { inherit pkgs; }).signer;
+          program = (pub._1password { inherit pkgs; }).signer;
         };
       };
       url =
@@ -72,8 +79,8 @@ in
             );
         in
         mkGithubUrlMappings [
-          auth.ssh.personal.name
-          auth.ssh.work.name
+          pub.ssh.personal.name
+          pub.ssh.work.name
         ];
     };
   };

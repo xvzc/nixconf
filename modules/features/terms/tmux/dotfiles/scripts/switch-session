@@ -1,16 +1,36 @@
 #!/usr/bin/env bash
 
-# TMUX_SESSION_DIRS: colon-separated entries, e.g. "(main)~:(pers)~/personal:~/dev"
-#   (name)path → explicit session name + path
-#   path       → basename of path used as session name
-# TMUX_SESSION_LOOKUP_DIRS: colon-separated dirs to scan for depth-1 subdirs
+# Uses ~/.config/tmux/projects.json by default.
+# Schema:
+# {
+#   "lookupDirs": ["~/personal"],
+#   "named": {
+#     "main": { "root": "~" },
+#     "pi": {
+#       "root": "~/.config/pi",
+#       "env": { "PI_CODING_AGENT_DIR": "~/.config/pi/agent" }
+#     }
+#   }
+# }
 #
 # All entries are unified: existing sessions prefixed with • and shown first.
-# On select: switch to existing session, or create new one at the given path.
+# On select: switch to existing session, or create new one at the given root.
 
 _start_ms=$(date +%s%3N)
 _log_file="$(dirname "$0")/log"
 trap 'printf "%s [switch-session] %dms\n" "$(date +"%Y-%m-%d %H:%M:%S")" "$(( $(date +%s%3N) - _start_ms ))" >> "$_log_file"' EXIT
+
+projects_config="${TMUX_PROJECTS_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/tmux/projects.json}"
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "switch-session: jq is required to read $projects_config" >&2
+  exit 1
+fi
+
+if [[ ! -f "$projects_config" ]]; then
+  echo "switch-session: projects config not found: $projects_config" >&2
+  exit 1
+fi
 
 # Fire both tmux queries in parallel via process substitution
 exec 3< <(tmux list-sessions -F '#{session_name}' 2>/dev/null)
@@ -23,26 +43,71 @@ in_array() {
   return 1
 }
 
-dirs_names=()
-dirs_paths_raw=()
+expand_value() {
+  local value="$1"
+  value="${value/#\~/$HOME}"
+  value="${value//\$HOME/$HOME}"
+  value="${value//\$\{HOME\}/$HOME}"
+  printf '%s\n' "$value"
+}
+
+session_variable_names=()
+session_variable_values=()
+
+collect_session_variables() {
+  local project_key="$1"
+  local name value
+
+  session_variable_names=()
+  session_variable_values=()
+
+  while IFS=$'\t' read -r name value; do
+    [[ -n "$name" ]] || continue
+    value="$(expand_value "$value")"
+    session_variable_names+=("$name")
+    session_variable_values+=("$value")
+  done < <(
+    jq -r --arg key "$project_key" '
+      (.named[$key].env // {})
+      | to_entries[]
+      | [.key, (.value | tostring)]
+      | @tsv
+    ' "$projects_config"
+  )
+}
+
+apply_session_variables() {
+  local target_session="$1"
+  local project_key="$2"
+  local i
+
+  collect_session_variables "$project_key"
+  for ((i = 0; i < ${#session_variable_names[@]}; i++)); do
+    tmux setenv -t "$target_session" "${session_variable_names[$i]}" "${session_variable_values[$i]}"
+  done
+}
+
+named_names=()
+named_paths_raw=()
 lookup_names=()
 lookup_paths_raw=()
 
 _cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/tmux-switch-session"
-_cache_key="$TMUX_SESSION_DIRS:$TMUX_SESSION_LOOKUP_DIRS"
+_cache_key="$projects_config:$(jq -c '{lookupDirs:(.lookupDirs // []),named:(.named // {})}' "$projects_config" | cksum | awk '{print $1":"$2}')"
 
 _cache_valid() {
   [[ -f "$_cache_file" ]] || return 1
   local stored_key
   IFS= read -r stored_key <"$_cache_file"
   [[ "$stored_key" == "#$_cache_key" ]] || return 1
-  if [[ -n "$TMUX_SESSION_LOOKUP_DIRS" ]]; then
-    IFS=':' read -ra _ldirs <<<"$TMUX_SESSION_LOOKUP_DIRS"
-    for _ldir in "${_ldirs[@]}"; do
-      _ldir="${_ldir/#\~/$HOME}"
-      [[ "$_ldir" -nt "$_cache_file" ]] && return 1
-    done
-  fi
+  [[ "$projects_config" -nt "$_cache_file" ]] && return 1
+
+  local _ldir
+  while IFS= read -r _ldir; do
+    _ldir="$(expand_value "$_ldir")"
+    [[ -d "$_ldir" && "$_ldir" -nt "$_cache_file" ]] && return 1
+  done < <(jq -r '.lookupDirs // [] | .[]' "$projects_config")
+
   return 0
 }
 
@@ -50,9 +115,9 @@ if _cache_valid; then
   while IFS=$'\t' read -r _type _name _path; do
     [[ "$_type" == '#'* ]] && continue
     case "$_type" in
-    D)
-      dirs_names+=("$_name")
-      dirs_paths_raw+=("$_path")
+    N)
+      named_names+=("$_name")
+      named_paths_raw+=("$_path")
       ;;
     L)
       lookup_names+=("$_name")
@@ -61,44 +126,37 @@ if _cache_valid; then
     esac
   done <"$_cache_file"
 else
-  re='^\(([^)]+)\)(.+)$'
-  if [[ -n "$TMUX_SESSION_DIRS" ]]; then
-    IFS=':' read -ra entries <<<"$TMUX_SESSION_DIRS"
-    for entry in "${entries[@]}"; do
-      entry="${entry## }"
-      entry="${entry%% }"
-      [[ -z "$entry" ]] && continue
-      if [[ "$entry" =~ $re ]]; then
-        name="${BASH_REMATCH[1]}"
-        dir="${BASH_REMATCH[2]}"
-      else
-        dir="$entry"
-        name="$(basename "${dir/#\~/$HOME}")"
-      fi
-      dir="${dir/#\~/$HOME}"
-      [[ -n "$name" && -d "$dir" ]] || continue
-      dirs_names+=("$name")
-      dirs_paths_raw+=("$dir")
-    done
-  fi
+  while IFS=$'\t' read -r name root; do
+    [[ -n "$name" && -n "$root" ]] || continue
+    root="$(expand_value "$root")"
+    [[ -d "$root" ]] || continue
+    named_names+=("$name")
+    named_paths_raw+=("$root")
+  done < <(
+    jq -r '
+      .named // {}
+      | to_entries[]
+      | select(.value.root != null)
+      | [.key, .value.root]
+      | @tsv
+    ' "$projects_config"
+  )
 
-  if [[ -n "$TMUX_SESSION_LOOKUP_DIRS" ]]; then
-    IFS=':' read -ra lookup_dirs <<<"$TMUX_SESSION_LOOKUP_DIRS"
-    for dir in "${lookup_dirs[@]}"; do
-      dir="${dir/#\~/$HOME}"
-      [[ -d "$dir" ]] || continue
-      for subdir in "$dir"/*/; do
-        [[ -d "$subdir" ]] || continue
-        lookup_names+=("$(basename "$subdir")")
-        lookup_paths_raw+=("$subdir")
-      done
+  while IFS= read -r dir; do
+    dir="$(expand_value "$dir")"
+    [[ -d "$dir" ]] || continue
+    for subdir in "$dir"/*/; do
+      [[ -d "$subdir" ]] || continue
+      lookup_names+=("$(basename "$subdir")")
+      lookup_paths_raw+=("$subdir")
     done
-  fi
+  done < <(jq -r '.lookupDirs // [] | .[]' "$projects_config")
 
+  mkdir -p "$(dirname "$_cache_file")"
   {
     printf '#%s\n' "$_cache_key"
-    for ((i = 0; i < ${#dirs_names[@]}; i++)); do
-      printf 'D\t%s\t%s\n' "${dirs_names[$i]}" "${dirs_paths_raw[$i]}"
+    for ((i = 0; i < ${#named_names[@]}; i++)); do
+      printf 'N\t%s\t%s\n' "${named_names[$i]}" "${named_paths_raw[$i]}"
     done
     for ((i = 0; i < ${#lookup_names[@]}; i++)); do
       printf 'L\t%s\t%s\n' "${lookup_names[$i]}" "${lookup_paths_raw[$i]}"
@@ -112,6 +170,10 @@ exec 3<&-
 current_session=$(cat <&4)
 exec 4<&-
 
+# Outside tmux, display-message may resolve #S to an unattached/default session.
+# That is not the current client session, so do not filter it out.
+[[ -z "$TMUX" ]] && current_session=""
+
 if [[ -n "$TMUX" ]]; then
   if [[ "$current_session" == "scratch" || "$current_session" == opencode_* ]]; then
     tmux detach-client
@@ -120,42 +182,48 @@ fi
 
 display_names=()
 session_names=()
+project_keys=()
 paths=()
 
-for ((i = 0; i < ${#dirs_names[@]}; i++)); do
-  session="${dirs_names[$i]//./_}"
+add_entry() {
+  local display_name="$1"
+  local session_name="$2"
+  local project_key="$3"
+  local path="$4"
+
+  display_names+=("$display_name")
+  session_names+=("$session_name")
+  project_keys+=("$project_key")
+  paths+=("$path")
+}
+
+for ((i = 0; i < ${#named_names[@]}; i++)); do
+  session="${named_names[$i]//./_}"
   in_array "$session" "${existing[@]}" || continue
   [[ "$session" == "$current_session" ]] && continue
-  display_names+=("•${dirs_names[$i]}")
-  session_names+=("$session")
-  paths+=("${dirs_paths_raw[$i]}")
+  add_entry "•${named_names[$i]}" "$session" "${named_names[$i]}" "${named_paths_raw[$i]}"
 done
 for ((i = 0; i < ${#lookup_names[@]}; i++)); do
   session="${lookup_names[$i]//./_}"
   in_array "$session" "${existing[@]}" || continue
   [[ "$session" == "$current_session" ]] && continue
-  display_names+=("•${lookup_names[$i]}")
-  session_names+=("$session")
-  paths+=("${lookup_paths_raw[$i]}")
+  add_entry "•${lookup_names[$i]}" "$session" "" "${lookup_paths_raw[$i]}"
 done
-for ((i = 0; i < ${#dirs_names[@]}; i++)); do
-  session="${dirs_names[$i]//./_}"
+for ((i = 0; i < ${#named_names[@]}; i++)); do
+  session="${named_names[$i]//./_}"
   in_array "$session" "${existing[@]}" && continue
-  display_names+=("${dirs_names[$i]}")
-  session_names+=("$session")
-  paths+=("${dirs_paths_raw[$i]}")
+  add_entry "${named_names[$i]}" "$session" "${named_names[$i]}" "${named_paths_raw[$i]}"
 done
 for ((i = 0; i < ${#lookup_names[@]}; i++)); do
   session="${lookup_names[$i]//./_}"
   in_array "$session" "${existing[@]}" && continue
-  display_names+=("${lookup_names[$i]}")
-  session_names+=("$session")
-  paths+=("${lookup_paths_raw[$i]}")
+  add_entry "${lookup_names[$i]}" "$session" "" "${lookup_paths_raw[$i]}"
 done
 
 [[ ${#display_names[@]} -eq 0 ]] && exit 0
 
 session_name=""
+project_key=""
 workdir=""
 
 if [[ -n "$1" ]]; then
@@ -164,6 +232,7 @@ if [[ -n "$1" ]]; then
     label="${display_names[$i]#•}"
     if [[ "$label" == "$query" ]]; then
       session_name="${session_names[$i]}"
+      project_key="${project_keys[$i]}"
       workdir="${paths[$i]%/}"
       break
     fi
@@ -189,6 +258,7 @@ else
     label="${display_names[$i]#•}"
     if [[ "$label" == "$selected_display" ]]; then
       session_name="${session_names[$i]}"
+      project_key="${project_keys[$i]}"
       workdir="${paths[$i]%/}"
       break
     fi
@@ -204,10 +274,20 @@ else
 fi
 
 if in_array "$session_name" "${existing[@]}"; then
-  tmux $attach_cmd -t "$session_name"
+  [[ -n "$project_key" ]] && apply_session_variables "$session_name" "$project_key"
+  tmux "$attach_cmd" -t "$session_name"
 else
-  tmux new-session $new_session_flag "$session_name" -c "$workdir"
+  new_session_env_args=()
+  if [[ -n "$project_key" ]]; then
+    collect_session_variables "$project_key"
+    for ((i = 0; i < ${#session_variable_names[@]}; i++)); do
+      new_session_env_args+=("-e" "${session_variable_names[$i]}=${session_variable_values[$i]}")
+    done
+  fi
+
+  tmux new-session "${new_session_env_args[@]}" "$new_session_flag" "$session_name" -c "$workdir"
   [[ "$workdir" != "$HOME" ]] &&
     tmux setenv -t "$session_name" TMUX_SESSION_ROOT_DIR "$workdir"
+  [[ -n "$project_key" ]] && apply_session_variables "$session_name" "$project_key"
   [[ -n "$TMUX" ]] && tmux switch-client -t "$session_name"
 fi

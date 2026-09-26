@@ -1,7 +1,0 @@
-{
-  "rules": {
-    "header-max-length": [0, "always", 72],
-    "type-enum": ["build", "chore", "ci", "docs", "feat", "fix", "perf", "refactor", "revert", "style", "test"]
-  }
-}  
-

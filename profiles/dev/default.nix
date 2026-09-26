@@ -16,12 +16,13 @@
     ../../modules/features/essentials/zsh
 
     ../../modules/features/utils/bat
-    ../../modules/features/utils/direnv
+    ../../modules/features/utils/devenv
     ../../modules/features/utils/eza
     ../../modules/features/utils/fd
     ../../modules/features/utils/fzf
 
     ../../modules/features/code/ai
+    ../../modules/features/code/pi
     ../../modules/features/code/jetbrains
     ../../modules/features/code/neovim
 

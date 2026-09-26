@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+TOPIC=""
+
+usage() {
+  echo "usage: toggle-session --topic <prefix>" >&2
+  exit 1
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --topic)
+      [[ $# -ge 2 ]] || usage
+      TOPIC="$2"
+      shift 2
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+[[ -n "$TOPIC" ]] || usage
+
+session_id_for_name() {
+  local requested_name="$1"
+  local name session_id
+  local format="#{session_name}"$'\t'"#{session_id}"
+
+  while IFS=$'\t' read -r name session_id; do
+    [[ "$name" == "$requested_name" ]] && {
+      printf '%s\n' "$session_id"
+      return 0
+    }
+  done < <(tmux list-sessions -F "$format")
+
+  return 1
+}
+
+current_session="$(tmux display-message -p '#{session_name}')"
+prefix="${TOPIC}:"
+
+if [[ "$current_session" == "$prefix"* ]]; then
+  target_session="${current_session#"$prefix"}"
+  [[ -n "$target_session" ]] || {
+    echo "toggle-session: session '$current_session' has no base session name" >&2
+    exit 1
+  }
+else
+  target_session="${prefix}${current_session}"
+
+  if ! target_session_id="$(session_id_for_name "$target_session")"; then
+    current_path="$(tmux display-message -p '#{pane_current_path}')"
+    tmux new-session -d -s "$target_session" -c "$current_path"
+  fi
+fi
+
+target_session_id="$(session_id_for_name "$target_session")" || {
+  echo "toggle-session: could not find session '$target_session'" >&2
+  exit 1
+}
+tmux switch-client -t "$target_session_id"

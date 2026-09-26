@@ -108,6 +108,7 @@ in
           # ┌─────────┐
           # │ VI-MODE │
           # └─────────┘
+          bindkey -v
           BLOCK='\e[1 q'
           BEAM='\e[5 q'
           function zle-line-init zle-keymap-select {

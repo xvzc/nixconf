@@ -27,6 +27,12 @@
       url = "github:xvzc/nvim";
       flake = false;
     };
+
+    pi-xvzc = {
+      url = "github:xvzc/pi";
+      flake = false;
+    };
+
     assets = {
       url = "github:xvzc/assets";
       flake = false;
@@ -91,6 +97,5 @@
               exec zsh
             '';
         };
-
     };
 }

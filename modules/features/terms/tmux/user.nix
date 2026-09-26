@@ -9,15 +9,34 @@
     recursive = true;
   };
 
-  xdg.configFile."tmux/projects" = {
-    source = ./dotfiles/projects;
-    recursive = true;
-  };
+  home.file.".config/tmux/projects.json".text = builtins.toJSON {
+    lookupDirs = [
+      "~/personal"
+    ];
 
-  home.sessionVariables = {
-    TMUXINATOR_CONFIG = "$HOME/.config/tmux/projects";
-    TMUX_SESSION_LOOKUP_DIRS = "$HOME/personal";
-    TMUX_SESSION_DIRS = "(main)~:~/nixconf:~/.config/nvim";
+    named = {
+      main = {
+        root = "~";
+      };
+
+      nixconf = {
+        root = "~/nixconf";
+      };
+
+      nvim = {
+        root = "~/.config/nvim";
+        env = {
+          NVIM_APPNAME = "nvim";
+        };
+      };
+
+      pi = {
+        root = "~/.config/pi";
+        env = {
+          PI_CODING_AGENT_DIR = "~/.config/pi/agent";
+        };
+      };
+    };
   };
 
   home.shellAliases = {
@@ -42,6 +61,7 @@
 
   programs.tmux = {
     enable = true;
+    package = pkgs.unstable.tmux;
     tmuxinator.enable = true;
 
     prefix = "C-a";

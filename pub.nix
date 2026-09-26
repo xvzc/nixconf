@@ -17,6 +17,12 @@
       path = ".ssh/${name}.pub";
       key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIIOn17UKMSvSOCQ6/XH+sqBjbpSbu+r0ECJEnVZ7niy";
     };
+
+    router = rec {
+      name = "router";
+      path = ".ssh/${name}.pub";
+      key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJHA2a+fXiKvZfhqcqde7uat+uvx5VhXq0tdVpF1mjzW";
+    };
   };
 
   _1password =

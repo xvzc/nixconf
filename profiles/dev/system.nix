@@ -59,7 +59,7 @@ lib.mkMerge [
       };
     };
 
-    environment.systemPath = [
+    environment.systemPath = lib.mkAfter [
       "/opt/homebrew/bin"
     ];
   })

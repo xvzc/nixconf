@@ -25,15 +25,14 @@ lib.mkMerge [
       fastfetch
       master.gemini-cli
       google-chrome
-      jq
       ripgrep
-      unstable.slack
+      slack
       # spoofdpi
       spotify
       tree
-      vscode
-      unstable.antigravity
 
+      nixd
+      nixfmt
       unstable.lazygit
       unstable.bash-language-server
       unstable.typstyle
