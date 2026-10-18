@@ -30,6 +30,8 @@ lib.mkMerge [
       # spoofdpi
       spotify
       tree
+      codex
+      claude-code
 
       nixd
       nixfmt

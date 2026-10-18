@@ -288,11 +288,11 @@
     "pi-xvzc": {
       "flake": false,
       "locked": {
-        "lastModified": 1790442939,
-        "narHash": "sha256-lvlP9M9BqgShf8XYsDefLSpZQNGdYdLX6RgoVHiPejs=",
+        "lastModified": 1790690890,
+        "narHash": "sha256-0TeaJ/syeM0RjiZa2Ktnryro25ZaYYJkpYOxU0jJBlk=",
         "owner": "xvzc",
         "repo": "pi",
-        "rev": "8cfd4530ac7b1d9efbcc0ef9e54d678e42b65a53",
+        "rev": "e5c14de76a2836224a201a7be2909ad21e5ed481",
         "type": "github"
       },
       "original": {
