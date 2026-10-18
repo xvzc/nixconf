@@ -10,13 +10,13 @@
   # └───────┘
   nixpkgs.overlays = [
     (final: prev: {
-      kdePackages = final.unstable.kdePackages;
-      # wine = final.unstable.wine;
-      rofi = final.unstable.rofi;
-      waybar = final.unstable.waybar;
-      hyprland = final.unstable.hyprland;
+      kdePackages = final.mv.tip.kdePackages;
+      # wine = final.mv.tip.wine;
+      rofi = final.mv.tip.rofi;
+      waybar = final.mv.tip.waybar;
+      hyprland = final.mv.tip.hyprland;
 
-      rofi-power-menu = final.unstable.rofi-power-menu;
+      rofi-power-menu = final.mv.tip.rofi-power-menu;
     })
   ];
 }

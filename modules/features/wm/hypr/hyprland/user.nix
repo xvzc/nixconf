@@ -8,7 +8,7 @@
 lib.mkIf (osConfig.features.wm.hypr.enable) {
   wayland.windowManager.hyprland = {
     enable = true;
-    package = pkgs.unstable.hyprland;
+    package = pkgs.mv.tip.hyprland;
     xwayland.enable = true;
     settings = {
       "$mod1" = "SUPER";

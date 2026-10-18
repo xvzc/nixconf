@@ -12,7 +12,7 @@
 #     aarch64-linux = /nix/store/0hvjf326j6gb5chlnf11ndip558bg1j2-devenv-wrapped-2.3.1;
 #   };
 #
-#   # package = pkgs.unstable.devenv;
+#   # package = pkgs.mv.tip.devenv;
 #   package = builtins.fetchClosure {
 #     fromStore = "https://devenv.cachix.org";
 #     fromPath = devenvStorePaths.${system};
@@ -21,7 +21,7 @@
 # in
 {
   home.packages = [
-    pkgs.unstable.devenv
+    pkgs.mv.tip.devenv
   ];
 
   xdg.configFile."devenv/config.yaml" = {
@@ -38,7 +38,7 @@
   programs.zsh.initContent = lib.mkMerge [
     (lib.mkOrder 999 # sh
       ''
-        eval "$(${pkgs.unstable.devenv}/bin/devenv hook zsh)"
+        eval "$(${pkgs.mv.tip.devenv}/bin/devenv hook zsh)"
       ''
     )
   ];

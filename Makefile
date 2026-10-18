@@ -63,25 +63,29 @@ _check-or-install-nix:
 
 _setup:
 ifeq ($(UNAME), Darwin)
-	CURRENT_HOST=$(shell cat $(CACHE_DIR)/current-host); \
-    . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'; \
-	caffeinate -ids nix build \
+	@CURRENT_HOST=$$(cat $(CACHE_DIR)/current-host); \
+	LOCK_FILE="$(CURDIR)/flake.$$CURRENT_HOST.lock"; \
+	if [ ! -f "$$LOCK_FILE" ]; then echo "Missing host lock: $$LOCK_FILE" >&2; exit 1; fi; \
+	. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'; \
+	SYSTEM=$$(caffeinate -ids nix build \
 		--extra-experimental-features nix-command \
 		--extra-experimental-features fetch-closure \
 		--extra-experimental-features flakes \
-		".#darwinConfigurations.$$CURRENT_HOST.system" \
-		&& sudo ./result/sw/bin/darwin-rebuild switch --flake ".#$$CURRENT_HOST";
+		--reference-lock-file "$$LOCK_FILE" --no-write-lock-file \
+		--print-out-paths \
+		".#darwinConfigurations.$$CURRENT_HOST.system") \
+		&& sudo nix-env -p /nix/var/nix/profiles/system --set "$$SYSTEM" \
+		&& sudo "$$SYSTEM/sw/bin/darwin-rebuild" activate
 else
-	CURRENT_HOST=$(shell cat $(CACHE_DIR)/current-host); \
-	sudo NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nixos-rebuild switch \
-		--flake ".#$$CURRENT_HOST";
+	@CURRENT_HOST=$$(cat $(CACHE_DIR)/current-host); \
+	LOCK_FILE="$(CURDIR)/flake.$$CURRENT_HOST.lock"; \
+	if [ ! -f "$$LOCK_FILE" ]; then echo "Missing host lock: $$LOCK_FILE" >&2; exit 1; fi; \
+	SYSTEM=$$(NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
+		".#nixosConfigurations.$$CURRENT_HOST.config.system.build.toplevel" \
+		--no-link --print-out-paths \
+		--reference-lock-file "$$LOCK_FILE" --no-write-lock-file) \
+		&& sudo nixos-rebuild switch --store-path "$$SYSTEM" --no-reexec
 endif
-
-# ┌─────────────────────┐ 
-# │ UPDATE FLAKE INPUTS │ 
-# └─────────────────────┘ 
-update: 
-	nix flake update assets nvim
 
 # ┌───────────────┐ 
 # │ CLEAN PROJECT │ 

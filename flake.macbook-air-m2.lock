@@ -114,6 +114,21 @@
         "type": "github"
       }
     },
+    "multiverse": {
+      "locked": {
+        "lastModified": 1792281746,
+        "narHash": "sha256-f8Q/HitbGHUgFSbkYbtEPpDumBbBZsE1gRNk1VElPsk=",
+        "owner": "fzakaria",
+        "repo": "nixpkgs-multiverse",
+        "rev": "bd585901740ec83034030baba5e8bae542f4fd80",
+        "type": "github"
+      },
+      "original": {
+        "owner": "fzakaria",
+        "repo": "nixpkgs-multiverse",
+        "type": "github"
+      }
+    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -205,38 +220,6 @@
         "type": "github"
       }
     },
-    "nixpkgs-master": {
-      "locked": {
-        "lastModified": 1787050409,
-        "narHash": "sha256-rWWWwm5Hr6tWNJUQ0znra53IehG7k8uNpFe2r9wGE3I=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "fbd737989d7b8424ce3e89ecd0d02dae187c08fe",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "master",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nixpkgs-unstable": {
-      "locked": {
-        "lastModified": 1792116957,
-        "narHash": "sha256-EjZqHKObBfIOeHZnMRVV87HB3pPq/WBkmRJWyFxmZu8=",
-        "owner": "nixos",
-        "repo": "nixpkgs",
-        "rev": "f20cd90e28fe0403873f473b29e42662cd86e8c4",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nixos",
-        "ref": "nixpkgs-unstable",
-        "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
     "nixpkgs_2": {
       "locked": {
         "lastModified": 1786963906,
@@ -288,11 +271,11 @@
     "pi-xvzc": {
       "flake": false,
       "locked": {
-        "lastModified": 1792299529,
-        "narHash": "sha256-qFTYjjE8hU/QwaAVJNw5uDA6haMANDDOlbEnikEAMQ0=",
+        "lastModified": 1792308452,
+        "narHash": "sha256-+HgwWc7HzfWtu4XFzynXp6NkW4ICQS4vt/DgPWRCLfA=",
         "owner": "xvzc",
         "repo": "pi",
-        "rev": "35d10fb12b9de8843027a07e704ac7397504d911",
+        "rev": "fb478369fcfb029a3282cb20163b11e5164831d1",
         "type": "github"
       },
       "original": {
@@ -307,12 +290,11 @@
         "assets": "assets",
         "home-manager": "home-manager",
         "home-manager-master": "home-manager-master",
+        "multiverse": "multiverse",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_3",
-        "nixpkgs-master": "nixpkgs-master",
-        "nixpkgs-unstable": "nixpkgs-unstable",
         "nvim-xvzc": "nvim-xvzc",
         "pi-xvzc": "pi-xvzc"
       }

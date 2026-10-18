@@ -7,7 +7,7 @@
 
   programs.ghostty = {
     enable = true;
-    package = if pkgs.stdenv.isDarwin then null else pkgs.master.ghostty;
+    package = if pkgs.stdenv.isDarwin then null else pkgs.mv.latest.ghostty;
     systemd.enable = pkgs.stdenv.isLinux;
     clearDefaultKeybinds = false;
     settings = {

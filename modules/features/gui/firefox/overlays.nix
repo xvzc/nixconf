@@ -9,7 +9,7 @@
   # └────────┘
   nixpkgs.overlays = lib.mkBefore [
     (final: prev: {
-      firefox = final.unstable.firefox-unwrapped;
+      firefox = final.mv.tip.firefox-unwrapped;
     })
   ];
 }

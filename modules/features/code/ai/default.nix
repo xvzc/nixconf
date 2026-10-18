@@ -14,8 +14,8 @@
   # └────────┘
   nixpkgs.overlays = [
     (final: prev: {
-      claude-code = final.master.claude-code;
-      opencode = final.unstable.opencode;
+      claude-code = final.mv.latest.claude-code;
+      opencode = final.mv.tip.opencode;
     })
   ];
 }

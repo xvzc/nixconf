@@ -55,12 +55,7 @@ in
   nixpkgs.overlays = [
     # inputs.neovim-nightly-overlay.overlays.default
     (final: prev: {
-      unstable = import inputs.nixpkgs-unstable {
-        system = final.stdenv.hostPlatform.system;
-        config.allowUnfree = true;
-      };
-
-      master = import inputs.nixpkgs-master {
+      mv = inputs.multiverse.lib.mkMultiverse {
         system = final.stdenv.hostPlatform.system;
         config.allowUnfree = true;
       };

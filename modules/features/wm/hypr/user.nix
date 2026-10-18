@@ -40,7 +40,7 @@ lib.mkIf osConfig.features.wm.hypr.enable {
   home.pointerCursor = {
     gtk.enable = true;
     x11.enable = true;
-    package = pkgs.unstable.adwaita-icon-theme;
+    package = pkgs.mv.tip.adwaita-icon-theme;
     name = "Adwaita";
     size = 24;
   };
@@ -52,11 +52,11 @@ lib.mkIf osConfig.features.wm.hypr.enable {
     # colorScheme = "dark";
 
     theme = {
-      package = pkgs.unstable.orchis-theme;
+      package = pkgs.mv.tip.orchis-theme;
       name = "Orchis-Dark-Compact";
     };
     iconTheme = {
-      package = pkgs.unstable.tela-icon-theme;
+      package = pkgs.mv.tip.tela-icon-theme;
       name = "Tela";
     };
   };

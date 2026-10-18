@@ -23,7 +23,7 @@
   };
 
   home.packages = [
-    pkgs.unstable.openspec
+    pkgs.mv.tip.openspec
   ];
 
   xdg.configFile."pi-xvzc/agent" = {
@@ -37,7 +37,7 @@
 
   programs.pi-coding-agent = {
     enable = true;
-    package = pkgs.unstable.pi-coding-agent;
+    package = pkgs.mv.tip.pi-coding-agent;
     configDir = "${config.xdg.configHome}/pi-xvzc/agent";
     extraPackages = [ ];
   };

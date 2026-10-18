@@ -61,7 +61,7 @@
 
   programs.tmux = {
     enable = true;
-    package = pkgs.unstable.tmux;
+    package = pkgs.mv.tip.tmux;
     tmuxinator.enable = true;
 
     prefix = "C-a";

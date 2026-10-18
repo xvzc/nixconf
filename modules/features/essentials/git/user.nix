@@ -15,7 +15,7 @@ in
 
   programs.gh = {
     enable = true;
-    package = pkgs.unstable.gh;
+    package = pkgs.mv.tip.gh;
     settings = {
       git_protocol = "ssh";
       prompt = "enabled";

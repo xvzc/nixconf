@@ -10,9 +10,9 @@
   # └────────┘
   nixpkgs.overlays = [
     (final: prev: {
-      skhd = final.unstable.skhd;
-      yabai = final.unstable.yabai;
-      jankyborders = final.unstable.jankyborders;
+      skhd = final.mv.tip.skhd;
+      yabai = final.mv.tip.yabai;
+      jankyborders = final.mv.tip.jankyborders;
     })
   ];
 }

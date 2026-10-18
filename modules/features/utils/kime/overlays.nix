@@ -9,7 +9,7 @@
   # └────────┘
   nixpkgs.overlays = lib.mkBefore [
     (final: prev: {
-      kime = final.unstable.kime;
+      kime = final.mv.tip.kime;
     })
   ];
 }

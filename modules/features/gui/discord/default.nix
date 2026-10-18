@@ -16,9 +16,9 @@
     (final: prev: {
       discord =
         if pkgs.stdenv.isDarwin then
-          final.unstable.discord
+          final.mv.tip.discord
         else
-          final.unstable.discord.overrideAttrs (old: {
+          final.mv.tip.discord.overrideAttrs (old: {
             postInstall = ''
               ${old.postInstall or ""}
               wrapProgram $out/bin/Discord \

@@ -55,7 +55,7 @@ platforms.${platform}.builder {
 
     platforms.${platform}.modules
 
-    ../global.nix
+    ../config.nix
     ../profiles/${profile}
     ../hosts/${host}.nix
     (builtins.filter builtins.pathExists [

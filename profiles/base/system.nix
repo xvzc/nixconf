@@ -13,14 +13,14 @@
     home-manager
     htop
     jq
-    unstable.openssh
+    mv.tip.openssh
     openssl
     unzip
     vim
     wget
     zip
 
-    unstable.nodejs
+    mv.tip.nodejs
     (pkgs.python313.withPackages (
       ppkgs: with ppkgs; [
         pip

@@ -8,7 +8,7 @@
 lib.mkIf (osConfig.features.wm.hypr.enable) {
   programs.hyprlock = {
     enable = true;
-    package = pkgs.unstable.hyprlock;
+    package = pkgs.mv.tip.hyprlock;
 
     settings = {
       general = {

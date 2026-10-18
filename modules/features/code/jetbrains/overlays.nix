@@ -9,7 +9,7 @@
   # └────────┘
   nixpkgs.overlays = lib.mkBefore [
     (final: prev: {
-      jetbrains = final.unstable.jetbrains;
+      jetbrains = final.mv.tip.jetbrains;
     })
   ];
 }

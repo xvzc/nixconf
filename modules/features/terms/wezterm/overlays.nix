@@ -9,7 +9,7 @@
   # └────────┘
   nixpkgs.overlays = lib.mkBefore [
     (final: prev: {
-      wezterm = final.unstable.wezterm;
+      wezterm = final.mv.tip.wezterm;
     })
   ];
 }

@@ -17,7 +17,7 @@
   #         sha256 = "sha256-tBh84C7Kt3qjV4oZOcL05dVvBNMFtiCF45uogZvYxiY=";
   #       };
   #     });
-  #     tmuxPlugins.catppuccin = final.unstable.tmuxPlugins.catppuccin;
+  #     tmuxPlugins.catppuccin = final.mv.tip.tmuxPlugins.catppuccin;
   #   })
   # ];
 }

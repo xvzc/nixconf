@@ -12,7 +12,7 @@
 
   # nixpkgs.overlays = [
   #   (final: prev: {
-  #     neovim-unwrapped = final.unstable.neovim-unwrapped;
+  #     neovim-unwrapped = final.mv.tip.neovim-unwrapped;
   #   })
   # ];
 }

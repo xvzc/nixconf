@@ -23,7 +23,7 @@ lib.mkMerge [
     home.packages = with pkgs; [
       # cava
       fastfetch
-      master.gemini-cli
+      mv.latest.gemini-cli
       google-chrome
       ripgrep
       slack
@@ -35,9 +35,9 @@ lib.mkMerge [
 
       nixd
       nixfmt
-      unstable.lazygit
-      unstable.bash-language-server
-      unstable.typstyle
+      mv.tip.lazygit
+      mv.tip.bash-language-server
+      mv.tip.typstyle
       shellcheck
       shfmt
       tree-sitter
@@ -55,7 +55,7 @@ lib.mkMerge [
     home.packages = with pkgs; [
       pngpaste
       # im-select
-      unstable.macism
+      mv.tip.macism
     ];
 
     home.activation.setWallpaper =
@@ -77,7 +77,7 @@ lib.mkMerge [
       feh
       # electron-chromedriver_35
       desktop-file-utils
-      unstable.wine-staging
+      mv.tip.wine-staging
       clipse
     ];
   })
