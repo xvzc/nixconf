@@ -21,7 +21,7 @@
     zip
 
     unstable.nodejs
-    (pkgs.python312.withPackages (
+    (pkgs.python313.withPackages (
       ppkgs: with ppkgs; [
         pip
       ]

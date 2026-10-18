@@ -9,7 +9,7 @@
 {
   imports = [
     ../modules/features/wm/hypr
-    ../modules/features/essentials/tailscale
+    # ../modules/features/essentials/tailscale
   ];
 
   config = lib.mkMerge [

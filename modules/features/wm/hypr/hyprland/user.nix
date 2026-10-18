@@ -42,7 +42,7 @@ lib.mkIf (osConfig.features.wm.hypr.enable) {
         focus_on_activate = true;
         disable_hyprland_logo = true;
         # Keep repainting consistently; VFR can leave flickering artifacts after Waybar tray popups close.
-        vfr = false;
+        # vfr = false;
       };
 
       xwayland = {
