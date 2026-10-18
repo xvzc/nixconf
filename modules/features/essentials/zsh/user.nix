@@ -6,6 +6,7 @@
   ...
 }:
 let
+  purePrompt = pkgs.mv.version "pure-prompt" "1.28.4";
 in
 {
   home.file = {
@@ -16,7 +17,7 @@ in
   };
 
   home.packages = [
-    pkgs.pure-prompt
+    purePrompt
   ];
 
   programs.zsh = {
@@ -93,7 +94,7 @@ in
       (lib.mkOrder 550 # sh
         ''
           fpath+=($HOME/.local/share/zsh/site-functions)
-          fpath+=(${pkgs.pure-prompt})
+          fpath+=(${purePrompt})
         ''
       )
 
