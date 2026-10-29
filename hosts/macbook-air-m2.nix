@@ -12,10 +12,7 @@
 
   config = lib.mkMerge [
     {
-      features.wm.yabai = {
-        enable = true;
-        border = true;
-      };
+      features.wm.yabai.enable = true;
 
       # The user should already exist, but we need to set
       # this up so Nix knows what our home directory is.

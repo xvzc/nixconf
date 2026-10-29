@@ -10,17 +10,8 @@ lib.mkIf (config.features.wm.yabai.enable) {
     csrutil status | grep -q 'enabled.' && echo "SIP must be disabled" && exit 1;
   '';
 
-  # ┌──────────┐
-  # │ PACKAGES │
-  # └──────────┘
-  environment.systemPackages = [
-    pkgs.skhd
-    pkgs.yabai
-  ];
+  environment.systemPackages = [ pkgs.yabai ];
 
-  # ┌───────┐
-  # │ YABAI │
-  # └───────┘
   launchd.user.agents.yabai = {
     serviceConfig.ProgramArguments = [ "${pkgs.yabai}/bin/yabai" ];
 
@@ -46,32 +37,29 @@ lib.mkIf (config.features.wm.yabai.enable) {
     EOF
   '';
 
-  system.activationScripts.postActivation.text =
+  system.activationScripts.postActivation.text = lib.mkOrder 1000 (
     # sh
     ''
-      # Restart `yabai` and `skhd`
+      # Restart `yabai`
       sudo ${pkgs.yabai}/bin/yabai --load-sa || true
       launchctl kickstart -k "gui/$(id -u ${ctx.user})/org.nixos.yabai" || true
-      launchctl kickstart -k "gui/$(id -u ${ctx.user})/org.nixos.skhd" || true
-    '';
-
-  # ┌──────┐
-  # │ SKHD │
-  # └──────┘
-  launchd.user.agents.skhd = {
-    path = [ config.environment.systemPath ];
-
-    serviceConfig.ProgramArguments = [
-      "${pkgs.skhd}/bin/skhd"
-      "-c"
-      "/Users/${ctx.user}/.config/yabai/skhdrc"
-    ];
-    serviceConfig.KeepAlive = true;
-    serviceConfig.ProcessType = "Interactive";
-    serviceConfig.StandardErrorPath = "/tmp/skhd_error_log.txt";
-  };
+    ''
+  );
 
   system.nvram.variables = {
     "boot-args" = "-arm64e_preview_abi"; # Allow non-Apple signed binaries
+  };
+
+  home-manager.users.${ctx.user} = {
+    xdg.configFile = {
+      "yabai/yabairc" = {
+        source = ./dotfiles/yabairc;
+      };
+
+      "yabai/scripts" = {
+        source = ./dotfiles/scripts;
+        recursive = true;
+      };
+    };
   };
 }
