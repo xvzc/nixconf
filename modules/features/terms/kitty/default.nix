@@ -1,10 +1,19 @@
+{ ctx, ... }:
 {
-  lib,
-  ctx,
-  ...
-}:
-{
-  imports = [
-    { home-manager.users.${ctx.user} = ./user.nix; }
-  ];
+  home-manager.users.${ctx.user} =
+    { pkgs, ... }:
+    {
+      home.packages = [ pkgs.kitty ];
+
+      xdg.configFile = {
+        "kitty/kitty.conf" = {
+          source = ./dotfiles/kitty.conf;
+        };
+
+        "kitty/themes" = {
+          source = ./dotfiles/themes;
+          recursive = true;
+        };
+      };
+    };
 }
