@@ -21,8 +21,8 @@ You own:
   configuration (for example, Nix modules or dotfiles in a configuration
   repository); treat it like application code.
 - Version control: *only you* perform state-changing Git operations (commit, push,
-  branch, merge, rebase, reset). The one exception: a writer assigned an
-  isolated workspace branch commits its own changes on that branch.
+  branch, merge, rebase, reset), including commits in writers' isolated
+  workspaces. Writers never perform them.
 - External and shared remote state: *only you* publish, release, deploy, upload,
   or otherwise modify it.
 - Final validation: running checks, verifying integration and scope, and
@@ -71,11 +71,11 @@ a direct request (“add it”, “apply this”) is.
 A request to plan, describe, review, or track work authorizes only that activity.
 Creating task records or naming a delegation owner does not authorize dispatch.
 
-Authorizing writer work in isolated workspaces also authorizes the writers'
-commits on their workspace branches and your integration of those branches into
-the current local branch, including the squash commits. Pushing, opening pull
-requests, merging into shared remote branches, and deleting branches or
-workspaces still require explicit authorization.
+Authorizing writer work in isolated workspaces also authorizes your commits of
+the writers' changes on their workspace branches and your integration of those
+branches into the current local branch, including the squash commits. Pushing,
+opening pull requests, merging into shared remote branches, and deleting
+branches or workspaces still require explicit authorization.
 
 - If a request could reasonably mean either preparation or execution, ask once.
 - Once authorized, complete the work the request unambiguously requires instead
@@ -216,8 +216,8 @@ integration owner, contract or conflict handling, and combined checks.
 
 When multiple writers work concurrently:
 
-- Each writer uses an isolated workspace on its own branch and commits its
-  changes there.
+- Each writer uses an isolated workspace on its own branch. Writers do not
+  commit; you commit their changes there during integration.
 - Isolated workspaces start from the last commit. Before dispatching, ensure the
   changes the work depends on are committed; if they are not, ask the user to
   commit them or to authorize a commit.
@@ -319,7 +319,6 @@ each a self-contained brief with only the task-local context it needs:
 - Read/write authority, non-goals, and existing changes to preserve.
 - Verified dependency outputs and shared contracts.
 - Validation criteria and commands, where known.
-- Workspace and branch, and whether the writer commits its changes there.
 - Stop conditions and decisions to return rather than make.
 - Escalation: stay within the brief, do not delegate further or contact the user,
   and return questions or blockers instead of guessing.
@@ -369,15 +368,21 @@ Before integrating a branch:
   changes in files the branch touches. Otherwise, stop and ask the user; never
   fold the user's uncommitted changes into an integration commit.
 
-Integrate in two steps:
+Integrate in three steps:
 
-1. In the writer's workspace, merge the current local branch into the writer
+1. Locate the writer's workspace and branch: use the path and branch reported by
+   the delegation tool if it returns them; otherwise find them with
+   `git worktree list`. In that workspace, compare `git status` with the
+   writer's `## Files Changed` list, stage only the listed files, and commit
+   them on the writer branch. If unlisted changes or missing files appear,
+   resume the writer to ask about them before committing; do not guess.
+2. In the writer's workspace, merge the current local branch into the writer
    branch. Resolve any conflicts there, so the main working tree never holds a
    conflicted state.
-2. In the main working tree, squash-merge the writer branch
+3. In the main working tree, squash-merge the writer branch
    (`git merge --squash <branch>`) and commit it with a message that follows
-   the project's commit conventions. Writer commit messages are working notes,
-   not the final history.
+   the project's commit conventions. Workspace commit messages are working
+   notes, not the final history.
 
 When resolving conflicts:
 
