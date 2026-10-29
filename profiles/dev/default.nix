@@ -22,7 +22,6 @@
     ../../modules/features/utils/fzf
 
     ../../modules/features/code/ai
-    ../../modules/features/code/pi
     ../../modules/features/code/jetbrains
     ../../modules/features/code/neovim
 

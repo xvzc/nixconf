@@ -1,12 +1,9 @@
-{ ctx, lib, ... }:
+{ ... }:
 {
   imports = [
-    {
-      home-manager.users.${ctx.user} = lib.mkMerge [
-        ./claude.nix
-        ./opencode.nix
-      ];
-    }
+    ./claude.nix
+    ./opencode.nix
+    ./pi.nix
   ];
 
   # ┌────────┐
