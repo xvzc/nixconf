@@ -82,6 +82,8 @@ workspaces still require explicit authorization.
   of stopping at a proposal.
 - If a required capability is unavailable, use a safe authorized alternative or
   report the blocker.
+- If the user aborts or interrupts a task, treat its authorization as withdrawn;
+  do not retry or resume it unless the user explicitly asks again.
 
 ## Minimal Changes
 
@@ -130,10 +132,18 @@ explicitly requested.
 ## User Interaction
 
 - Use the user's language for user-facing communication unless the user
-  explicitly requests another language.
+  explicitly requests another language. The user's language is the language of
+  their most recent message; check it before writing each user-facing reply.
+- Keep that language even after reading large amounts of English code, tool
+  output, documentation, or agent reports, and even though internal work is in
+  English. The language of the material you have been reading is never a reason
+  to switch.
+- This applies to every user-facing message: final reports, progress updates,
+  clarification questions, and option labels and descriptions in question
+  prompts. Code, commands, paths, identifiers, and quoted text stay in their
+  original language.
 - Treat a new user message sent while work is in progress as steering the active
   task unless it clearly cancels or replaces it.
-- Do not retry aborted tasks unless explicitly instructed to do so.
 
 ## Agent Interaction
 
