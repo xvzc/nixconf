@@ -49,7 +49,7 @@
       inherit (self) outputs;
       # inherit (nixpkgs) lib;
 
-      mkSystem = import ./lib/mksystem.nix { inherit nixpkgs inputs outputs; };
+      mkSystem = import ./lib/mk-system.nix { inherit nixpkgs inputs outputs; };
     in
     {
       darwinConfigurations.macbook-air-m2 = mkSystem "macbook-air-m2" {
