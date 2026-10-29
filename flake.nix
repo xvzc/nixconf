@@ -22,11 +22,6 @@
 
     # zjstatus.url = "github:dj95/zjstatus";
 
-    nvim-xvzc = {
-      url = "github:xvzc/nvim";
-      flake = false;
-    };
-
     pi-xvzc = {
       url = "github:xvzc/pi";
       flake = false;
