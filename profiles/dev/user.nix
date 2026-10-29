@@ -23,15 +23,13 @@ lib.mkMerge [
     home.packages = with pkgs; [
       # cava
       fastfetch
-      mv.latest.gemini-cli
       google-chrome
       ripgrep
       slack
       # spoofdpi
       spotify
       tree
-      codex
-      claude-code
+      mv.tip.codex
 
       nixd
       nixfmt
