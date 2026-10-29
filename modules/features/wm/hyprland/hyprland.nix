@@ -1,0 +1,321 @@
+{
+  lib,
+  config,
+  pkgs,
+  ctx,
+  ...
+}:
+lib.mkIf config.features.wm.hyprland.enable {
+  environment.systemPackages = with pkgs; [
+    dunst
+    wl-clipboard
+  ];
+
+  services.dbus.packages = with pkgs; [ xfce.xfconf ];
+  services = {
+    xserver = {
+      enable = true;
+    };
+
+    displayManager = {
+      sessionPackages = [
+        pkgs.hyprland
+      ];
+
+      ly = {
+        enable = true;
+        settings = {
+          animation = "matrix";
+          load = true;
+          save = true;
+        };
+      };
+    };
+  };
+
+  # environment.pathsToLink = [
+  #   "/share/applications"
+  #   "/share/xdg-desktop-portal"
+  # ];
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    withUWSM = false;
+  };
+
+  home-manager.users.${ctx.user} =
+    {
+      pkgs,
+      config,
+      ...
+    }:
+    {
+      programs.zsh.shellAliases = {
+        "open" = "nemo";
+      };
+      home.packages = with pkgs; [
+        hyprpicker
+        hyprshot
+        nemo
+      ];
+
+      xdg = {
+        portal = {
+          enable = true;
+
+          config = {
+            hyprland = {
+              default = [
+                "hyprland"
+                "gtk"
+              ];
+            };
+          };
+
+          # Define a portal backend for Gnome
+          extraPortals = with pkgs; [
+            xdg-desktop-portal-gtk
+            # xdg-desktop-portal-wlr
+            xdg-desktop-portal-hyprland
+            # xdg-desktop-portal
+          ];
+        };
+      };
+
+      home.pointerCursor = {
+        gtk.enable = true;
+        x11.enable = true;
+        package = pkgs.mv.tip.adwaita-icon-theme;
+        name = "Adwaita";
+        size = 24;
+      };
+
+      gtk = {
+        enable = true;
+        gtk2.enable = true;
+        gtk3.enable = true;
+        # colorScheme = "dark";
+
+        theme = {
+          package = pkgs.mv.tip.orchis-theme;
+          name = "Orchis-Dark-Compact";
+        };
+        iconTheme = {
+          package = pkgs.mv.tip.tela-icon-theme;
+          name = "Tela";
+        };
+      };
+
+      fonts.fontconfig = {
+        enable = true;
+        defaultFonts.serif = [
+          "DejaVu Sans"
+          "D2Coding"
+          "JetBrainsMonoNL Nerd Font"
+        ];
+
+        defaultFonts.sansSerif = [
+          "DejaVu Sans"
+          "D2Coding"
+          "JetBrainsMonoNL Nerd Font"
+        ];
+
+        defaultFonts.monospace = [
+          "JetBrainsMonoNL Nerd Font Mono"
+        ];
+      };
+
+      wayland.windowManager.hyprland = {
+        enable = true;
+        package = pkgs.mv.tip.hyprland;
+        xwayland.enable = true;
+        settings = {
+          "$mod1" = "SUPER";
+          "$mod2" = "ALT";
+          "$mod3" = "CONTROL";
+          "$terminal" = "wezterm";
+          # "$terminal" = "env -u WAYLAND_DISPLAY wezterm";
+
+          general = {
+            layout = "master";
+            no_focus_fallback = true;
+            "col.active_border" = "rgba(68f938cc) rgba(68f938cc) 0deg";
+          };
+
+          master = {
+            new_status = "slave";
+            orientation = "left";
+            mfact = "0.70";
+          };
+
+          ecosystem = {
+            no_update_news = true;
+            no_donation_nag = true;
+          };
+
+          debug = {
+            disable_logs = false;
+          };
+
+          misc = {
+            focus_on_activate = true;
+            disable_hyprland_logo = true;
+            # Keep repainting consistently; VFR can leave flickering artifacts after Waybar tray popups close.
+            # vfr = false;
+          };
+
+          xwayland = {
+            force_zero_scaling = true;
+          };
+
+          input = {
+            follow_mouse = 2;
+            float_switch_override_focus = 0;
+          };
+
+          animations = {
+            enabled = true;
+            animation = [
+              "workspaces, 1, 1.5, default, slide"
+              "windows, 1, 2, default, popin 80%"
+              "fade, 0, 1, default"
+              "fadeIn, 0, 1, default"
+              "fadeOut, 0, 1, default"
+              "fadeShadow, 0, 1, default"
+              "fadeDim, 0, 1, default"
+              # "fadeIn, 1, 0.5, default"
+            ];
+          };
+
+          decoration = {
+            active_opacity = 0.98;
+            inactive_opacity = 0.93;
+          };
+
+          exec = [
+          ];
+
+          exec-once = [
+            # Ensure environment variable synchronization to prevent compatibility issues in applications such as kime and Ghostty
+            "${pkgs.dbus}/bin/dbus-update-activation-environment --systemd --all"
+
+            "${pkgs.waybar}/bin/waybar"
+            "${pkgs.kime}/bin/kime"
+            "${pkgs._1password-gui}/bin/1password --silent"
+            "${pkgs.discord}/bin/Discord --start-minimized"
+
+            # Launch Spotify hidden so it can initialize in the background
+            "[workspace special:hidden silent] ${pkgs.spotify}/bin/spotify"
+            # Hide/close its window after startup; Spotify has no reliable Linux start-minimized flag
+            "for i in {1..100}; do hyprctl clients | grep -qi 'class: spotify' && hyprctl dispatch closewindow class:spotify && break; sleep 0.1; done"
+
+            "${pkgs.dunst}/bin/dunst" # notification backend
+
+            "[workspace special:hidden silent] wezterm"
+
+            "hyprctl setcursor ${toString config.home.pointerCursor.name} ${toString config.home.pointerCursor.size}"
+            "dconf write /org/gnome/desktop/interface/color-scheme \"'prefer-dark'\""
+          ];
+
+          windowrule = [
+            {
+              name = "noblur";
+              "match:class" = "^()$";
+              "match:title" = "^()$";
+              no_blur = "on";
+            }
+            {
+              name = "force float for untitled windows";
+              "match:title" = "Not\ titled.*";
+              float = "on";
+              size = "300 200";
+            }
+            {
+              name = "force float for setting windows";
+              "match:title" = "(?i)(setting|preference)";
+              float = "on";
+              size = "300 200";
+            }
+            # {
+            #   name = "force float for setting windows";
+            #   "match:class" = "^(dev\.benz\.walker)$";
+            #   # animation = "fadeIn, 0, 1, default";
+            #   # float = "on";
+            #   # size = "300 200";
+            # }
+          ];
+
+          # windowrulev2 = [
+          # "noblur,class:^()$,title:^()$"
+
+          # "float,title:(Not\ titled.*)"
+          # "size 300 200,title:(Not\ titled.*)"
+
+          # "stayfocused, class:^(Rofi)$"
+          # ];
+
+          bind = [
+            "$mod1 $mod2 $mod3, r, exec, hyprctl reload"
+
+            "$mod1, Return, exec, $terminal"
+            "$mod2, q, killactive"
+            "$mod1, F12, togglespecialworkspace, hidden"
+            ", Pause, exec, hyprlock"
+
+            #sh
+            ''
+              $mod1, f, exec, hyprctl dispatch togglefloating \
+               && (hyprctl activewindow | grep -q "floating: 1" \
+               && hyprctl dispatch resizeactive exact 1200 900 \
+               && hyprctl dispatch centerwindow) \
+               || true
+            ''
+
+            "$mod2, Space, exec, rofi -show drun -calc-command \"echo -n '{result}' | wl-copy\""
+
+            "$mod1, h, movefocus, l"
+            "$mod1, j, movefocus, d"
+            "$mod1, k, movefocus, u"
+            "$mod1, l, movefocus, r"
+
+            "$mod1 $mod2, h, swapwindow, l"
+            "$mod1 $mod2, j, swapwindow, d"
+            "$mod1 $mod2, k, swapwindow, u"
+            "$mod1 $mod2, l, swapwindow, r"
+
+            "$mod1, 1, workspace, 1"
+            "$mod1, 2, workspace, 2"
+            "$mod1, 3, workspace, 3"
+            "$mod1, 4, workspace, 4"
+            "$mod1, 5, workspace, 5"
+            "$mod1, 6, workspace, 6"
+            "$mod1, 7, workspace, 7"
+            "$mod1, 8, workspace, 8"
+            "$mod1, 9, workspace, 9"
+            "$mod1, 0, workspace, 10"
+
+            "$mod1 $mod2, 1, movetoworkspace, 1"
+            "$mod1 $mod2, 2, movetoworkspace, 2"
+            "$mod1 $mod2, 3, movetoworkspace, 3"
+            "$mod1 $mod2, 4, movetoworkspace, 4"
+            "$mod1 $mod2, 5, movetoworkspace, 5"
+            "$mod1 $mod2, 6, movetoworkspace, 6"
+            "$mod1 $mod2, 7, movetoworkspace, 7"
+            "$mod1 $mod2, 8, movetoworkspace, 8"
+            "$mod1 $mod2, 9, movetoworkspace, 9"
+            "$mod1 $mod2, 0, movetoworkspace, 10"
+
+            # "$mod1 $mod3, s, exec, rofi -show drun"
+            "$mod1 $mod3, s, exec, hyprshot -m region --clipboard-only"
+            "$mod1 $mod2 $mod3, s, exec, hyprshot -m region -o ~/.screenshots"
+          ];
+
+          bindm = [
+            "$mod1, mouse:272, movewindow"
+            "$mod1, mouse:273, resizewindow"
+            # "$mod ALT, mouse:272, resizewindow"
+          ];
+        };
+      };
+    };
+}

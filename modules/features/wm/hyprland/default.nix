@@ -1,14 +1,25 @@
 {
   lib,
   ctx,
-  inputs,
   ...
 }:
+assert ctx.isLinux;
 {
+  options.features.wm.hyprland.enable = lib.mkEnableOption "Whether to enable 'hyprland'";
+
+  imports = [
+    ./hypridle.nix
+    ./hyprland.nix
+    ./hyprlock.nix
+    ./hyprpaper.nix
+    ./waybar.nix
+    ./rofi.nix
+  ];
+
   # ┌───────┐
   # │ LINUX │
   # └───────┘
-  nixpkgs.overlays = [
+  config.nixpkgs.overlays = [
     (final: prev: {
       kdePackages = final.mv.tip.kdePackages;
       # wine = final.mv.tip.wine;

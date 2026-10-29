@@ -48,7 +48,7 @@
   # └───────┘
   ++ lib.optionals ctx.isLinux [
     ../../modules/features/essentials/chrony
-    ../../modules/features/wm/hypr
+    ../../modules/features/wm/hyprland
     ../../modules/features/utils/kime
   ];
 }

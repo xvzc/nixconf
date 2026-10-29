@@ -8,7 +8,7 @@
 }:
 {
   imports = [
-    ../modules/features/wm/hypr
+    ../modules/features/wm/hyprland
     # ../modules/features/essentials/tailscale
   ];
 
@@ -18,10 +18,7 @@
     # ┗━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     {
 
-      features.wm.hypr = {
-        enable = true;
-        withRofi = true;
-      };
+      features.wm.hyprland.enable = true;
     }
     # ┏━━━━━━━━┓
     # ┃ SYSTEM ┃
