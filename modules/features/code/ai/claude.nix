@@ -57,6 +57,11 @@
           agent = "orchestrator";
           defaultShell = "bash";
           includeCoAuthoredBy = false;
+          permissions.allow = [
+            "Read(~/.claude/skills/**)"
+            "Read(~/.claude/agents/**)"
+            "Read(~/.claude/rules/**)"
+          ];
           enabledPlugins = {
             "rust-analyzer-lsp@claude-plugins-official" = true;
             "gopls-lsp@claude-plugins-official" = true;
