@@ -45,6 +45,7 @@
 
       programs.zsh.sessionVariables = {
         CLAUDE_CODE_NO_FLICKER = 1;
+        CLAUDE_CODE_ENABLE_TASKS = 1;
       }
       // lib.optionalAttrs ctx.isDarwin {
         NODE_EXTRA_CA_CERTS = "/etc/ssl/cert.pem";
