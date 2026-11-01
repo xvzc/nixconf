@@ -6,6 +6,7 @@
 TOPIC=""
 LAUNCH_CMD=""
 SIZE=33
+FLOAT_SIZE="80x60" # --position float: WxH or N, in percent of the window
 POSITION="right"
 F_FLAG=""
 TARGET_PANE=""
@@ -25,6 +26,7 @@ while [[ "$#" -gt 0 ]]; do
     ;;
   --size)
     SIZE="$2"
+    FLOAT_SIZE="$2"
     shift
     ;;
   --position)
@@ -71,8 +73,23 @@ bottom)
   SPLIT_FLAG="$F_FLAG -v"
   DIM_PROP="height"
   ;;
+float)
+  if [[ ! "$FLOAT_SIZE" =~ ^([0-9]{1,3})(x([0-9]{1,3}))?$ ]]; then
+    echo "Error: Invalid --size '$FLOAT_SIZE'. With --position float, use WxH or N in percent (e.g., 80x60 or 80)."
+    exit 1
+  fi
+  FLOAT_W=$((10#${BASH_REMATCH[1]}))
+  FLOAT_H=$((10#${BASH_REMATCH[3]:-${BASH_REMATCH[1]}}))
+  if [ "$FLOAT_W" -lt 1 ] || [ "$FLOAT_W" -gt 100 ] || [ "$FLOAT_H" -lt 1 ] || [ "$FLOAT_H" -gt 100 ]; then
+    echo "Error: Invalid --size '$FLOAT_SIZE'. Percentages must be between 1 and 100."
+    exit 1
+  fi
+  # Centered in the window; --span and --target do not apply
+  FLOAT_GEOMETRY=(-x "$FLOAT_W%" -y "$FLOAT_H%" -X "$(((100 - FLOAT_W) / 2))%" -Y "$(((100 - FLOAT_H) / 2))%")
+  TARGET_PANE=""
+  ;;
 *)
-  echo "Error: Invalid --position '$POSITION'. Use left, right, top, or bottom."
+  echo "Error: Invalid --position '$POSITION'. Use left, right, top, bottom, or float."
   exit 1
   ;;
 esac
@@ -82,6 +99,11 @@ esac
 # ------------------------------------------------------------------------------
 CUR_SESSION_NAME="$(tmux display-message -p '#{session_name}')"
 CUR_WIN_ID="$(tmux display-message -p '#{window_id}')"
+
+# A session named <base>/<topic> shares the pane of <base>. The = prevents tmux
+# from resolving a missing <base> to <base>/<topic> by prefix.
+BASE_SESSION="${CUR_SESSION_NAME%%/*}"
+tmux has-session -t "=$BASE_SESSION" 2>/dev/null || BASE_SESSION="$CUR_SESSION_NAME"
 
 # Formats target pane string
 if [ -n "$TARGET_PANE" ]; then
@@ -103,12 +125,63 @@ if ! tmux has-session -t "$HIDDEN_SESSION" 2>/dev/null; then
   tmux new-session -d -s "$HIDDEN_SESSION" -n "__keepalive" "sleep infinity"
 fi
 
-SAVED_PANE_ID=$(tmux show-option -t "$CUR_SESSION_NAME" -v "$VAR_PANE_ID" 2>/dev/null)
+ensure_hidden_window() {
+  if ! tmux list-windows -t "$HIDDEN_SESSION" -F '#{window_name}' 2>/dev/null | grep -q "^${BASE_SESSION}$"; then
+    tmux new-window -d -t "$HIDDEN_SESSION:" -n "$BASE_SESSION" "sleep infinity"
+  fi
+}
+
+resolve_target_dir() {
+  # Extracts target directory path
+  RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" TMUX_SESSION_ROOT_DIR 2>/dev/null | grep "^TMUX_SESSION_ROOT_DIR=")
+  TARGET_DIR="${RAW_ENV#TMUX_SESSION_ROOT_DIR=}"
+  TARGET_DIR=$(echo "$TARGET_DIR" | tr -d '\r\n' | sed 's/^"//;s/"$//' | xargs)
+  [ -z "$TARGET_DIR" ] || [ ! -d "$TARGET_DIR" ] && TARGET_DIR=$(tmux display-message -p -t "$TMUX_TARGET" '#{pane_current_path}')
+}
+
+SAVED_PANE_ID=$(tmux show-option -t "$BASE_SESSION" -v "$VAR_PANE_ID" 2>/dev/null)
 
 # Evaluates pane presence within target window
 IS_VISIBLE=0
 if [ -n "$SAVED_PANE_ID" ] && tmux list-panes -t "$CUR_WIN_ID" -F '#{pane_id}' 2>/dev/null | grep -q "^${SAVED_PANE_ID}$"; then
   IS_VISIBLE=1
+fi
+
+# ------------------------------------------------------------------------------
+# Floating Pane
+# ------------------------------------------------------------------------------
+if [ "$POSITION" = "float" ]; then
+  IS_ZOOMED=$(tmux display-message -p -t "$CUR_WIN_ID" '#{window_zoomed_flag}')
+  ACTIVE_PANE=$(tmux display-message -p -t "$CUR_WIN_ID" '#{pane_id}')
+
+  # A zoomed pane covers the floating pane, so toggling then shows it instead
+  if [ "$IS_VISIBLE" -eq 1 ] && { [ "$IS_ZOOMED" -eq 0 ] || [ "$ACTIVE_PANE" = "$SAVED_PANE_ID" ]; }; then
+    ensure_hidden_window
+    tmux join-pane -d -v -s "$SAVED_PANE_ID" -t "${HIDDEN_SESSION}:${BASE_SESSION}"
+    exit 0
+  fi
+
+  [ "$IS_ZOOMED" -eq 1 ] && tmux resize-pane -Z -t "$CUR_WIN_ID"
+
+  if [ "$IS_VISIBLE" -eq 1 ]; then
+    tmux select-pane -t "$SAVED_PANE_ID"
+  elif [ -n "$SAVED_PANE_ID" ] && tmux list-panes -a -F '#{pane_id}' | grep -q "^${SAVED_PANE_ID}$"; then
+    # Swapping into a floating placeholder leaves the tiled panes unresized. The
+    # placeholder is active after new-pane, so run-shell -C resolves it as #{pane_id}.
+    PLACEHOLDER=$(tmux new-pane -t "$CUR_WIN_ID" "${FLOAT_GEOMETRY[@]}" -P -F '#{pane_id}' "sleep 300" \; \
+      run-shell -t "$CUR_WIN_ID" -C "swap-pane -d -s '$SAVED_PANE_ID' -t '#{pane_id}' ; kill-pane -t '#{pane_id}'") || {
+      [ -n "$PLACEHOLDER" ] && tmux kill-pane -t "$PLACEHOLDER"
+      exit 1
+    }
+  else
+    resolve_target_dir
+    LAUNCH_ARGS=()
+    [ -n "$LAUNCH_CMD" ] && LAUNCH_ARGS=("$LAUNCH_CMD")
+    NEW_ID=$(tmux new-pane -d -t "$CUR_WIN_ID" -c "$TARGET_DIR" "${FLOAT_GEOMETRY[@]}" -P -F '#{pane_id}' "${LAUNCH_ARGS[@]}") || exit 1
+    tmux set-option -t "$BASE_SESSION" "$VAR_PANE_ID" "$NEW_ID"
+    tmux select-pane -t "$NEW_ID"
+  fi
+  exit 0
 fi
 
 if [ "$IS_VISIBLE" -eq 1 ]; then
@@ -117,20 +190,18 @@ if [ "$IS_VISIBLE" -eq 1 ]; then
   if [ "$IS_ZOOMED" -eq 0 ]; then
     # Stores current pane dimension
     CURRENT_SIZE=$(tmux display-message -p -t "$SAVED_PANE_ID" "#{pane_${DIM_PROP}}")
-    tmux set-option -t "$CUR_SESSION_NAME" "$VAR_PANE_SIZE" "$CURRENT_SIZE"
+    tmux set-option -t "$BASE_SESSION" "$VAR_PANE_SIZE" "$CURRENT_SIZE"
   else
     # Retrieves stored dimension to preserve layout during zoomed state
-    CURRENT_SIZE=$(tmux show-option -t "$CUR_SESSION_NAME" -v "$VAR_PANE_SIZE" 2>/dev/null)
+    CURRENT_SIZE=$(tmux show-option -t "$BASE_SESSION" -v "$VAR_PANE_SIZE" 2>/dev/null)
     # Assigns fallback dimension
     [ -z "$CURRENT_SIZE" ] && CURRENT_SIZE=20
   fi
 
-  if ! tmux list-windows -t "$HIDDEN_SESSION" -F '#{window_name}' 2>/dev/null | grep -q "^${CUR_SESSION_NAME}$"; then
-    tmux new-window -d -t "$HIDDEN_SESSION:" -n "$CUR_SESSION_NAME" "sleep infinity"
-  fi
+  ensure_hidden_window
 
   # Migrates pane to hidden session
-  tmux join-pane -d $SPLIT_FLAG -s "$SAVED_PANE_ID" -t "${HIDDEN_SESSION}:${CUR_SESSION_NAME}" -l "$CURRENT_SIZE"
+  tmux join-pane -d $SPLIT_FLAG -s "$SAVED_PANE_ID" -t "${HIDDEN_SESSION}:${BASE_SESSION}" -l "$CURRENT_SIZE"
 
   # Restores window split layout
   CURRENT_PANES=$(tmux display-message -p -t "$CUR_WIN_ID" '#{window_panes}')
@@ -143,7 +214,7 @@ if [ "$IS_VISIBLE" -eq 1 ]; then
     fi
   fi
 else
-  SAVED_SIZE=$(tmux show-option -t "$CUR_SESSION_NAME" -v "$VAR_PANE_SIZE" 2>/dev/null)
+  SAVED_SIZE=$(tmux show-option -t "$BASE_SESSION" -v "$VAR_PANE_SIZE" 2>/dev/null)
   if [ -z "$SAVED_SIZE" ]; then
     # Determines base dimension using span flag condition
     if [ "$F_FLAG" = "-f" ]; then
@@ -164,11 +235,7 @@ else
   tmux set-option -t "$CUR_SESSION_NAME" "@${TOPIC}_saved_layout" "$CURRENT_LAYOUT"
   tmux set-option -t "$CUR_SESSION_NAME" "@${TOPIC}_saved_panes" "$CURRENT_PANES"
 
-  # Extracts target directory path
-  RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" TMUX_SESSION_ROOT_DIR 2>/dev/null | grep "^TMUX_SESSION_ROOT_DIR=")
-  TARGET_DIR="${RAW_ENV#TMUX_SESSION_ROOT_DIR=}"
-  TARGET_DIR=$(echo "$TARGET_DIR" | tr -d '\r\n' | sed 's/^"//;s/"$//' | xargs)
-  [ -z "$TARGET_DIR" ] || [ ! -d "$TARGET_DIR" ] && TARGET_DIR=$(tmux display-message -p -t "$TMUX_TARGET" '#{pane_current_path}')
+  resolve_target_dir
 
   if [ -n "$SAVED_PANE_ID" ] && tmux list-panes -a -F '#{pane_id}' | grep -q "^${SAVED_PANE_ID}$"; then
     # Reattaches existing pane
@@ -181,7 +248,7 @@ else
     else
       NEW_ID=$(tmux split-window -t "$TMUX_TARGET" -c "$TARGET_DIR" $SPLIT_FLAG -P -F '#{pane_id}' -l "$TARGET_SIZE")
     fi
-    tmux set-option -t "$CUR_SESSION_NAME" "$VAR_PANE_ID" "$NEW_ID"
+    tmux set-option -t "$BASE_SESSION" "$VAR_PANE_ID" "$NEW_ID"
     tmux select-pane -t "$NEW_ID"
   fi
 fi

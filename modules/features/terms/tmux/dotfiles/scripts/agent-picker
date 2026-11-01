@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+# Lists running Claude Code sessions (~/.claude/sessions/<pid>.json) that live
+# inside a tmux pane and jumps to the selected one.
+# Each session pid is mapped to a pane by walking up the process tree.
+# Only "*.json" files are read; the neighbouring "*.key" files are never opened.
+
+sessions_dir="$HOME/.claude/sessions"
+
+# Prints "<pane_id>\t<display text>" rows for every live Claude session in tmux.
+list_rows() {
+  local f
+  {
+    tmux list-panes -a -F 'P	#{pane_pid}	#{pane_id}	#{session_name}' 2>/dev/null
+    ps -axo pid=,ppid= | awk '{print "S\t"$1"\t"$2}'
+    for f in "$sessions_dir"/*.json; do
+      [[ -f "$f" ]] || continue
+      jq -r '
+        select((.pid | type) == "number")
+        | ["J", .pid,
+           ((.name // "-") | tostring | gsub("[\\t\\r\\n]"; " ")),
+           ((.status // "") | tostring | gsub("[\\t\\r\\n]"; " "))]
+        | @tsv
+      ' "$f" 2>/dev/null
+    done
+  } | awk -F'\t' '
+    $1 == "P" { pane[$2] = $3; sess[$2] = $4 }
+    $1 == "S" { ppid[$2] = $3; alive[$2] = 1 }
+    $1 == "J" { jpid[++n] = $2; jname[n] = $3; jstatus[n] = $4 }
+    END {
+      for (i = 1; i <= n; i++) {
+        if (!(jpid[i] in alive)) continue
+        p = jpid[i]
+        for (d = 0; d < 64 && p != "" && p > 1 && !(p in pane); d++) p = ppid[p]
+        if (!(p in pane)) continue
+        printf "%s\t%s\t%s\t%s\t%s\n", sess[p], pane[p], jname[i], jstatus[i], jpid[i]
+      }
+    }
+  ' | sort -t$'\t' -s -k1,1 -k5,5n | awk -F'\t' -v active="$active_pane" '
+    { s[NR] = $1; p[NR] = $2; an[NR] = "claude:" $3; st[NR] = "(" $4 ")"
+      if (length($1) > w1) w1 = length($1)
+      if (length(an[NR]) > w2) w2 = length(an[NR]) }
+    END {
+      for (i = 1; i <= NR; i++)
+        printf "%s\t%s%-" w1 "s · %-" w2 "s · %s\n", p[i], (p[i] == active ? "• " : "  "), s[i], an[i], st[i]
+    }
+  '
+}
+
+active_pane="${1:-$(tmux display-message -p '#{pane_id}')}"
+
+tmp_dir="$(mktemp -d)"
+sock="$tmp_dir/fzf.sock"
+list_file="$tmp_dir/list"
+
+list_rows >"$list_file"
+
+watch_loop() {
+  local last new
+  last="$(<"$list_file")"
+  while sleep 1; do
+    new="$(list_rows)"
+    [[ "$new" == "$last" ]] && continue
+    printf '%s\n' "$new" >"$list_file.new"
+    mv "$list_file.new" "$list_file"
+    curl -s --max-time 2 --unix-socket "$sock" http://fzf \
+      -d "reload-sync(cat '$list_file')" >/dev/null 2>&1 && last="$new"
+  done
+}
+
+watch_loop &
+loop_pid=$!
+trap 'kill "$loop_pid" 2>/dev/null; rm -rf "$tmp_dir"' EXIT
+trap 'exit 1' HUP TERM
+
+pane_id=$(
+  fzf --popup=center,80%,80% \
+    --listen="$sock" \
+    --delimiter=$'\t' \
+    --with-nth=2 \
+    --id-nth=1 \
+    --accept-nth=1 \
+    --track \
+    --bind=f11:abort \
+    --no-sort \
+    --no-preview \
+    --color=bg:-1,bg+:-1 \
+    --gutter=' ' \
+    --info-command='echo "$FZF_MATCH_COUNT/$FZF_TOTAL_COUNT"' \
+    <"$list_file"
+)
+
+[[ -z "$pane_id" ]] && exit 0
+
+session_id="$(tmux display-message -p -t "$pane_id" '#{session_id}' 2>/dev/null)" || exit 0
+tmux switch-client -t "$session_id" \; select-window -t "$pane_id" \; select-pane -t "$pane_id"

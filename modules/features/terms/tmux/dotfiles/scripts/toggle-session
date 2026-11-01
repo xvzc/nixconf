@@ -2,9 +2,10 @@
 set -euo pipefail
 
 TOPIC=""
+COMMAND=""
 
 usage() {
-  echo "usage: toggle-session --topic <prefix>" >&2
+  echo "usage: toggle-session --topic <prefix> [--command <cmd>]" >&2
   exit 1
 }
 
@@ -13,6 +14,11 @@ while [[ $# -gt 0 ]]; do
     --topic)
       [[ $# -ge 2 ]] || usage
       TOPIC="$2"
+      shift 2
+      ;;
+    --command)
+      [[ $# -ge 2 ]] || usage
+      COMMAND="$2"
       shift 2
       ;;
     *)
@@ -39,20 +45,24 @@ session_id_for_name() {
 }
 
 current_session="$(tmux display-message -p '#{session_name}')"
-prefix="${TOPIC}:"
+base_session="${current_session%%/*}"
 
-if [[ "$current_session" == "$prefix"* ]]; then
-  target_session="${current_session#"$prefix"}"
-  [[ -n "$target_session" ]] || {
-    echo "toggle-session: session '$current_session' has no base session name" >&2
-    exit 1
-  }
+if [[ "$current_session" == "$base_session/$TOPIC" ]]; then
+  target_session="$base_session"
 else
-  target_session="${prefix}${current_session}"
+  target_session="$base_session/$TOPIC"
 
   if ! target_session_id="$(session_id_for_name "$target_session")"; then
     current_path="$(tmux display-message -p '#{pane_current_path}')"
-    tmux new-session -d -s "$target_session" -c "$current_path"
+    if [[ -n "$COMMAND" ]]; then
+      # Chained so that a first pane which exits at once is still kept.
+      tmux new-session -d -s "$target_session" -c "$current_path" "$COMMAND" \; \
+        set-option default-command "$COMMAND" \; \
+        set-option -w remain-on-exit failed \; \
+        set-hook after-new-window 'set-option -w remain-on-exit failed'
+    else
+      tmux new-session -d -s "$target_session" -c "$current_path"
+    fi
   fi
 fi
 

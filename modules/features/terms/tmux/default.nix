@@ -77,6 +77,18 @@
                 ~/.config/tmux/scripts/switch-session $1
               fi
             }
+
+            # Records the tty of the shell per pane for switch-session. A shell in
+            # nvim's :terminal is skipped so that it keeps the value of nvim's shell.
+            autoload -Uz add-zsh-hook
+            function _tmux_pane_tty_precmd() {
+              local last_status=$?
+              if [[ -n $TMUX && -n $TMUX_PANE && -z $NVIM ]]; then
+                command tmux set -p -t "$TMUX_PANE" -- @pane_tty "$TTY" >/dev/null 2>&1
+              fi
+              return $last_status
+            }
+            add-zsh-hook precmd _tmux_pane_tty_precmd
           '';
 
       programs.tmux = {

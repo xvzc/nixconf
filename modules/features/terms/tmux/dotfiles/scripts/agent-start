@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# scripts/agent-start
+if err=$(devenv info 2>&1); then
+  exec devenv shell claude
+fi
+
+if [[ -f devenv.nix ]]; then
+  printf '%s\n\nFailed to load devenv. Start claude without it? [y/n] ' "$err"
+  read -rn1 answer
+  echo
+  [[ "$answer" == [yY] ]] || exec zsh
+fi
+
+exec claude
