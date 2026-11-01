@@ -2,19 +2,31 @@
 {
   home-manager.users.${ctx.user} =
     { pkgs, lib, ... }:
+    let
+      mkAgents = import ./lib/mk-agents.nix { inherit lib pkgs; };
+      mkModelList = import ./lib/mk-model-list.nix { inherit lib; };
+
+      defaultModel = "claude-opus-5-5";
+
+      models = [
+        {
+          id = "claude-fable-5-1";
+          explicitOnly = true;
+        }
+        { id = "claude-opus-5-5"; }
+        { id = "claude-sonnet-5-5"; }
+        { id = "claude-haiku-5-5"; }
+      ];
+
+    in
     {
       # ┏━━━━━━━━━━━━━┓
       # ┃ CLAUDE CODE ┃
       # ┗━━━━━━━━━━━━━┛
-      home.file.".claude/rules" = {
-        source = ./dotfiles/rules;
-        recursive = true;
-      };
-
-      home.file.".claude/agents" = {
-        source = ./dotfiles/agents;
-        recursive = true;
-      };
+      home.packages = [
+        pkgs.nono
+        pkgs.jq
+      ];
 
       home.file.".claude/skills" = {
         source = ./dotfiles/skills;
@@ -54,14 +66,13 @@
       programs.claude-code = {
         enable = true;
         settings = {
-          model = "claude-opus-5-5";
+          model = defaultModel;
           agent = "orchestrator";
           defaultShell = "bash";
           includeCoAuthoredBy = false;
           permissions.allow = [
             "Read(~/.claude/skills/**)"
             "Read(~/.claude/agents/**)"
-            "Read(~/.claude/rules/**)"
           ];
           enabledPlugins = {
             "rust-analyzer-lsp@claude-plugins-official" = true;
@@ -79,6 +90,63 @@
             };
           };
         };
+      };
+      home.file.".claude/agents" = {
+        source = mkAgents {
+          architect = {
+            enable = true;
+            tools = "Read, Grep, Glob";
+          };
+          documenter = {
+            enable = true;
+            disallowedTools = "Agent";
+          };
+          engineer = {
+            enable = true;
+            disallowedTools = "Agent";
+          };
+          orchestrator = {
+            enable = true;
+            vars.modelList = mkModelList models;
+          };
+          reviewer = {
+            enable = true;
+            hooks.PreToolUse = [
+              {
+                matcher = "Bash";
+                hooks = [
+                  {
+                    type = "command";
+                    command = ''
+                      ${./dotfiles/hooks/nono-wrapper.sh} --profile
+                      ${./dotfiles/nono-readonly.json}
+                    '';
+                  }
+                ];
+              }
+            ];
+            tools = "Read, Bash";
+          };
+          scout = {
+            enable = true;
+            hooks.PreToolUse = [
+              {
+                matcher = "Bash";
+                hooks = [
+                  {
+                    type = "command";
+                    command = ''
+                      ${./dotfiles/hooks/nono-wrapper.sh} --profile
+                      ${./dotfiles/nono-readonly.json}
+                    '';
+                  }
+                ];
+              }
+            ];
+            tools = "Read, Bash, WebSearch, WebFetch";
+          };
+        };
+        recursive = true;
       };
     };
 }

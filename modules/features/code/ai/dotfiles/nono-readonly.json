@@ -1,0 +1,10 @@
+{
+  "meta": { "name": "agent-readonly" },
+  "extends": "default",
+  "groups": { "exclude": ["system_write_macos", "system_write_linux"] },
+  "filesystem": {
+    "allow_file": ["/dev/null"],
+    "read": ["$HOME/.config/git"]
+  },
+  "network": { "block": true }
+}
