@@ -20,7 +20,7 @@
     nix-homebrew.url = "github:zhaofengli-wip/nix-homebrew";
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
 
-    # zjstatus.url = "github:dj95/zjstatus";
+    zjstatus.url = "github:dj95/zjstatus";
 
     pi-xvzc = {
       url = "github:xvzc/pi";

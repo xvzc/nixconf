@@ -43,12 +43,16 @@
         recursive = true;
       };
 
+      xdg.configFile."zellij/plugins/zjstatus.wasm".source = "${pkgs.zjstatus}/bin/zjstatus.wasm";
+
       programs.zellij = {
         enable = true;
+        package = pkgs.mv.tip.zellij;
       };
 
       programs.zellij.settings = {
         pane_frames = true;
+        pane_frame_style = "full";
         show_startup_tips = false;
         advanced_mouse_actions = false;
 
@@ -76,7 +80,7 @@
             cwd = "/";
           };
 
-          zjstatus = mkPlugin "file:${pkgs.zjstatus}/bin/zjstatus.wasm" {
+          zjstatus = mkPlugin "file:${config.xdg.configHome}/zellij/plugins/zjstatus.wasm" {
             format_left = "{mode} #[fg=#89B4FA,bold]{session}";
             format_center = "{tabs}";
             format_right = "";
@@ -120,6 +124,15 @@
               })
               (mkBind "F12" {
                 ToggleFloatingPanes = [ ];
+              })
+              (mkBind "Ctrl s" {
+                Run = {
+                  _args = [ "${config.xdg.configHome}/zellij/scripts/switch-session" ];
+                  _children = [
+                    { in_place = true; }
+                    { close_on_exit = true; }
+                  ];
+                };
               })
               (mkBind "Ctrl h" {
                 MoveFocus = "Left";

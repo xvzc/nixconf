@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+# Zellij session switcher. Reads the same projects config as the tmux one
+# (lookupDirs, named.<name>.root). Runs fzf in the current pane; bind it with
+# Run { in_place true; close_on_exit true; }.
+# Existing sessions are shown first, prefixed with •, then projects without a
+# session. `zellij action switch-session` creates a missing session.
+
+projects_config="${TMUX_PROJECTS_CONFIG:-${XDG_CONFIG_HOME:-$HOME/.config}/tmux/projects.json}"
+
+if ! command -v jq >/dev/null 2>&1; then
+  echo "switch-session: jq is required to read $projects_config" >&2
+  exit 1
+fi
+
+if [[ ! -f "$projects_config" ]]; then
+  echo "switch-session: projects config not found: $projects_config" >&2
+  exit 1
+fi
+
+expand_value() {
+  local value="$1"
+  value="${value/#\~/$HOME}"
+  value="${value//\$HOME/$HOME}"
+  value="${value//\$\{HOME\}/$HOME}"
+  printf '%s\n' "$value"
+}
+
+in_array() {
+  local needle="$1"
+  shift
+  for item; do [[ "$item" == "$needle" ]] && return 0; done
+  return 1
+}
+
+# Live sessions only: exited ones are marked "(EXITED" in the long listing.
+mapfile -t existing < <(zellij list-sessions --no-formatting 2>/dev/null | awk '!/\(EXITED/ {print $1}')
+current_session="${ZELLIJ_SESSION_NAME:-}"
+
+names=()
+paths=()
+
+while IFS=$'\t' read -r name root; do
+  [[ -n "$name" && -n "$root" ]] || continue
+  root="$(expand_value "$root")"
+  [[ -d "$root" ]] || continue
+  names+=("$name")
+  paths+=("$root")
+done < <(jq -r '.named // {} | to_entries[] | select(.value.root != null) | [.key, .value.root] | @tsv' "$projects_config")
+
+while IFS= read -r dir; do
+  dir="$(expand_value "$dir")"
+  [[ -d "$dir" ]] || continue
+  for subdir in "$dir"/*/; do
+    [[ -d "$subdir" ]] || continue
+    names+=("$(basename "$subdir")")
+    paths+=("$subdir")
+  done
+done < <(jq -r '.lookupDirs // [] | .[]' "$projects_config")
+
+display_names=()
+display_paths=()
+
+for ((i = 0; i < ${#names[@]}; i++)); do
+  session="${names[$i]//./_}"
+  in_array "$session" "${existing[@]}" || continue
+  [[ "$session" == "$current_session" ]] && continue
+  display_names+=("•${names[$i]}")
+  display_paths+=("${paths[$i]%/}")
+done
+for ((i = 0; i < ${#names[@]}; i++)); do
+  session="${names[$i]//./_}"
+  in_array "$session" "${existing[@]}" && continue
+  display_names+=("${names[$i]}")
+  display_paths+=("${paths[$i]%/}")
+done
+
+[[ ${#display_names[@]} -eq 0 ]] && exit 0
+
+selected=$(printf '%s\n' "${display_names[@]}" | fzf --no-preview --no-sort)
+[[ -z "$selected" ]] && exit 0
+
+for ((i = 0; i < ${#display_names[@]}; i++)); do
+  if [[ "${display_names[$i]}" == "$selected" ]]; then
+    session_name="${display_names[$i]#•}"
+    session_name="${session_name//./_}"
+    exec zellij action switch-session "$session_name" --cwd "${display_paths[$i]}"
+  fi
+done
