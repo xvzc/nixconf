@@ -29,7 +29,6 @@
     ../../modules/features/terms/kitty
     ../../modules/features/terms/tmux
     ../../modules/features/terms/wezterm
-    ../../modules/features/terms/zellij
 
     ../../modules/features/gui/1password
     ../../modules/features/gui/discord
