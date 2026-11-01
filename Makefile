@@ -87,6 +87,39 @@ else
 		&& sudo nixos-rebuild switch --store-path "$$SYSTEM" --no-reexec
 endif
 
+# ┌──────────┐
+# │ VALIDATE │
+# └──────────┘
+LOCK := flake.$(HOST).lock
+
+.PHONY: check build switch
+
+check:
+	nix flake check --reference-lock-file $(LOCK) --no-update-lock-file
+
+build:
+ifeq ($(UNAME), Darwin)
+	nix build ".#darwinConfigurations.$(HOST).system" --no-link \
+		--reference-lock-file $(LOCK) --no-update-lock-file
+else
+	NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
+		".#nixosConfigurations.$(HOST).config.system.build.toplevel" --no-link \
+		--reference-lock-file $(LOCK) --no-update-lock-file
+endif
+
+switch:
+ifeq ($(UNAME), Darwin)
+	@SYSTEM=$$(nix build ".#darwinConfigurations.$(HOST).system" --no-link --print-out-paths \
+		--reference-lock-file $(LOCK) --no-update-lock-file) \
+		&& sudo -H "$$(command -v nix-env)" -p /nix/var/nix/profiles/system --set "$$SYSTEM" \
+		&& sudo -H "$$SYSTEM/sw/bin/darwin-rebuild" activate
+else
+	@SYSTEM=$$(NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
+		".#nixosConfigurations.$(HOST).config.system.build.toplevel" --no-link --print-out-paths \
+		--reference-lock-file $(LOCK) --no-update-lock-file) \
+		&& sudo nixos-rebuild switch --store-path "$$SYSTEM" --no-reexec
+endif
+
 # ┌───────────────┐ 
 # │ CLEAN PROJECT │ 
 # └───────────────┘ 
