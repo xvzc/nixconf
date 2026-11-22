@@ -1,28 +1,13 @@
 #!/bin/zsh
-
-# if $(ps uxww | grep -v "open-wezterm" | grep -q "[w]ezterm"); then
-#   wezterm cli spawn --new-window
-# else
-#   eval "$(realpath "$HOME/Applications/Home Manager Apps/WezTerm.app")"/Contents/MacOS/wezterm start
-# fi
-
-#!/bin/zsh
-# Test launcher for tile's alt-return. Logs what it did to /tmp/open-wezterm-test.log.
-log=/tmp/open-wezterm-test.log
-{
-  print -- "=== $(date '+%H:%M:%S') LANG=$LANG TMUX=${TMUX:+set} WEZTERM_UNIX_SOCKET=${WEZTERM_UNIX_SOCKET:+set}"
-} >>"$log"
+# Open a new WezTerm window, or start WezTerm when it is not running.
 
 # A socket inherited from some terminal session may point at a dead GUI; let wezterm find the live one.
 unset WEZTERM_UNIX_SOCKET WEZTERM_PANE
 
 if /usr/bin/pgrep -qx wezterm-gui; then
-  print -- "running: cli spawn --new-window" >>"$log"
-  wezterm cli spawn --new-window >>"$log" 2>&1
+  wezterm cli spawn --new-window
 else
-  print -- "not running: open -a" >>"$log"
   # `open` hands the caller's environment to the app, so start it from a clean one like Spotlight does.
   /usr/bin/env -i HOME="$HOME" USER="$USER" LOGNAME="$USER" PATH=/usr/bin:/bin:/usr/sbin:/sbin \
-    /usr/bin/open -a "$HOME/Applications/Home Manager Apps/WezTerm.app" >>"$log" 2>&1
+    /usr/bin/open -a "$HOME/Applications/Home Manager Apps/WezTerm.app"
 fi
-print -- "exit=$?" >>"$log"
