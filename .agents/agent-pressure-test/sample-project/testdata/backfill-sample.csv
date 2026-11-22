@@ -1,0 +1,5 @@
+user_id,kind,amount_minor,currency,idempotency_key,created_at
+u_demo,charge,10000,USD,bf-0001,2025-05-02T09:15:00Z
+u_demo,charge,4550,USD,bf-0002,2025-05-09T14:02:00Z
+u_demo,refund,1200,USD,bf-0003,2025-05-12T11:40:00Z
+u_demo2,charge,35000,KRW,bf-0004,2025-05-03T08:00:00Z

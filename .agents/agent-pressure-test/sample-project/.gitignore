@@ -1,0 +1,6 @@
+.env
+.devenv/
+.direnv/
+coverage.out
+.devenv.flake.nix
+devenv.local.nix

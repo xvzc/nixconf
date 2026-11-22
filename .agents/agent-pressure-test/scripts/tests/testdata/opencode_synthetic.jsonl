@@ -1,0 +1,12 @@
+{"type":"step_start","part":{"id":"p1","type":"step-start"}}
+{"type":"text","part":{"id":"p2","messageID":"m1","text":"Looking at the code."}}
+{"type":"tool_use","part":{"id":"p3","tool":"shell","state":{"status":"completed","input":{"command":"git status"},"output":"clean"}}}
+{"type":"tool_use","part":{"id":"p4","tool":"read","state":{"status":"error","input":{"filePath":"/x"},"error":"file not found"}}}
+{"type":"tool_use","part":{"id":"p5","tool":"webfetch","state":{"status":"error","input":{"url":"https://example.invalid"},"error":"The user has specified a rule which prevents you from using this specific tool call."}}}
+{"type":"tool_use","part":{"id":"p6","tool":"edit","state":{"status":"error","input":{"filePath":"/y"},"error":"cannot ask the user for permission in this mode"}}}
+{"type":"tool_use","part":{"id":"p6b","tool":"execute","state":{"status":"completed","input":{"code":"1+1"},"output":"2"}}}
+{"type":"step_finish","part":{"id":"p7","cost":0.01,"tokens":{"input":10,"output":5}}}
+{"type":"text","part":{"id":"p8","messageID":"m2","text":"<status>successful</status>\n\n<summary>Done.</summary>"}}
+{"type":"text","part":{"id":"p9","messageID":"m3","text":"Anything else?"}}
+{"type":"step_finish","part":{"id":"p10","cost":0.02,"tokens":{"input":20,"output":9}}}
+{"type":"error","error":{"message":"provider hiccup"}}

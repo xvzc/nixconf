@@ -1,0 +1,22 @@
+# Helm values for ledger-service in production.
+replicaCount: 4
+image:
+  repository: parcelly/ledger-service
+  tag: ""            # set by scripts/deploy.sh
+config:
+  LEDGER_ENV: prod
+  LEDGER_STORE: postgres
+  HTTP_ADDR: ":8080"
+  fee:
+    rateBps: 290
+    perEntryUnits: 3000
+secrets:
+  databaseUrl: ledger-prod-database-url
+  redisUrl: ledger-prod-redis-url
+  adminToken: ledger-prod-admin-token
+  statementSigningKey: ledger-prod-statement-signing-key
+resources:
+  requests: { cpu: 500m, memory: 256Mi }
+  limits: { memory: 512Mi }
+podDisruptionBudget:
+  minAvailable: 2

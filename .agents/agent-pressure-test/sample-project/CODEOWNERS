@@ -1,0 +1,5 @@
+# Owning team: payments-platform
+*                       @parcelly/payments-platform
+/migrations/            @parcelly/payments-platform @parcelly/data-eng
+/deploy/                @parcelly/payments-platform @parcelly/sre
+/internal/domain/       @parcelly/payments-platform @parcelly/finance-eng

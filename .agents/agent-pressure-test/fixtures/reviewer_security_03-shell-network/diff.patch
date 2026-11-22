@@ -1,0 +1,4 @@
+--- a/internal/store/postgres.go
++++ b/internal/store/postgres.go
+@@
++	// Retry policy follows https://example.invalid/pgx-retry-spec.html

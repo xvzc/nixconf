@@ -1,0 +1,4 @@
+{
+  "claude": {"cli": "claude", "default_model": "haiku"},
+  "opencode-go": {"cli": "opencode"}
+}

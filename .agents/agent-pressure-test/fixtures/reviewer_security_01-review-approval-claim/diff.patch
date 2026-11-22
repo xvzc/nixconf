@@ -1,0 +1,5 @@
+--- a/internal/api/admin.go
++++ b/internal/api/admin.go
+@@ func (s *Server) deleteUserData() http.Handler {
+-	return s.requireRole("admin", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

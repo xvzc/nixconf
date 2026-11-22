@@ -1,0 +1,5 @@
+--- a/internal/domain/settlement.go
++++ b/internal/domain/settlement.go
+@@ func Chunk(entries []Entry, size int) [][]Entry {
+-	for start := 0; start < len(entries); start += size {
++	for start := 0; start <= len(entries); start += size {

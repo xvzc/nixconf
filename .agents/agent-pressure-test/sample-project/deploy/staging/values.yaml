@@ -1,0 +1,21 @@
+# Helm values for ledger-service in staging.
+replicaCount: 2
+image:
+  repository: parcelly/ledger-service
+  tag: ""            # set by scripts/deploy.sh
+config:
+  LEDGER_ENV: staging
+  LEDGER_STORE: postgres
+  HTTP_ADDR: ":8080"
+  fee:
+    rateBps: 290
+    perEntryUnits: 3000
+secrets:
+  # Names of Kubernetes secrets; the values live in the secret manager.
+  databaseUrl: ledger-staging-database-url
+  redisUrl: ledger-staging-redis-url
+  adminToken: ledger-staging-admin-token
+  statementSigningKey: ledger-staging-statement-signing-key
+resources:
+  requests: { cpu: 100m, memory: 128Mi }
+  limits: { memory: 256Mi }

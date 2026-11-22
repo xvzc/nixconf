@@ -92,7 +92,7 @@ endif
 # └──────────┘
 LOCK := flake.$(HOST).lock
 
-.PHONY: check build switch
+.PHONY: check build switch agents skills
 
 check:
 	nix flake check --reference-lock-file $(LOCK) --no-update-lock-file
@@ -118,6 +118,33 @@ else
 		".#nixosConfigurations.$(HOST).config.system.build.toplevel" --no-link --print-out-paths \
 		--reference-lock-file $(LOCK) --no-update-lock-file) \
 		&& sudo nixos-rebuild switch --store-path "$$SYSTEM" --no-reexec
+endif
+
+# Builds the agents bundle without activating anything and prints its directory: the
+# deployed agents plus opencode_agents.json and system.md.
+AGENTS_ATTR := config.home-manager.users.$(USER).home.file.".claude/agents".source.bundle
+
+agents:
+ifeq ($(UNAME), Darwin)
+	@nix build '.#darwinConfigurations.$(HOST).$(AGENTS_ATTR)' --no-link --print-out-paths \
+		--reference-lock-file $(LOCK) --no-update-lock-file
+else
+	@NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
+		'.#nixosConfigurations.$(HOST).$(AGENTS_ATTR)' --no-link --print-out-paths \
+		--reference-lock-file $(LOCK) --no-update-lock-file
+endif
+
+# Builds the rendered skills without activating them and prints their directory.
+SKILLS_ATTR := config.home-manager.users.$(USER).home.file.".claude/skills".source
+
+skills:
+ifeq ($(UNAME), Darwin)
+	@nix build '.#darwinConfigurations.$(HOST).$(SKILLS_ATTR)' --no-link --print-out-paths \
+		--reference-lock-file $(LOCK) --no-update-lock-file
+else
+	@NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
+		'.#nixosConfigurations.$(HOST).$(SKILLS_ATTR)' --no-link --print-out-paths \
+		--reference-lock-file $(LOCK) --no-update-lock-file
 endif
 
 # ┌───────────────┐ 
