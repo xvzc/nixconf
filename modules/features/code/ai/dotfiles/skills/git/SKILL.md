@@ -1,8 +1,6 @@
 ---
 name: git
-description: >-
-  Use when performing one of the following Git-related operations:
-   [commit, push, pull_request, worktree, ci].
+description: Use when performing one of the following Git-related operations: [commit, push, pull_request, ci].
 ---
 
 # Git Operations
@@ -26,12 +24,6 @@ creating a pull request. Follow its guidance together with applicable system saf
 
 Load `references/ci.md` when monitoring CI triggered by a Git-related operation.
 Follow its guidance together with applicable system safety rules.
-
-## Worktrees
-
-Load `references/worktrees.md` immediately before starting feature work that needs
-an isolated workspace, or before executing an implementation plan. Follow its
-guidance together with applicable system safety rules.
 
 ## Git Safety Protocol
 

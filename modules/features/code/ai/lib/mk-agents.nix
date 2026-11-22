@@ -1,162 +1,177 @@
-# Renders agent markdown files into a directory of `<name>.md` files. Each file is
-# the YAML frontmatter, ../dotfiles/GLOBAL_INSTRUCTIONS.md, a blank line, and the
-# agent body.
+# Renders every agent in ../dotfiles/agents into a directory of `<name>.md` files,
+# plus claude_agents.json, the same agents in the format of `claude --agents`.
+# The result also has `bundle`, a directory with those files plus opencode_agents.json,
+# the same agents as opencode config (`{ "agents": { <name>: ... } }`), and system.md,
+# a copy of ../dotfiles/system.md. The result itself, which is what gets deployed, has
+# none of the extra files.
 #   mkAgents { inherit lib pkgs; } {
-#     <name> = { enable = true; <extra frontmatter fields>; vars = {...}; };
+#     embed = { ... };               # optional; fills <embed:%key%/> placeholders
+#     overrides.<name> = {           # optional; only for agents that need a change
+#       enable = true;               # optional, default true; false generates nothing
+#       frontmatter = { ... };       # optional; replaces or adds frontmatter fields
+#     };
 #   }
-# `<name>` must be in `definitions`; its fields are overridden by the caller's. Bodies
-# are read from ../dotfiles/agents/<name>.md. `enable` (required boolean) and `vars`
-# are reserved: `enable = false` generates nothing, and `vars` values replace `@key@`
-# in the agent body only (a key without a placeholder is an error). All other fields
-# are the frontmatter. Agents not listed by the caller are not generated.
+# An override for an agent with no file, and any other attribute, is an error.
+#
+# Each agent is read from ../dotfiles/agents/<name>.md, in the format render-markdown.nix
+# describes, with `name` equal to `<name>`. An embed key that no enabled agent uses is
+# an error.
+#
+# In claude_agents.json, each agent is its frontmatter fields without `name`, with
+# strings folded as in the Markdown file, plus `prompt`, the body. String `tools` and
+# `disallowedTools` become lists.
 { lib, pkgs }:
 let
-  # Tool-independent agent definitions.
-  definitions = {
-    architect.description = ''
-      Read-only architecture and design advisor. Evaluates structure,
-      boundaries, APIs, migrations, tradeoffs, and long-term maintainability.
-    '';
-    documenter.description = ''
-      Documentation writer. Updates README, guides, API docs, examples,
-      changelog, migration notes, and other approved documentation within
-      scoped authority.
-    '';
-    engineer.description = ''
-      Implementation writer. Modifies files within approved scope, adds or
-      updates tests, runs focused validation, fixes own in-scope failures,
-      and returns a handoff.
-    '';
-    orchestrator.description = ''
-      User-facing engineering orchestrator and project operator. Default
-      user-facing agent; coordinates subagents, owns version control,
-      validation, and planning.
-    '';
-    reviewer.description = ''
-      Independent read-only reviewer for code diffs, plans, designs,
-      validation adequacy, regressions, and maintainability.
-    '';
-    scout.description = ''
-      Fast read-only scout for codebases and the web. Finds relevant files
-      and sources, summarizes current behavior, identifies implementation
-      seams, risks, and open questions.
-    '';
+  md = import ./render-markdown.nix { inherit lib; };
+
+  # Claude Code tool name to opencode permission action.
+  actionOf = {
+    Read = "read";
+    Grep = "grep";
+    Glob = "glob";
+    Bash = "shell";
+    WebSearch = "websearch";
+    WebFetch = "webfetch";
+    Edit = "edit";
+    Write = "edit";
+    NotebookEdit = "edit";
+    Agent = "subagent";
   };
 
-  bodyDir = ../dotfiles/agents;
-  globalInstructions = builtins.readFile ../dotfiles/GLOBAL_INSTRUCTIONS.md;
+  rule = action: resource: effect: { inherit action resource effect; };
 
-  # Frontmatter strings are folded to one line.
-  fold = s: builtins.replaceStrings [ "\n" ] [ " " ] (lib.trim s);
+  # Distinct actions of the tools, in order.
+  actions =
+    label: tools:
+    lib.unique (
+      map (
+        t:
+        actionOf.${t}
+          or (throw "${label}: tool '${t}' has no opencode action; known tools: ${lib.concatStringsSep ", " (builtins.attrNames actionOf)}")
+      ) tools
+    );
 
-  # Plain when safe, otherwise a double-quoted (JSON) scalar.
-  scalar =
-    v0:
+  envRules = [
+    (rule "read" "*.env" "ask")
+    (rule "read" "*.env.*" "ask")
+    (rule "read" "*.env.example" "allow")
+  ];
+
+  # { label, def }: the agent's opencode definition, an entry of `agents` in opencode's
+  # config, from `def`, its claude_agents.json entry. `description` and `prompt` become
+  # `description` and `system`, and `mode` is "primary". Other fields are dropped, except
+  # `tools` and `disallowedTools`, which become `permissions`, an ordered list of rules in
+  # which the last matching rule wins:
+  #   - `tools` (allowlist): deny everything, allow the actions of the listed tools, allow
+  #     external_directory, then opencode's default `.env` rules, which the deny would
+  #     otherwise remove.
+  #   - `disallowedTools`: a deny per action, after the rules above.
+  # An agent with neither has no `permissions`, so opencode's defaults apply.
+  opencodeAgent =
+    { label, def }:
     let
-      v = if builtins.isString v0 then fold v0 else v0;
+      allowlist = lib.optionals (def ? tools) (
+        [ (rule "*" "*" "deny") ]
+        ++ map (a: rule a "*" "allow") (actions label def.tools)
+        ++ [ (rule "external_directory" "*" "allow") ]
+        ++ envRules
+      );
+      denylist = map (a: rule a "*" "deny") (actions label (def.disallowedTools or [ ]));
+      permissions = allowlist ++ denylist;
     in
-    if builtins.isString v then
-      if
-        builtins.match "[A-Za-z][A-Za-z0-9 ,.()/_-]*" v != null
-        && builtins.match ".* " v == null
-        && !(builtins.elem v [
-          "true"
-          "false"
-          "null"
-          "yes"
-          "no"
-          "on"
-          "off"
-        ])
-      then
-        v
-      else
-        builtins.toJSON v
-    else
-      builtins.toJSON v;
+    {
+      inherit (def) description;
+      mode = "primary";
+      system = def.prompt;
+    }
+    // lib.optionalAttrs (permissions != [ ]) { inherit permissions; };
 
-  # Lines for a value, with nested blocks indented by two spaces under `ind`.
-  render =
-    ind: v:
-    if builtins.isAttrs v then
-      lib.concatLists (
-        lib.mapAttrsToList (
-          k: x:
-          if builtins.isAttrs x || builtins.isList x then
-            [ "${ind}${k}:" ] ++ render "${ind}  " x
-          else
-            [ "${ind}${k}: ${scalar x}" ]
-        ) v
-      )
-    else
-      lib.concatMap (
-        x:
-        if builtins.isAttrs x then
-          let
-            ls = render "${ind}  " x;
-            first = lib.removePrefix "${ind}  " (builtins.head ls);
-          in
-          [ "${ind}- ${first}" ] ++ builtins.tail ls
-        else
-          [ "${ind}- ${scalar x}" ]
-      ) v;
+  agentsDir = ../dotfiles/agents;
 
-  # `name` first, then the remaining keys.
+  # Comma-separated tool names as a list.
+  toolList = v: if builtins.isString v then map lib.trim (lib.splitString "," v) else v;
+
+  allowedAttrs = [
+    "enable"
+    "frontmatter"
+  ];
+
+  # { text; def; body; }: the Markdown file, the agent's claude_agents.json entry, and
+  # its body before expansion.
   document =
-    name: a:
+    name: a: embed:
     let
-      body = bodyDir + "/${name}.md";
+      label = "mkAgents: agent '${name}'";
+      doc = md.renderFile {
+        inherit label name embed;
+        file = "${name}.md";
+        source = builtins.readFile (agentsDir + "/${name}.md");
+        frontmatter = a.frontmatter or { };
+      };
+      fields = md.foldAll (removeAttrs doc.front [ "name" ]);
     in
-    if !builtins.pathExists body then
-      throw "mkAgents: agent '${name}' has no body file ${toString body}"
-    else
-      lib.concatStringsSep "\n" (
-        [
-          "---"
-          "name: ${scalar name}"
-        ]
-        ++ render "" (
-          removeAttrs a [
-            "enable"
-            "vars"
-          ]
+    builtins.seq (md.checkAttrs label allowedAttrs a) {
+      inherit (doc) body text;
+      def =
+        fields
+        // lib.mapAttrs (_: toolList) (
+          lib.filterAttrs (k: _: k == "tools" || k == "disallowedTools") fields
         )
-        ++ [
-          "---"
-          ""
-          ""
-        ]
-      )
-      + globalInstructions
-      + "\n"
-      + expand name (builtins.readFile body) (a.vars or { });
-
-  expand =
-    name: body: vars:
-    let
-      keys = builtins.attrNames vars;
-      missing = builtins.filter (k: !lib.hasInfix "@${k}@" body) keys;
-    in
-    if missing != [ ] then
-      throw (
-        "mkAgents: agent '${name}' has vars without a matching @key@ placeholder "
-        + "in its body: ${lib.concatStringsSep ", " missing}"
-      )
-    else
-      builtins.replaceStrings (map (k: "@${k}@") keys) (map (k: vars.${k}) keys) body;
+        // {
+          prompt = lib.removePrefix "\n" doc.expanded;
+        };
+    };
 in
-agents:
-pkgs.linkFarm "agents" (
-  lib.concatMapAttrs (
+{
+  embed ? { },
+  overrides ? { },
+}:
+let
+  names = map (lib.removeSuffix ".md") (
+    builtins.attrNames (
+      lib.filterAttrs (f: t: t == "regular" && lib.hasSuffix ".md" f) (builtins.readDir agentsDir)
+    )
+  );
+  missing = builtins.filter (n: !builtins.elem n names) (builtins.attrNames overrides);
+
+  docs = lib.concatMapAttrs (
     name: a:
-    if !definitions ? ${name} then
-      throw "mkAgents: unknown agent '${name}'"
-    else if !builtins.isBool (a.enable or null) then
-      throw "mkAgents: agent '${name}' needs enable = true or enable = false"
-    else
-      let
-        text = document name (definitions.${name} // a);
-      in
-      lib.optionalAttrs a.enable { "${name}.md" = pkgs.writeText "${name}.md" text; }
-  ) agents
-)
+    lib.optionalAttrs (md.isEnabled "mkAgents: agent '${name}'" a) {
+      ${name} = document name a embed;
+    }
+  ) (lib.genAttrs names (n: overrides.${n} or { }));
+in
+if missing != [ ] then
+  throw "mkAgents: overrides for agents with no ${toString agentsDir}/<name>.md: ${lib.concatStringsSep ", " missing}"
+else
+  builtins.seq (md.checkEmbedsUsed "mkAgents" embed (map (d: d.body) (builtins.attrValues docs))) (
+    let
+      files =
+        lib.mapAttrs' (name: d: lib.nameValuePair "${name}.md" (pkgs.writeText "${name}.md" d.text)) docs
+        // {
+          "claude_agents.json" = pkgs.writeText "claude_agents.json" (
+            builtins.toJSON (lib.mapAttrs (_: d: d.def) docs)
+          );
+        };
+    in
+    pkgs.linkFarm "agents" files
+    // {
+      bundle = pkgs.linkFarm "agents-bundle" (
+        files
+        // {
+          "opencode_agents.json" = pkgs.writeText "opencode_agents.json" (
+            builtins.toJSON {
+              agents = lib.mapAttrs (
+                name: d:
+                opencodeAgent {
+                  label = "mkAgents: agent '${name}'";
+                  inherit (d) def;
+                }
+              ) docs;
+            }
+          );
+          "system.md" = ../dotfiles/system.md;
+        }
+      );
+    }
+  )
