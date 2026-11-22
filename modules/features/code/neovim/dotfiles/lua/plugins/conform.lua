@@ -5,6 +5,11 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
+-- Format on demand; in visual mode only the selected range.
+vim.keymap.set({ "n", "x" }, "<C-S-f>", function()
+  require("conform").format({ async = true })
+end, { silent = true, desc = "Format" })
+
 require("conform").setup({
   formatters_by_ft = {
     -- Conform will run multiple formatters sequentially

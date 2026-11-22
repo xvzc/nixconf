@@ -30,6 +30,10 @@ vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', silent_noremap)
 vim.keymap.set("n", "<F5>", "<C-l>", silent_noremap)
 vim.keymap.set("x", "A", "gg^oG$", silent_noremap)
 
+-- half-page scroll on C-f / C-b (instead of full page)
+vim.keymap.set({ "n", "x" }, "<C-f>", "<C-d>", silent_noremap)
+vim.keymap.set({ "n", "x" }, "<C-b>", "<C-u>", silent_noremap)
+
 -- diagnostics
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { noremap = true, silent = true })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { noremap = true, silent = true })

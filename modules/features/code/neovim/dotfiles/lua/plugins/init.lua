@@ -4,12 +4,14 @@
 -- event, opts, config and after are optional. after runs once setup is done.
 -- config: true (default) = auto setup, false = skip setup (no lua module),
 --         function = custom setup.
+-- minimal: true = also load when $NVIM_MINIMAL is set (e.g. the tmux file
+--          mention picker); every other entry is skipped then.
 local specs = {
-  { "catppuccin", config = function() vim.cmd.colorscheme("catppuccin") end },
+  { "catppuccin", minimal = true, config = function() vim.cmd.colorscheme("catppuccin") end },
   { "notify", opts = {} }, -- external module: require("notify").setup(opts)
   { "plugins.noice" },
   { "plugins.bufferline" },
-  { "plugins.lualine" },
+  { "plugins.lualine", minimal = true },
   {
     "lastplace",
     config = false, -- vimscript plugin, no lua module to set up
@@ -19,10 +21,11 @@ local specs = {
       vim.g.lastplace_open_folds = 0
     end,
   },
-  { "plugins.treesitter" },
+  { "plugins.treesitter", minimal = true },
   { "plugins.lspconfig", event = "BufReadPre" },
   {
     "gitsigns",
+    minimal = true,
     event = "BufReadPre",
     opts = {
       current_line_blame = true, -- Toggle with `:Gitsigns toggle_current_line_blame`
@@ -36,7 +39,7 @@ local specs = {
     },
   },
   { "plugins.conform", event = "BufReadPost" },
-  { "plugins.indent-blankline", event = "BufReadPost" },
+  { "plugins.indent-blankline", minimal = true, event = "BufReadPost" },
   {
     "nvim-surround",
     event = "BufReadPost",
@@ -55,6 +58,8 @@ local specs = {
       vim.keymap.set("n", "<leader>o", "<cmd>Outline<CR>", { desc = "Toggle outline" })
     end,
   },
+  { "plugins.dial", event = "VimEnter" },
+  { "plugins.leap", event = "VimEnter" },
   {
     "cbox",
     event = "VimEnter",
@@ -106,8 +111,12 @@ local function load(spec)
   end
 end
 
+local minimal = vim.env.NVIM_MINIMAL ~= nil and vim.env.NVIM_MINIMAL ~= ""
+
 for _, spec in ipairs(specs) do
-  if spec.event then
+  if minimal and not spec.minimal then
+    -- skip
+  elseif spec.event then
     vim.api.nvim_create_autocmd(spec.event, {
       group = vim.api.nvim_create_augroup("plugins-lazy-" .. spec[1], { clear = true }),
       once = true,

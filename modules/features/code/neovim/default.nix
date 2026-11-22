@@ -88,6 +88,8 @@
             vp.nui-nvim
             vp.gitsigns-nvim
             vp.vim-lastplace
+            vp.dial-nvim
+            vp.leap-nvim
             cbox-nvim
             vp.indent-blankline-nvim
             (vp.nvim-treesitter.withPlugins (p: [

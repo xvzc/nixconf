@@ -8,6 +8,12 @@ require("blink.pairs").setup({
       ["<C-b>"] = false,
       ["<C-S-b>"] = false,
     },
+    -- No space expansion inside brackets ("[|]" + space stays "[ |]").
+    pairs = {
+      ["("] = { { "(", ")", space = false } },
+      ["["] = { { "[", "]", space = false } },
+      ["{"] = { { "{", "}", space = false } },
+    },
   },
 
   -- The highlight registration is what attaches buffers to the pair parser
