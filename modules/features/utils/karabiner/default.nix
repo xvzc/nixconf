@@ -1,4 +1,4 @@
-{ pkgs, ctx, ... }:
+{ ctx, ... }:
 assert ctx.isDarwin;
 {
   homebrew = {

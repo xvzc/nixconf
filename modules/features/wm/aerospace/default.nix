@@ -1,121 +1,124 @@
 {
-  pkgs,
-  config,
   lib,
   ctx,
+  config,
   ...
 }:
 assert ctx.isDarwin;
 let
-  cfg = config.features.wm;
-in
-lib.optionalAttrs (cfg.enable && cfg.wm.provider == "aerospace") {
-  services.aerospace = {
-    enable = false;
-  };
-}
-// {
-  home-manager.users.${ctx.user} =
-    {
-      lib,
-      pkgs,
-      osConfig,
-      ...
-    }:
-    let
-      cfg = osConfig.features.wm;
-    in
-    lib.optionalAttrs (cfg.enable && cfg.wm.provider == "aerospace") {
-      home.file.".local/bin/_open-wezterm" = {
-        source = ./dotfiles/scripts/_open-wezterm;
-        executable = true;
-      };
+  cfg = config.features.wm.aerospace;
 
-      home.packages = [
-        pkgs.aerospace
+  # alt-<n> focuses workspace <n>, cmd-alt-<n> sends the window there and
+  # follows it (key 0 is workspace 10), as with skhd + yabai.
+  workspaceKeys = map toString (lib.range 1 9) ++ [ "0" ];
+  workspaceOf = key: if key == "0" then "10" else key;
+  workspaceBindings = lib.listToAttrs (
+    lib.concatMap (key: [
+      (lib.nameValuePair "alt-${key}" "workspace ${workspaceOf key}")
+      (lib.nameValuePair "cmd-alt-${key}" [
+        "move-node-to-workspace ${workspaceOf key}"
+        "workspace ${workspaceOf key}"
+      ])
+    ]) workspaceKeys
+  );
+
+  # Windows left unmanaged (floating), ported from the yabai `manage=off` rules.
+  float = cond: {
+    "if" = cond;
+    run = [ "layout floating" ];
+  };
+in
+{
+  options.features.wm.aerospace = {
+    enable = lib.mkEnableOption "Whether to enable 'aerospace'";
+  };
+
+  config = lib.mkMerge [
+    # Once disabled, unload the user agent and remove its plist: switching to
+    # another window manager left it running (nix-darwin did not clean it up),
+    # and KeepAlive relaunches the app whenever it is quit.
+    (lib.mkIf (!cfg.enable) {
+      system.activationScripts.postActivation.text = lib.mkOrder 1200 ''
+        launchctl bootout "gui/$(id -u ${ctx.user})/org.nixos.aerospace" 2>/dev/null || true
+        rm -f "/Users/${ctx.user}/Library/LaunchAgents/org.nixos.aerospace.plist"
+      '';
+    })
+
+    (lib.mkIf cfg.enable {
+      assertions = [
+        {
+          assertion = !(config.features.wm.yabai.enable or false);
+          message = "features.wm.aerospace and features.wm.yabai cannot be enabled together.";
+        }
       ];
 
-      xdg.configFile."aerospace/aerospace.toml".text = # toml
-        ''
-          [gaps]
-              inner.horizontal = 8
-              inner.vertical =   8
-              outer.left =       8
-              outer.bottom =     8
-              outer.top =        8
-              outer.right =      8
+      services.aerospace = {
+        enable = true;
+        settings = {
+          gaps = {
+            inner.horizontal = 8;
+            inner.vertical = 8;
+            outer.left = 8;
+            outer.bottom = 8;
+            outer.top = 8;
+            outer.right = 8;
+          };
 
-          [mode.main.binding]
-              alt-h = 'focus left'
-              alt-j = 'focus down'
-              alt-k = 'focus up'
-              alt-l = 'focus right'
+          mode.main.binding = workspaceBindings // {
+            cmd-alt-ctrl-r = "reload-config";
 
-              alt-cmd-h = 'move left'
-              alt-cmd-j = 'move down'
-              alt-cmd-k = 'move up'
-              alt-cmd-l = 'move right'
+            alt-enter = "exec-and-forget ~/.local/bin/_open-wezterm";
 
-              alt-1 = 'workspace 1'
-              alt-2 = 'workspace 2'
-              alt-3 = 'workspace 3'
-              alt-4 = 'workspace 4'
-              alt-5 = 'workspace 5'
-              alt-6 = 'workspace 6'
-              alt-7 = 'workspace 7'
-              alt-8 = 'workspace 8'
-              alt-9 = 'workspace 9'
-              alt-0 = 'workspace 10'
+            alt-h = "focus left";
+            alt-j = "focus down";
+            alt-k = "focus up";
+            alt-l = "focus right";
 
-              alt-cmd-1 = ['move-node-to-workspace 1', 'workspace 1']
-              alt-cmd-2 = ['move-node-to-workspace 2', 'workspace 2']
-              alt-cmd-3 = ['move-node-to-workspace 3', 'workspace 3']
-              alt-cmd-4 = ['move-node-to-workspace 4', 'workspace 4']
-              alt-cmd-5 = ['move-node-to-workspace 5', 'workspace 5']
-              alt-cmd-6 = ['move-node-to-workspace 6', 'workspace 6']
-              alt-cmd-7 = ['move-node-to-workspace 7', 'workspace 7']
-              alt-cmd-8 = ['move-node-to-workspace 8', 'workspace 8']
-              alt-cmd-9 = ['move-node-to-workspace 9', 'workspace 9']
-              alt-cmd-0 = ['move-node-to-workspace 10', 'workspace 10']
+            # --swap-focus: the focus stays on the moved window, as with yabai.
+            cmd-alt-h = "swap --swap-focus left";
+            cmd-alt-j = "swap --swap-focus down";
+            cmd-alt-k = "swap --swap-focus up";
+            cmd-alt-l = "swap --swap-focus right";
 
-              alt-enter = 'exec-and-forget ~/.local/bin/_open-wezterm'
+            cmd-alt-t = "layout floating tiling";
+            cmd-alt-b = "balance-sizes";
+          };
 
-              alt-s = 'mode service'
+          on-window-detected = [
+            (float { app-name-regex-substring = "^System Settings$"; })
+            (float { window-title-regex-substring = "^Settings$"; })
+            (float { app-name-regex-substring = "KakaoTalk"; })
+            (float { app-name-regex-substring = "Finder"; })
+            (float { app-name-regex-substring = "Spotify"; })
+            (float { app-name-regex-substring = "1Password"; })
+            (float { app-name-regex-substring = "Alfred"; })
+            (float { app-name-regex-substring = "ChatGPT"; })
+            # JetBrains dialogs
+            (float { window-title-regex-substring = "Rename|Move|Delete|Add File to Git"; })
+          ];
+        };
+      };
 
-              alt-minus = 'resize smart -50'
-              alt-equal = 'resize smart +50'
+      home-manager.users.${ctx.user} = {
+        home.file.".local/bin/_open-wezterm" = {
+          source = ./dotfiles/scripts/_open-wezterm;
+          executable = true;
+        };
 
-              alt-slash = 'layout tiles horizontal vertical'
-              # alt-h = 'join-with left'
-              # alt-j = 'join-with down'
-              # alt-k = 'join-with up'
-              # alt-l = 'join-with right'
-
-          [mode.service.binding]
-              esc = ['reload-config', 'mode main']
-
-
-          [[on-window-detected]]
-              if.app-name-regex-substring = "wezterm-gui"
-              run = ['layout floating']  # The callback itself
-
-          [[on-window-detected]]
-              if.app-id = 'com.kakao.KakaoTalkMac'
-              run = ['layout floating', 'move-node-to-workspace 10']  # The callback itself
-              # if.app-name-regex-substring = 'KaKaoTalk'
-              # if.window-title-regex-substring = 'substring'
-              # if.workspace = 'workspace-name'
-              # if.during-aerospace-startup = true
-              # check-further-callbacks = true
-
-          [[on-window-detected]]
-              if.app-id = 'com.apple.systempreferences'
-              run = ['layout floating']  # The callback itself
-
-          [[on-window-detected]]
-              if.app-id = 'com.apple.finder'
-              run = ['layout floating']  # The callback itself
-
-        '';
-    };
+        # Same borders as with yabai (modules/features/wm/yabai/jankyborders.nix).
+        services.jankyborders = {
+          enable = false;
+          settings = {
+            style = "square";
+            width = 3.0;
+            hidpi = "on";
+            active_color = "0xff7ffa5c";
+            inactive_color = "0x00000000";
+            whitelist = "\"wezterm-gui,wezterm,WezTerm,ghostty\"";
+            ax_focus = "on";
+          };
+        };
+      };
+    })
+  ];
 }

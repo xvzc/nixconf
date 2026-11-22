@@ -2,6 +2,7 @@
   lib,
   pkgs,
   ctx,
+  config,
   ...
 }:
 {
@@ -88,6 +89,12 @@
     StageManagerHideWidgets = false;
     StandardHideDesktopIcons = false; # Show items on desktop
     EnableStandardClickToShowDesktop = true; # Click wallpaper to reveal desktop
+
+    # Built-in window tiling (macOS 15): drag to the screen edges or the menu
+    # bar, or hold Option while dragging.
+    EnableTilingByEdgeDrag = false;
+    EnableTopTilingByEdgeDrag = false;
+    EnableTilingOptionAccelerator = false;
   };
 
   system.defaults.screensaver = {
@@ -239,11 +246,31 @@
       name:
       let
         seq = lib.strings.toInt name - 118 + 1;
+        # Amethyst has no command to switch spaces, and throws windows to a
+        # space with these shortcuts, so with it Switch to Desktop 1-9 is on
+        # as Option+1-9 (skhd's alt-N). Parameters: ASCII code, key code,
+        # modifier mask (Option).
+        keyCodes = [ 18 19 20 21 23 22 26 28 25 ];
+        amethyst = (config.features.wm.amethyst.enable or false) && seq <= 9;
       in
-      {
-        enabled = false;
-        description = "Disable move to space ${builtins.toString seq}";
-      }
+      if amethyst then
+        {
+          enabled = true;
+          description = "Switch to Desktop ${builtins.toString seq} (Option+${builtins.toString seq})";
+          value = {
+            type = "standard";
+            parameters = [
+              (48 + seq)
+              (builtins.elemAt keyCodes (seq - 1))
+              524288
+            ];
+          };
+        }
+      else
+        {
+          enabled = false;
+          description = "Disable move to space ${builtins.toString seq}";
+        }
     );
   };
 
