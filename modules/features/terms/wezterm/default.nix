@@ -33,6 +33,12 @@
           source = ./dotfiles/colors;
           recursive = true;
         };
+
+        # Opens a new window in the running WezTerm, or starts it (macOS app
+        # path). Bound by window managers, e.g. skhdrc alt - return.
+        "wezterm/scripts/open-wezterm" = lib.mkIf ctx.isDarwin {
+          source = ./dotfiles/scripts/open-wezterm;
+        };
       };
     };
 }

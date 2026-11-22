@@ -56,6 +56,10 @@ config.keys = {
 	{ key = "=", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
 	{ key = "-", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
 	{ key = "=", mods = "SUPER", action = wezterm.action.DisableDefaultAssignment },
+	-- Pass Ctrl+Shift+F through (nvim formatting); search stays on Cmd+F.
+	{ key = "f", mods = "SHIFT|CTRL", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "F", mods = "SHIFT|CTRL", action = wezterm.action.DisableDefaultAssignment },
+	{ key = "F", mods = "CTRL", action = wezterm.action.DisableDefaultAssignment },
 	{
 		key = "Tab",
 		mods = "CTRL",
