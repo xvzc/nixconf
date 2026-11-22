@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+
+# Picks files under the current directory with fzf in a floating tmux pane and
+# types them into the target pane as "@<relative-path> " mentions.
+#
+# ctrl-e opens the current entry in a read-only nvim (see line-picker.lua)
+# that loads only the plugins marked `minimal` in the nvim config
+# (NVIM_MINIMAL=1), in a larger popup on top of the fzf pane. Picking lines
+# there adds "<relative-path>#L<start>-<end>" as a new entry at the top of the
+# list and selects it; q leaves the list as it is. fzf keeps running under
+# nvim, so its query, selection and cursor stay as they were.
+#
+# fzf runs in a floating pane rather than a popup: tmux ignores display-popup
+# while a popup is open on the client, but a popup can open over a pane. The
+# pane is shown above a zoomed pane (-A) and borderless (-B none, fzf draws its
+# own border), and `new-pane -W` waits until fzf is done. It is not modal (-O):
+# a modal pane keeps the focus, which breaks toggle-pane (F12), whose new pane
+# has to become the active one.
+#
+# fzf has no action to add an item, and reload clears the selection, so the
+# input stays open instead: the file list followed by `tail -f` of the ranges
+# file, which line-picker.lua appends to. fzf reads new lines as they come,
+# and --tac shows the newest first. (The loading spinner keeps turning.)
+# fzf has no action to select an item by its text either, so `main select`
+# looks the new entry up in fzf's --listen state and selects it by position
+# with a POST. nvim runs that before it quits, so the list is already updated
+# when its popup closes. That needs fzf to keep running meanwhile, so ctrl-e
+# starts nvim with bg-transform rather than execute (which blocks fzf; nvim
+# does not need fzf's terminal, it gets a popup of its own). ctrl-e first
+# turns on track-current, so the cursor stays on its entry while the new one
+# pushes the list down (fzf otherwise keeps the cursor row); selecting the new
+# entry moves the cursor, which ends the tracking, so `main select` moves it
+# back.
+#
+#   fd + tail -f ranges --> [floating pane (fzf size): main pick -> fzf --tac]
+#                             | ctrl-e: bg-transform `main nvim`
+#                             |   -> display-popup over the pane
+#                             |   [nvim (nvim size)] enter: append the range
+#                             |     to the ranges file, `main select` (select
+#                             |     the new entry, cursor back), then quit
+#                             | enter: the selected entries -> result file
+#   new-pane -W returns; types them into the pane (nvim RPC, or a paste)
+#
+# Pressing the key binding again while the picker is open closes it.
+#
+# Usage: main <pane-id>
+#        main pick <state-dir>                (internal, runs in the pane)
+#        main nvim <state-dir> <entry>        (internal, fzf's ctrl-e)
+#        main select <state-dir> <range> <entry>  (internal, from nvim)
+
+# Sizes in percent of the window; both are centered.
+fzf_w=65 fzf_h=45
+nvim_w=70 nvim_h=80
+fzf_pane=(-x "$fzf_w%" -y "$fzf_h%" -X "$(((100 - fzf_w) / 2))%" -Y "$(((100 - fzf_h) / 2))%")
+nvim_popup=(-w "$nvim_w%" -h "$nvim_h%")
+here="$(cd "$(dirname "$0")" && pwd)"
+
+case $1 in
+pick)
+  dir=$2
+  # Marks the picker pane, so the key binding closes it when pressed again.
+  tmux set-option -p -t "$TMUX_PANE" @fzf_file_mention 1
+  # --no-height: FZF_DEFAULT_OPTS may set --height, but fzf owns the pane.
+  fzf -m --tac --no-height \
+    --header 'enter: insert · tab: select · ctrl-e: pick lines' \
+    --listen="$dir/fzf.sock" \
+    --bind "ctrl-e:track-current+bg-transform($(printf %q "$here/main") nvim $(printf %q "$dir") {})" \
+    <"$dir/input" >"$dir/result"
+  exit 0
+  ;;
+nvim)
+  # Arguments instead of one shell-command string, so tmux runs nvim without
+  # a shell in between. A range entry opens its file. Prints no fzf actions.
+  tmux display-popup -E "${nvim_popup[@]}" -d "$PWD" \
+    -e "FZF_MENTION_DIR=$2" -e "FZF_MENTION_MAIN=$here/main" \
+    -e "FZF_MENTION_ENTRY=$3" -e NVIM_MINIMAL=1 \
+    nvim -n -M -c "luafile $here/line-picker.lua" -- "${3%#L*}" >/dev/null 2>&1
+  exit 0
+  ;;
+select)
+  # $3: the new range entry, $4: the entry the cursor was on at ctrl-e.
+  # Selecting moves the cursor to the new entry, so it is put back on that
+  # one (looked up by text, as the new entry shifts the positions).
+  dir=$2
+  # fzf reads the new line from tail -f shortly after nvim wrote it.
+  for _ in {1..50}; do
+    IFS=: read -r ref_pos cur_pos < <(curl -s --unix-socket "$dir/fzf.sock" 'http?limit=100000' |
+      jq -r --arg ref "$3" --arg cur "$4" \
+        '[.matches[].text] | "\(index($ref) // ""):\(index($cur) // "")"')
+    if [ -n "$ref_pos" ]; then
+      curl -s --unix-socket "$dir/fzf.sock" http \
+        -d "pos($((ref_pos + 1)))+select${cur_pos:++pos($((cur_pos + 1)))}"
+      exit 0
+    fi
+    sleep 0.01
+  done
+  exit 0
+  ;;
+esac
+
+pane="${1:?usage: main <pane-id>}"
+
+# Pressed again while a picker is open in the window: close it instead (its
+# main then finds no result and types nothing).
+picker=$(tmux list-panes -t "$pane" -F '#{pane_id} #{@fzf_file_mention}' | awk '$2 == 1 { print $1; exit }')
+if [ -n "$picker" ]; then
+  tmux kill-pane -t "$picker"
+  exit 0
+fi
+
+dir=$(mktemp -d)
+: >"$dir/ranges"
+mkfifo "$dir/input"
+{
+  fd --type f --hidden --exclude .git
+  # GNU tail (first in PATH with nix) polls once a second on macOS, where it
+  # has no inotify; the system tail follows with kqueue right away.
+  tail=tail
+  [ "$(uname)" = Darwin ] && tail=/usr/bin/tail
+  exec "$tail" -n +1 -f "$dir/ranges"
+} >"$dir/input" &
+producer=$!
+trap 'kill "$producer" 2>/dev/null; rm -rf "$dir"' EXIT
+
+tmux new-pane -W -A -B none -t "$pane" -c "$PWD" "${fzf_pane[@]}" \
+  "$here/main" pick "$dir"
+tmux select-pane -t "$pane"
+selected=$(cat "$dir/result" 2>/dev/null)
+
+mentions=""
+while IFS= read -r file; do
+  [ -n "$file" ] && mentions+="@${file} "
+done <<<"$selected"
+
+[ -n "$mentions" ] || exit 0
+
+# Finds the foreground (n)vim TUI among the descendants of the pane process,
+# instead of on the pane tty, since wrappers like `devenv shell` run the shell
+# on a pty of their own. The --embed server child has no tty (no "+" state).
+# Prints "<tui-pid> <first-child-pid>" from a single ps snapshot.
+find_vim() {
+  local root
+  root=$(tmux display -p -t "$pane" '#{pane_pid}')
+  ps -axo pid=,ppid=,stat=,comm= | awk -v root="$root" '
+    {
+      st[$1] = $3
+      c = $4
+      for (i = 5; i <= NF; i++) c = c " " $i
+      comm[$1] = c
+      kids[$2] = kids[$2] " " $1
+    }
+    function is_vim(n) {
+      sub(/.*\//, "", n)
+      return n ~ /^g?\.?(view|n?vim?x?)(-wrapped)?(diff)?$/
+    }
+    END {
+      q[1] = root; head = 1; tail = 1
+      while (head <= tail) {
+        p = q[head++]
+        n = split(kids[p], a, " ")
+        if (st[p] !~ /^[TXZ]/ && st[p] ~ /\+/ && is_vim(comm[p])) {
+          print p, (n ? a[1] : "")
+          found = 1
+          exit
+        }
+        for (i = 1; i <= n; i++) q[++tail] = a[i]
+      }
+    }
+    END { exit !found }'
+}
+
+# Pastes into the nvim over RPC with nvim_paste, which keeps the current mode
+# (a visual selection is replaced, like a normal paste). The --embed child of
+# the TUI owns the server socket. Returns 2 when no socket is found; an RPC
+# error is not retried with keys.
+paste_rpc() {
+  local ui=$1 srv=$2 pid sock text
+  for pid in $srv $ui; do
+    sock=$(ls "${TMPDIR:-/tmp/}"nvim."$USER"/*/nvim."$pid".0 2>/dev/null | head -1)
+    [ -S "$sock" ] && break
+    sock=""
+  done
+  [ -n "$sock" ] || return 2
+
+  text=${mentions//\'/\'\'}
+  local cmd=(nvim --server "$sock" --remote-expr
+    "luaeval('vim.api.nvim_paste(_A, false, -1)', '$text')")
+  if command -v timeout >/dev/null; then
+    timeout 2 "${cmd[@]}" >/dev/null 2>&1
+  else
+    "${cmd[@]}" >/dev/null 2>&1
+  fi
+}
+
+# Bracketed-pastes the text as one paste event, so the app gets it at once
+# instead of as typed keys (and completion and autopairs stay out).
+paste_text() {
+  tmux set-buffer -b fzf-file-mention -- "$mentions"
+  tmux paste-buffer -p -d -b fzf-file-mention -t "$pane"
+}
+
+# Fallback: switch to insert mode after the cursor from any mode (C-\ C-n, then
+# a) and paste the text.
+paste_keys() {
+  tmux send-keys -t "$pane" 'C-\' C-n a
+  paste_text
+}
+
+if vim_pids=$(find_vim); then
+  # shellcheck disable=SC2086 # "<tui-pid> <child-pid>"
+  paste_rpc $vim_pids
+  if [ $? -eq 2 ]; then
+    paste_keys
+  fi
+else
+  paste_text
+fi

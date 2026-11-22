@@ -13,25 +13,29 @@
 #   }
 # }
 #
-# All entries are unified as a tree: the current session first, then the other
-# running sessions (except names outside the config starting with __) by
-# session_last_attached, newest first, each in bold green and followed by all
-# its panes, then projects not yet running, dim.
-# A session named <base>/<topic>, split on the first /, is a bold green node
-# above the panes of <base>, with its panes nested under it. Nodes are sorted by
-# topic, and <base> is listed even when only <base>/<topic> is running.
+# Running sessions are listed by their panes: the current session first, then
+# the other running sessions (except names outside the config starting with __)
+# by session_last_attached, newest first, then projects not yet running, dim.
+# Each pane is a row, the session name bold green in a column padded to the
+# longest one. A session with one pane leads to it with a dim ╌,
+# "<session>   ╌ <pane>"; one with several panes shows its name on the first
+# row only, joined as a tree: ┬╌, then ├╌ and └╌ below (there are no dashed
+# corners or tees).
+# A session named <base>/<topic>, split on the first /, is listed after the
+# panes of <base>, sorted by topic. A session with no panes to list is a row of
+# its own.
 # On select: switch to existing session, create new one at the given root, or
 # jump to the selected pane.
-# A pane is labeled by its agent, by the foreground process of @pane_tty (the
-# tty of its shell, recorded by the zsh hook in the tmux module), or by its
-# pane_current_command. An agent reads claude:<name>, cut to 16 columns, followed
+# A pane is labeled by its agent, by the process it really runs (see
+# pane-process, which follows wrappers like `devenv shell` into their own pty),
+# or by its pane_current_command. An agent reads claude:<name>, cut to 16 columns, followed
 # by its status, aligned across all agent rows in each view.
 # Agents are Claude Code sessions (~/.claude/sessions/<pid>.json) mapped to a
 # pane by walking up the process tree. Only "*.json" files are read; the
 # neighbouring "*.key" files are never opened.
-# The list shows the tree while the query is empty. With a query it shows the
-# search view, a separate row field without tree glyphs where each pane row is
-# prefixed by its session, cut to 20 columns.
+# Session names are cut to 20 columns. With a query the list shows the search
+# view, a separate row field where every pane row reads "<session>    <pane>",
+# so a session name matches all of its panes.
 
 _start_ms=$(date +%s%3N)
 _log_file="$(dirname "$0")/log"
@@ -247,15 +251,14 @@ add_entry() {
   paths+=("$path")
 }
 
-declare -A agent_names agent_statuses tty_foreground session_panes session_topics session_rows
+declare -A agent_names agent_statuses pane_processes session_panes session_topics session_rows
 pane_ids=()
 pane_lefts=()
 pane_statuses=()
-pane_search_names=()
-pane_tree_widths=()
-pane_search_widths=()
-agent_tree_width=0
-agent_search_width=0
+pane_session_names=()
+pane_left_widths=()
+agent_width=0
+session_width=0
 shown_sessions=()
 
 # Prints "<pane_id>\t<name>\t<status>" for every live Claude session in tmux,
@@ -308,24 +311,34 @@ truncate_column() {
   ((${#REPLY} > $2)) && REPLY="${REPLY:0:$2-1}…"
 }
 
-# A tty's foreground process is the one whose pid equals the tty's tpgid.
-collect_foreground() {
-  local tty comm
+# Maps each pane pid to the name pane-process resolves for it.
+collect_pane_processes() {
+  local pids=() names=() i
 
-  while read -r _ _ _ tty comm; do
-    tty_foreground[$tty]="$comm"
-  done < <(awk '$1 == $3' <<<"$process_table")
+  mapfile -t pids < <(tmux list-panes -a -F '#{pane_pid}' 2>/dev/null)
+  ((${#pids[@]})) || return 0
+  mapfile -t names < <("$(dirname "$0")/pane-process" "${pids[@]}")
+  for i in "${!pids[@]}"; do
+    pane_processes[${pids[i]}]="${names[i]}"
+  done
 }
 
 collect_panes() {
   local sep=$'\x1f'
-  local session pane command pane_tty left status name group tree_width search_width
+  local session pane command pane_pid left status name group width listed
 
-  while IFS="$sep" read -r session pane command pane_tty; do
+  while IFS="$sep" read -r session pane command pane_pid; do
     session_group "$session"
     group="$REPLY"
+    # Sessions that are not listed do not widen the columns.
+    listed=""
+    if [[ "$group" != __* || "$group" == "$current_group" ]] ||
+      in_array "$group" "${named_names[@]//./_}" "${lookup_names[@]//./_}"; then
+      listed=1
+    fi
     truncate_column "$session" 20
-    pane_search_names+=("$REPLY")
+    pane_session_names+=("$REPLY")
+    [[ -n "$listed" ]] && ((${#REPLY} > session_width)) && session_width=${#REPLY}
     status=""
     if [[ -n "${agent_names[$pane]+x}" ]]; then
       status="${agent_statuses[$pane]}"
@@ -335,21 +348,12 @@ collect_panes() {
         truncate_column "$name" 16
         left="claude:$REPLY"
       fi
-      tree_width=$((${#left} + 3))
-      [[ "$session" != "$group" ]] && tree_width=$((tree_width + 3))
-      search_width=$((${#pane_search_names[-1]} + ${#left} + 3))
-      [[ "$pane" == "$current_pane" ]] && search_width=$((search_width + 1))
-      pane_tree_widths[${#pane_ids[@]}]="$tree_width"
-      pane_search_widths[${#pane_ids[@]}]="$search_width"
-      # Agents in sessions that are not listed do not widen the columns.
-      if [[ "$group" != __* || "$group" == "$current_group" ]] ||
-        in_array "$group" "${named_names[@]//./_}" "${lookup_names[@]//./_}"; then
-        ((tree_width > agent_tree_width)) && agent_tree_width=$tree_width
-        ((search_width > agent_search_width)) && agent_search_width=$search_width
-      fi
+      width=${#left}
+      pane_left_widths[${#pane_ids[@]}]="$width"
+      [[ -n "$listed" ]] && ((width > agent_width)) && agent_width=$width
     else
       name="$command"
-      [[ -n "$pane_tty" ]] && name="${tty_foreground[${pane_tty#/dev/}]:-$command}"
+      [[ -n "$pane_pid" ]] && name="${pane_processes[$pane_pid]:-$command}"
       name="${name##*/}"
       name="${name#-}"
       truncate_column "${name//[[:cntrl:]]/ }" 20
@@ -361,48 +365,69 @@ collect_panes() {
     pane_ids+=("$pane")
     pane_lefts+=("$left")
     pane_statuses+=("$status")
-  done < <(tmux list-panes -a -F "#{session_name}$sep#{pane_id}$sep#{pane_current_command}$sep#{@pane_tty}" 2>/dev/null)
+  done < <(tmux list-panes -a -F "#{session_name}$sep#{pane_id}$sep#{pane_current_command}$sep#{pane_pid}" 2>/dev/null)
+}
+
+# Sets REPLY to the session name in bold green, padded to the session column.
+session_column() {
+  printf -v REPLY '\033[1;32m%s\033[0m%*s' "$1" "$((session_width - ${#1}))" ''
 }
 
 add_pane_row() {
-  local i="$1" glyph="$2"
-  local left="${pane_lefts[$i]}" status="${pane_statuses[$i]}" search_name="${pane_search_names[$i]}"
-  local tree_tail="" search_tail="" tree_separator=" " search_marker=""
+  local i="$1" glyph="$2" show_name="$3"
+  local left="${pane_lefts[$i]}" status="${pane_statuses[$i]}" name="${pane_session_names[$i]}"
+  local tail="" separator=" " name_column search_column
 
-  [[ "${pane_ids[$i]}" == "$current_pane" ]] && tree_separator="•" search_marker="•"
+  [[ "${pane_ids[$i]}" == "$current_pane" ]] && separator="•"
   if [[ -n "$status" ]]; then
     case "$status" in
     busy) status=$'\033[33m'"$status"$'\033[0m' ;;
-    idle) status=$'\033[2m'"$status"$'\033[0m' ;;
+    idle) status=$'\033[32m'"$status"$'\033[0m' ;;
     esac
-    printf -v tree_tail '%*s  %s' "$((agent_tree_width - pane_tree_widths[i]))" '' "$status"
-    printf -v search_tail '%*s  %s' "$((agent_search_width - pane_search_widths[i]))" '' "$status"
+    printf -v tail '%*s %s' "$((agent_width - pane_left_widths[i]))" '' "$status"
   fi
-  rows+=("pane"$'\t'"${pane_ids[$i]}"$'\t'"$glyph$tree_separator$left$tree_tail"$'\t'$'\033[1;32m'"$search_name"$'\033[0m \033[2m→\033[0m '"$search_marker$left$search_tail")
+  session_column "$name"
+  search_column="$REPLY"
+  if [[ -z "$glyph" ]]; then
+    # A lone pane: the ╌ of the tree glyphs alone, dim like them.
+    name_column="$REPLY  "$'\033[2m╌\033[0m'
+  else
+    name_column="$REPLY"
+    [[ "$show_name" != 1 ]] && printf -v name_column '%*s' "$session_width" ''
+    name_column+=" "$'\033[2m'"$glyph"$'\033[0m'
+  fi
+  rows+=("pane"$'\t'"${pane_ids[$i]}"$'\t'"$name_column$separator$left$tail"$'\t'"$search_column   $separator$left$tail")
 }
 
-# Adds the pane rows of a session. The last pane closes the branch.
+# Adds the pane rows of a session: a lone pane (no glyph, see add_pane_row), or
+# rows joined as a tree with the name shown on the first row only.
 add_pane_rows() {
-  local session="$1" indent="$2"
-  local indexes i last
+  local session="$1"
+  local indexes i last glyph
 
   read -r -a indexes <<<"${session_panes[$session]}"
   last=$((${#indexes[@]} - 1))
   for ((i = 0; i <= last; i++)); do
-    if ((i == last)); then
-      add_pane_row "${indexes[$i]}" "${indent}└─"
+    if ((last == 0)); then
+      glyph=""
+    elif ((i == 0)); then
+      glyph="┬╌"
+    elif ((i == last)); then
+      glyph="└╌"
     else
-      add_pane_row "${indexes[$i]}" "${indent}├─"
+      glyph="├╌"
     fi
+    add_pane_row "${indexes[$i]}" "$glyph" "$((i == 0))"
   done
 }
 
-# Collects the rows of a running session, its topic nodes and its panes, to be
-# placed by recency. Topic nodes come before the panes of the session.
+# Collects the rows of a running session, its panes and then the panes of its
+# topic sessions, to be placed by recency. Selecting a pane row switches to its
+# session; a session is a row of its own only when it has no panes to list.
 add_running_session() {
   local name="$1" session="$2" project_key="$3" path="$4" entry_session="${5:-$2}"
   local first_row=${#rows[@]}
-  local topics=() topic i last glyph indent
+  local topics=() topic display=""
 
   if in_array "$session" "${shown_sessions[@]}"; then
     add_entry "" "$name" "$session" "$project_key" "$path"
@@ -410,19 +435,16 @@ add_running_session() {
   fi
   shown_sessions+=("$session")
 
-  add_entry $'\033[1;32m'"$name"$'\033[0m' "$name" "$entry_session" "$project_key" "$path"
   [[ -n "${session_topics[$session]}" ]] &&
     mapfile -t topics < <(printf '%s' "${session_topics[$session]}" | LC_ALL=C sort)
-  last=$((${#topics[@]} - 1))
-  for ((i = 0; i <= last; i++)); do
-    topic="${topics[$i]}"
-    glyph="├─" indent="│  "
-    [[ $i -eq $last && -z "${session_panes[$session]}" ]] && glyph="└─" indent="   "
-    add_entry "$glyph "$'\033[1;32m'"$topic"$'\033[0m' "$session/$topic" "$session/$topic" "" "" \
-      $'\033[1;32m'"$session/$topic"$'\033[0m'
-    add_pane_rows "$session/$topic" "$indent"
+  [[ -z "${session_panes[$session]}" && ${#topics[@]} -eq 0 ]] &&
+    display=$'\033[1;32m'"$name"$'\033[0m'
+  add_entry "$display" "$name" "$entry_session" "$project_key" "$path"
+  add_pane_rows "$session"
+  for topic in "${topics[@]}"; do
+    add_entry "" "$session/$topic" "$session/$topic" "" ""
+    add_pane_rows "$session/$topic"
   done
-  add_pane_rows "$session" ""
 
   local IFS=$'\n'
   session_rows[$session]="${rows[*]:first_row}"
@@ -432,7 +454,7 @@ add_running_session() {
 # The argument path matches by session/project name only, so it skips panes.
 if [[ -z "$1" ]]; then
   collect_agents
-  collect_foreground
+  collect_pane_processes
   collect_panes
 fi
 

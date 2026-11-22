@@ -131,6 +131,14 @@ ensure_hidden_window() {
   fi
 }
 
+# The pane moves between windows, and a window may keep dead panes
+# (remain-on-exit, e.g. the agents session of toggle-session): a shell that
+# exits with a failed last command (130 after C-c) would then leave a dead
+# pane. A pane option overrides the window one, so set it on every show.
+close_on_exit() {
+  tmux set-option -p -t "$1" remain-on-exit off
+}
+
 resolve_target_dir() {
   # Extracts target directory path
   RAW_ENV=$(tmux show-environment -t "$CUR_SESSION_NAME" TMUX_SESSION_ROOT_DIR 2>/dev/null | grep "^TMUX_SESSION_ROOT_DIR=")
@@ -181,6 +189,7 @@ if [ "$POSITION" = "float" ]; then
     tmux set-option -t "$BASE_SESSION" "$VAR_PANE_ID" "$NEW_ID"
     tmux select-pane -t "$NEW_ID"
   fi
+  close_on_exit "${NEW_ID:-$SAVED_PANE_ID}"
   exit 0
 fi
 
@@ -251,4 +260,5 @@ else
     tmux set-option -t "$BASE_SESSION" "$VAR_PANE_ID" "$NEW_ID"
     tmux select-pane -t "$NEW_ID"
   fi
+  close_on_exit "${NEW_ID:-$SAVED_PANE_ID}"
 fi
