@@ -55,6 +55,13 @@ assert ctx.isLinux;
                 Esc:
                   behavior: !Switch Latin
                   result: Bypass
+              hangul:
+                # Replaces kime's default addons: drops ComposeChoseongSsang so that
+                # ㄱ + ㄱ stays ㄱㄱ (Shift still gives ㄲ), keeps the dubeolsik default.
+                addons:
+                  all: []
+                  dubeolsik:
+                    - TreatJongseongAsChoseong
           '';
       };
     };
