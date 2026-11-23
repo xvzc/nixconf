@@ -19,6 +19,11 @@ Drop a patch once the fix ships in the kime release that nixpkgs packages.
   it treats the re-sent preedit as a new one and replaces the selection with it.
 - Fix: remember the last preedit sent, skip `set_preedit_string` when it is unchanged,
   send `commit` only when something was sent, and forget the value on deactivate.
+- Follow-up fix (local only, not added to #817): the skip must not apply when a commit
+  string is sent in the same batch. Every `done` resets the client's preedit, so with
+  `ComposeChoseongSsang` off, ㄱ + ㄱ committed the first ㄱ and dropped the second one
+  from the screen (the engine still held it until the next non-Hangul key). The preedit
+  is now always re-sent alongside a non-empty commit.
 
 ## 02-wayland-v1-reset-engine.patch
 

@@ -1,5 +1,5 @@
 diff --git a/src/frontends/wayland/src/state.rs b/src/frontends/wayland/src/state.rs
-index 7f68614..38fcac3 100644
+index 7f68614..d4e917b 100644
 --- a/src/frontends/wayland/src/state.rs
 +++ b/src/frontends/wayland/src/state.rs
 @@ -86,6 +86,8 @@ pub struct AppState {
@@ -19,7 +19,7 @@ index 7f68614..38fcac3 100644
              should_exit: false,
              globals: Globals {
                  seat: None,
-@@ -363,27 +366,42 @@ impl AppState {
+@@ -363,27 +366,46 @@ impl AppState {
          }
  
          if let Some(ref im_state) = self.im_v2 {
@@ -27,6 +27,10 @@ index 7f68614..38fcac3 100644
 +            // preedit (e.g. on a bare Ctrl/Alt/Super press) makes clients such
 +            // as Chromium replace the current selection with it.
 +            let mut changed = false;
++            // Every done resets the client's preedit, so a preedit that follows a
++            // commit must be sent again even when its text is unchanged (ㄱ + ㄱ).
++            let has_commit =
++                ret.contains(InputResult::HAS_COMMIT) && !self.engine.commit_str().is_empty();
 +
              if ret.contains(InputResult::HAS_PREEDIT) {
                  let preedit = self.engine.preedit_str();
@@ -35,7 +39,7 @@ index 7f68614..38fcac3 100644
 -                    .im
 -                    .set_preedit_string(preedit.into(), 0, len as i32);
 -                self.last_preedit_len = len;
-+                if preedit != self.last_preedit_v2 {
++                if has_commit || preedit != self.last_preedit_v2 {
 +                    let len = preedit.len();
 +                    im_state
 +                        .im
@@ -68,7 +72,7 @@ index 7f68614..38fcac3 100644
          }
  
          !ret.contains(InputResult::CONSUMED)
-@@ -585,6 +603,9 @@ impl Dispatch<ZwpInputMethodV2, ()> for AppState {
+@@ -585,6 +607,9 @@ impl Dispatch<ZwpInputMethodV2, ()> for AppState {
                      if state.engine_ready {
                          state.engine.reset();
                      }
