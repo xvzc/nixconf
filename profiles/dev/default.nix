@@ -39,7 +39,7 @@
   # └────────┘
   ++ lib.optionals ctx.isDarwin [
     ../../modules/features/wm/yabai
-    ../../modules/features/utils/karabiner
+    # ../../modules/features/utils/karabiner
   ]
   # ┌───────┐
   # │ LINUX │
