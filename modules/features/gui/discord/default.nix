@@ -9,17 +9,11 @@
         if pkgs.stdenv.isDarwin then
           final.mv.tip.discord
         else
-          final.mv.tip.discord.overrideAttrs (old: {
-            postInstall = ''
-              ${old.postInstall or ""}
-              wrapProgram $out/bin/Discord \
-                --add-flags "--ozone-platform=x11"
-
-              ${old.postInstall or ""}
-              wrapProgram $out/bin/discord \
-                --add-flags "--ozone-platform=x11"
-            '';
-          });
+          # The FHS wrapper ignores postInstall; commandLineArgs is appended after
+          # the NIXOS_OZONE_WL wayland flags in the inner wrapper, so x11 wins.
+          final.mv.tip.discord.override {
+            commandLineArgs = "--ozone-platform=x11";
+          };
     })
   ];
 
