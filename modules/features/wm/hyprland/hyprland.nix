@@ -329,7 +329,8 @@ lib.mkIf config.features.wm.hyprland.enable {
                   end
                 end'')
 
-              (bind "${mod2} + Space" (exec "rofi -show drun -calc-command \"echo -n '{result}' | wl-copy\""))
+              (bind "${mod2} + Space" (exec "vicinae toggle"))
+              # (bind "${mod2} + Space" (exec "rofi -show drun -calc-command \"echo -n '{result}' | wl-copy\""))
 
               (bind "${mod1} + h" ''hl.dsp.focus({ direction = "left" })'')
               (bind "${mod1} + j" ''hl.dsp.focus({ direction = "down" })'')

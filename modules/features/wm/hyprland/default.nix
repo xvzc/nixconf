@@ -14,6 +14,7 @@ assert ctx.isLinux;
     ./hyprpaper.nix
     ./waybar.nix
     ./rofi.nix
+    ./vicinae.nix
   ];
 
   # ┌───────┐
@@ -28,6 +29,7 @@ assert ctx.isLinux;
       hyprland = final.mv.tip.hyprland;
 
       rofi-power-menu = final.mv.tip.rofi-power-menu;
+      vicinae = final.mv.tip.vicinae;
     })
   ];
 }
