@@ -1,0 +1,13 @@
+--- a/window/src/os/wayland/inputhandler.rs
++++ b/window/src/os/wayland/inputhandler.rs
+@@ -189,7 +189,9 @@
+                         raw: None,
+                     }));
+                 }
+-                let status = if let Some(text) = pending_state.pre_edit.take() {
++                // An empty preedit ends the composition, the same as a null one;
++                // treating it as composing pins the cursor to the default shape.
++                let status = if let Some(text) = pending_state.pre_edit.take().filter(|t| !t.is_empty()) {
+                     DeadKeyStatus::Composing(text)
+                 } else {
+                     DeadKeyStatus::None
