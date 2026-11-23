@@ -79,6 +79,9 @@ in
           agent = "lead";
           defaultShell = "bash";
           includeCoAuthoredBy = false;
+          # Connect Remote Control automatically when an interactive session starts.
+          # Only honored in user or managed settings, not in project settings.
+          remoteControlAtStartup = true;
           permissions.allow = [
             "Read(~/.claude/skills/**)"
           ];
