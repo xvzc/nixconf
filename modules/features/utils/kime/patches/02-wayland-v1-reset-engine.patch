@@ -1,0 +1,19 @@
+diff --git a/src/frontends/wayland/src/state.rs b/src/frontends/wayland/src/state.rs
+index 38fcac3..9b26d05 100644
+--- a/src/frontends/wayland/src/state.rs
++++ b/src/frontends/wayland/src/state.rs
+@@ -835,6 +835,14 @@ impl Dispatch<ZwpInputMethodContextV1, ()> for AppState {
+             zwp_input_method_context_v1::Event::CommitState { serial } => {
+                 state.serial = serial;
+             }
++            zwp_input_method_context_v1::Event::Reset => {
++                log::trace!("input_method_context_v1: Reset");
++                // The client already committed the preedit itself (e.g. Chromium on a mouse
++                // click), so discard it instead of committing it a second time.
++                if state.engine_ready {
++                    state.engine.reset();
++                }
++            }
+             _ => {}
+         }
+     }
