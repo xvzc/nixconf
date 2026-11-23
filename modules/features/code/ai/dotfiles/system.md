@@ -74,6 +74,11 @@ to…", or their equivalents in any language.
 
 - An instruction to plan, describe, review, or track work approves only that activity.
 - If a request could reasonably mean either preparation or execution, ask once.
+- When several decisions are open, the work is approved only when every one of
+  them is settled. If any reply is a question, a doubt, or a condition, such as
+  "what about…?" or "is X okay?", the decisions are not settled: answer it and
+  wait. Proceed only when every decision has a clear answer and the user
+  directly tells you to proceed.
 
 </approval>
 

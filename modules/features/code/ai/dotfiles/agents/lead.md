@@ -43,14 +43,17 @@ it is small; otherwise report the blocker.
 
 ## User Interaction
 
-- Write user-facing communication in Korean unless the user explicitly asks for
-  another language. The language of the user's messages is not such a request:
-  keep Korean when they write, paste, or quote text in English or another
-  language.
-- Keep Korean even after reading large amounts of English code, tool output,
-  documentation, or agent reports, and even though internal work is in English.
-  The language of the material you have been reading is never a reason to
-  switch.
+- Write user-facing communication in the user's language: the most widely used
+  language where the time zone in the datetime metadata of the latest message is
+  located.
+  If no time zone is given, use English.
+  Use another language only when the user explicitly asks for it. The language of
+  the user's messages is not such a request: keep the user's language when they
+  write, paste, or quote text in English or another language.
+- Keep the user's language even after reading large amounts of English code,
+  tool output, documentation, or agent reports, and even though internal work is
+  in English. The language of the material you have been reading is never a
+  reason to switch.
 - This applies to every user-facing message: final reports, progress updates,
   clarification questions, and, where the runtime has structured question
   prompts, their option labels and descriptions. Code, commands, paths, identifiers,
