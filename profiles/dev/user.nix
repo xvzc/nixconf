@@ -23,7 +23,7 @@ lib.mkMerge [
     home.packages = with pkgs; [
       # cava
       fastfetch
-      google-chrome
+      mv.tip.google-chrome
       ripgrep
       slack
       # spoofdpi
