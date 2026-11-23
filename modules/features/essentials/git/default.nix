@@ -13,6 +13,7 @@
     {
       home.packages = [
         pkgs.commitlint
+        pkgs.difftastic
       ];
       home.file.".local/bin/git-auth".source = ./dotfiles/scripts/git-auth;
 
@@ -22,6 +23,49 @@
         settings = {
           git_protocol = "ssh";
           prompt = "enabled";
+        };
+      };
+
+      programs.jujutsu = {
+        enable = true;
+        package = pkgs.mv.tip.jujutsu;
+        settings = {
+          user = {
+            name = "xvzc";
+            email = "me@xvzc.dev";
+          };
+
+          signing = {
+            behavior = "drop";
+            backend = "ssh";
+            key = "${home}/${pub.ssh.personal.path}";
+            backends.ssh.program = (pub._1password { inherit pkgs; }).signer;
+          };
+          revsets.git-sign-on-push = "~signed() & mine()";
+
+          ui = {
+            editor = "nvim";
+            default-command = "log";
+            diff-formatter = [
+              "${pkgs.difftastic}/bin/difft"
+              "--color=always"
+              "$left"
+              "$right"
+            ];
+          };
+
+          revset-aliases."closest_bookmark(to)" = "heads(::to & bookmarks())";
+
+          aliases = {
+            tug = [
+              "bookmark"
+              "move"
+              "--from"
+              "closest_bookmark(@-)"
+              "--to"
+              "@-"
+            ];
+          };
         };
       };
 
