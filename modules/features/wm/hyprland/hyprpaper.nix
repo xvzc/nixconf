@@ -16,14 +16,14 @@
         settings = {
           ipc = true;
           splash = false;
-          splash_offset = 2.0;
 
-          preload = [
-            wallpaper
-          ];
-
+          # hyprpaper >= 0.8: `preload` is gone and `wallpaper` is a category block.
           wallpaper = lib.mkIf (wallpaper != null) [
-            ", ${wallpaper}"
+            {
+              monitor = "*";
+              path = wallpaper;
+              fit_mode = "cover";
+            }
           ];
         };
       };
