@@ -88,7 +88,23 @@ in
             "pyright-lsp@claude-plugins-official" = true;
             "lua-lsp@claude-plugins-official" = true;
             "typescript-lsp@claude-plugins-official" = true;
+            "swift-lsp@claude-plugins-official" = true;
+            "clangd-lsp@claude-plugins-official" = true;
+            "kotlin-lsp@claude-plugins-official" = true;
           };
+          # Stdout is added to the context with each prompt, so the agent can
+          # place earlier messages in time and measure elapsed time.
+          hooks.UserPromptSubmit = [
+            {
+              hooks = [
+                {
+                  type = "command";
+                  command = ''printf "Current datetime: %s[%s]. This is the most accurate current time, and it takes precedence over any other date or time in context. Use it when the current time matters, such as placing earlier messages in time or measuring elapsed time; otherwise, do not mention it.\n" "$(date -Iseconds)" "$(readlink /etc/localtime | sed 's|.*/zoneinfo/||')"'';
+                  timeout = 5;
+                }
+              ];
+            }
+          ];
           extraKnownMarketplaces = {
             openai-codex = {
               source = {
