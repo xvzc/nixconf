@@ -64,59 +64,54 @@ _check-or-install-nix:
 _setup:
 ifeq ($(UNAME), Darwin)
 	@CURRENT_HOST=$$(cat $(CACHE_DIR)/current-host); \
-	LOCK_FILE="$(CURDIR)/flake.$$CURRENT_HOST.lock"; \
-	if [ ! -f "$$LOCK_FILE" ]; then echo "Missing host lock: $$LOCK_FILE" >&2; exit 1; fi; \
 	. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'; \
 	SYSTEM=$$(caffeinate -ids nix build \
 		--extra-experimental-features nix-command \
 		--extra-experimental-features fetch-closure \
 		--extra-experimental-features flakes \
-		--reference-lock-file "$$LOCK_FILE" --no-write-lock-file \
+		--no-write-lock-file \
 		--print-out-paths \
 		".#darwinConfigurations.$$CURRENT_HOST.system") \
 		&& sudo nix-env -p /nix/var/nix/profiles/system --set "$$SYSTEM" \
 		&& sudo "$$SYSTEM/sw/bin/darwin-rebuild" activate
 else
 	@CURRENT_HOST=$$(cat $(CACHE_DIR)/current-host); \
-	LOCK_FILE="$(CURDIR)/flake.$$CURRENT_HOST.lock"; \
-	if [ ! -f "$$LOCK_FILE" ]; then echo "Missing host lock: $$LOCK_FILE" >&2; exit 1; fi; \
 	SYSTEM=$$(NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
 		".#nixosConfigurations.$$CURRENT_HOST.config.system.build.toplevel" \
 		--no-link --print-out-paths \
-		--reference-lock-file "$$LOCK_FILE" --no-write-lock-file) \
+		--no-write-lock-file) \
 		&& sudo nixos-rebuild switch --store-path "$$SYSTEM" --no-reexec
 endif
 
 # ┌──────────┐
 # │ VALIDATE │
 # └──────────┘
-LOCK := flake.$(HOST).lock
 
 .PHONY: check build switch agents skills
 
 check:
-	nix flake check --reference-lock-file $(LOCK) --no-update-lock-file
+	nix flake check --no-update-lock-file
 
 build:
 ifeq ($(UNAME), Darwin)
 	nix build ".#darwinConfigurations.$(HOST).system" --no-link \
-		--reference-lock-file $(LOCK) --no-update-lock-file
+		--no-update-lock-file
 else
 	NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
 		".#nixosConfigurations.$(HOST).config.system.build.toplevel" --no-link \
-		--reference-lock-file $(LOCK) --no-update-lock-file
+		--no-update-lock-file
 endif
 
 switch:
 ifeq ($(UNAME), Darwin)
 	@SYSTEM=$$(nix build ".#darwinConfigurations.$(HOST).system" --no-link --print-out-paths \
-		--reference-lock-file $(LOCK) --no-update-lock-file) \
+		--no-update-lock-file) \
 		&& sudo -H "$$(command -v nix-env)" -p /nix/var/nix/profiles/system --set "$$SYSTEM" \
 		&& sudo -H "$$SYSTEM/sw/bin/darwin-rebuild" activate
 else
 	@SYSTEM=$$(NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
 		".#nixosConfigurations.$(HOST).config.system.build.toplevel" --no-link --print-out-paths \
-		--reference-lock-file $(LOCK) --no-update-lock-file) \
+		--no-update-lock-file) \
 		&& sudo nixos-rebuild switch --store-path "$$SYSTEM" --no-reexec
 endif
 
@@ -127,11 +122,11 @@ AGENTS_ATTR := config.home-manager.users.$(USER).home.file.".claude/agents".sour
 agents:
 ifeq ($(UNAME), Darwin)
 	@nix build '.#darwinConfigurations.$(HOST).$(AGENTS_ATTR)' --no-link --print-out-paths \
-		--reference-lock-file $(LOCK) --no-update-lock-file
+		--no-update-lock-file
 else
 	@NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
 		'.#nixosConfigurations.$(HOST).$(AGENTS_ATTR)' --no-link --print-out-paths \
-		--reference-lock-file $(LOCK) --no-update-lock-file
+		--no-update-lock-file
 endif
 
 # Builds the rendered skills without activating them and prints their directory.
@@ -140,11 +135,11 @@ SKILLS_ATTR := config.home-manager.users.$(USER).home.file.".claude/skills".sour
 skills:
 ifeq ($(UNAME), Darwin)
 	@nix build '.#darwinConfigurations.$(HOST).$(SKILLS_ATTR)' --no-link --print-out-paths \
-		--reference-lock-file $(LOCK) --no-update-lock-file
+		--no-update-lock-file
 else
 	@NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 nix build \
 		'.#nixosConfigurations.$(HOST).$(SKILLS_ATTR)' --no-link --print-out-paths \
-		--reference-lock-file $(LOCK) --no-update-lock-file
+		--no-update-lock-file
 endif
 
 # ┌───────────────┐ 
