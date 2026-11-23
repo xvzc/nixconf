@@ -374,6 +374,117 @@ verified and what was not.
 
 </agent-coordination>
 
+<using-tmux>
+
+Apply this section when `$TMUX` is set. Only you use tmux: do not mention tmux,
+panes, or this section in briefs, and do not hand panes to delegated agents.
+
+## Scope
+
+Your own pane is `$TMUX_PANE`. Find your session name with
+`tmux display -p -t "$TMUX_PANE" '#{session_name}'`. Your work session is where
+you create panes:
+
+- If your session is named `<name>/agents`, it holds only coding agents, and
+  your work session is `<name>`. Create a new window there for your panes. If
+  `<name>` does not exist, ask the user instead of creating it.
+- Otherwise, your work session is your own session. Split your own pane, or
+  create a new window there.
+
+Act only within your work session and on your own pane. Do not create, change,
+or read panes, windows, or options in other sessions.
+
+Target the work session by exact name with `=`, such as `-t "=<name>"`; without
+`=`, tmux also matches a session whose name only starts with `<name>`. Name the
+session when you talk to the user, and use pane IDs you created as targets
+after that. Without `-t`, tmux targets the user's current client, which can be
+a different session.
+
+## Creating Panes
+
+```sh
+pane=$(tmux new-window -d -t "=<name>:" -P -F '#{pane_id}' -c "$PWD" "$SHELL")
+pane=$(tmux split-window -d -h -t "$TMUX_PANE" -P -F '#{pane_id}' -c "$PWD" "$SHELL")
+tmux set-option -p -t "$pane" @agent-owned 1
+```
+
+- `-d` keeps focus where the user has it.
+- Always pass the command to run, such as `"$SHELL"` or the program under test.
+  A session can set `default-command`, and a pane created without a command runs
+  it instead, which may start another agent.
+- Tag every pane you create with `@agent-owned`, so you can find it again even
+  after the conversation is summarized:
+  `tmux lsp -s -t "=<name>" -f '#{@agent-owned}' -F '#{pane_id} #{pane_current_command}'`.
+
+## Focus
+
+Change focus only to show the user something they asked to see, and tell them
+you did. Otherwise, keep focus where it is.
+
+- Within your work session:
+
+  ```sh
+  tmux select-window -t "$pane"
+  tmux select-pane -t "$pane"
+  ```
+
+- From an `<name>/agents` session, also move the user's client to `<name>`. Find
+  the client that shows your session with
+  `tmux list-clients -F '#{client_name} #{session_name}'`, then:
+
+  ```sh
+  tmux switch-client -c <client> -t "=<name>"
+  ```
+
+## Ownership
+
+- Touch only your own pane and the panes and windows you created, which carry
+  `@agent-owned`. Do not send keys to, capture, resize, move, or kill any other
+  pane or window, unless the user asks you to.
+- Listing panes and reading their metadata, such as IDs and `@agent-owned`, is
+  allowed so that you can find your own panes.
+- Check `@agent-owned` before every kill.
+
+## Uses
+
+Combine steps that need no judgment between them, such as starting a server,
+waiting for it, and sending a request, into one command, and print only what the
+next decision needs. Split them only where a result decides what to do next.
+
+- **Interactive testing:** run TUIs, REPLs, and key bindings in a pane you
+  created. Drive them with `send-keys`, and read the screen with
+  `capture-pane -p -t <pane>` (add `-e` to keep colors when they matter).
+- **Waiting for a command:** instead of sleeping, end the command with a signal
+  on a channel of your own, and wait for it. Run the wait with a timeout, since
+  it blocks until the signal arrives:
+
+  ```sh
+  tmux send-keys -t "$pane" '<command>; tmux wait-for -S <channel>' Enter
+  tmux wait-for <channel>
+  ```
+
+- **Showing code to the user:** when the user asks to see a location, open it in
+  a pane you create, such as `nvim +<line> <file>` or `nvim -d <a> <b>` for a
+  diff. Do not open panes for this unless the user asks.
+- **Opening a file in the user's nvim:** only when the user asks, open it in the
+  nvim they are using, without sending keys. Its server socket is
+  `${TMPDIR}nvim.$USER/*/nvim.<pid>.0`, where `<pid>` is the nvim process in the
+  user's pane or its `--embed` child. If more than one nvim runs, ask which one.
+
+  ```sh
+  nvim --server "$sock" --remote-expr "execute('edit +<line> <file>')"
+  ```
+
+## Cleanup
+
+- Kill the panes and windows you created when the task that needed them ends,
+  unless the user wants to keep them.
+- To read a test pane's output after its command exits, set
+  `set-option -p -t <pane> remain-on-exit on` before running it, and kill the
+  pane after you read the output.
+
+</using-tmux>
+
 <success-criterion>
 
 The user's requirements are met as agreed, changes stay within the approved scope,
