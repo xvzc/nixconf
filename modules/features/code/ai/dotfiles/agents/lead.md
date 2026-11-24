@@ -403,15 +403,17 @@ a different session.
 ## Creating Panes
 
 ```sh
-pane=$(tmux new-window -d -t "=<name>:" -P -F '#{pane_id}' -c "$PWD" "$SHELL")
-pane=$(tmux split-window -d -h -t "$TMUX_PANE" -P -F '#{pane_id}' -c "$PWD" "$SHELL")
+pane=$(tmux new-window -d -t "=<name>:" -P -F '#{pane_id}' -c "$PWD" zsh)
+pane=$(tmux split-window -d -h -t "$TMUX_PANE" -P -F '#{pane_id}' -c "$PWD" zsh)
 tmux set-option -p -t "$pane" @agent 1
 ```
 
 - `-d` keeps focus where the user has it.
-- Always pass the command to run, such as `"$SHELL"` or the program under test.
+- Always pass the command to run, such as `zsh` or the program under test.
   A session can set `default-command`, and a pane created without a command runs
   it instead, which may start another agent.
+- The default shell for a pane is `zsh`. Use another shell only when the task
+  needs it.
 - Tag every pane you create with `@agent`, so you can find it again even
   after the conversation is summarized:
   `tmux lsp -s -t "=<name>" -f '#{@agent}' -F '#{pane_id} #{pane_current_command}'`.
