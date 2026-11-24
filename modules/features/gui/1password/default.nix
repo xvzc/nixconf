@@ -41,7 +41,7 @@
 
       # Linux only: SSH_AUTH_SOCK is fixed to this link, which follows the
       # focused tmux client: its forwarded agent over SSH, otherwise 1Password.
-      agentLink = "${home}/.ssh/agent.sock";
+      agentLink = "${home}/.ssh/active-agent.sock";
       agentRelink = pkgs.writeShellApplication {
         name = "agent-relink";
         runtimeInputs = [
