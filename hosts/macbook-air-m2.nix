@@ -2,6 +2,7 @@
   lib,
   pkgs,
   ctx,
+  pub,
   ...
 }:
 {
@@ -48,6 +49,35 @@
         ];
       };
 
+    }
+    # SSH hosts, reached over Tailscale MagicDNS.
+    {
+      hm.users.default = {
+        programs.ssh.settings = {
+          "Host ${pub.desktop.name}" = {
+            hostname = "nixos-desktop-01.tailb7f463.ts.net";
+            user = "mizuki";
+            forwardAgent = true;
+            identitiesOnly = true;
+            StrictHostKeyChecking = "no";
+            identityFile = "~/${pub.desktop.path}";
+          };
+
+          "Host ${pub.router.name}" = {
+            hostname = "router.tailb7f463.ts.net";
+            user = "root";
+            forwardAgent = true;
+            identitiesOnly = true;
+            StrictHostKeyChecking = "no";
+            identityFile = "~/${pub.router.path}";
+          };
+        };
+
+        home.file = {
+          "${pub.desktop.path}".text = pub.desktop.key;
+          "${pub.router.path}".text = pub.router.key;
+        };
+      };
     }
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     { system.stateVersion = 6; }

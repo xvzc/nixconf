@@ -189,6 +189,23 @@
         };
       };
     }
+    # ┏━━━━━━━━━━━┓
+    # ┃ SSH HOSTS ┃
+    # ┗━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    {
+      hm.users.default = {
+        programs.ssh.settings."Host ${pub.router.name}" = {
+          hostname = "router.tailb7f463.ts.net";
+          user = "root";
+          forwardAgent = true;
+          identitiesOnly = true;
+          StrictHostKeyChecking = "no";
+          identityFile = "~/${pub.router.path}";
+        };
+
+        home.file."${pub.router.path}".text = pub.router.key;
+      };
+    }
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     { system.stateVersion = "25.05"; }
   ];
