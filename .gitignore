@@ -25,3 +25,7 @@ result-*
 *.log
 *.tmp
 *.bak
+
+# Claude Code writes type declarations beside a loaded mod
+modules/features/code/ai/dotfiles/mods/*/.claude-plugin/types/
+modules/features/code/ai/dotfiles/mods/*/tsconfig.json

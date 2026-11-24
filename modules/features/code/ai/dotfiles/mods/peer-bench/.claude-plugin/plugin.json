@@ -1,0 +1,5 @@
+{
+  "name": "peer-bench",
+  "version": "0.1.0",
+  "description": "Test: compare how fast a peer's busy/idle reaches another session by a consumed message versus ListAgents polling"
+}
