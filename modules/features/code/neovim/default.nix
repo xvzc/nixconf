@@ -6,7 +6,7 @@
   #   })
   # ];
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pkgs,
       ctx,

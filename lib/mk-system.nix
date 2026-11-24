@@ -55,6 +55,8 @@ platforms.${platform}.builder {
 
     platforms.${platform}.modules
 
+    ./hm.nix
+
     ../config.nix
     ../profiles/${profile}
     ../hosts/${host}.nix

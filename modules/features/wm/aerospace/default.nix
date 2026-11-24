@@ -99,7 +99,7 @@ in
         };
       };
 
-      home-manager.users.${ctx.user} = {
+      hm.users.default = {
         home.file.".local/bin/_open-wezterm" = {
           source = ./dotfiles/scripts/_open-wezterm;
           executable = true;

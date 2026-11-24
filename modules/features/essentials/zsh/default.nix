@@ -70,7 +70,7 @@
       '';
   };
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       lib,
       pkgs,

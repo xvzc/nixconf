@@ -26,7 +26,7 @@
     })
   ];
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       config,
       pkgs,

@@ -1,10 +1,9 @@
 {
-  ctx,
   pkgs,
   ...
 }:
 {
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       config,
       osConfig,

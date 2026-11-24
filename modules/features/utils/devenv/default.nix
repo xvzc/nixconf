@@ -1,9 +1,9 @@
-{ ctx, lib, ... }:
+{ lib, ... }:
 {
   nixpkgs.overlays = lib.mkBefore [
   ];
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pkgs,
       lib,

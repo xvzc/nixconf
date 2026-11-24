@@ -2,7 +2,6 @@
   lib,
   config,
   pkgs,
-  ctx,
   ...
 }:
 lib.mkIf config.features.wm.hyprland.enable {
@@ -43,7 +42,7 @@ lib.mkIf config.features.wm.hyprland.enable {
     withUWSM = false;
   };
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pkgs,
       config,

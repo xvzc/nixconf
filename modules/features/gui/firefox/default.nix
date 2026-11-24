@@ -19,7 +19,7 @@ lib.optionalAttrs ctx.isDarwin {
     })
   ];
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pkgs,
       lib,

@@ -29,7 +29,7 @@ lib.mkIf (config.features.wm.yabai.enable) {
     ''
   );
 
-  home-manager.users.${ctx.user} = {
+  hm.users.default = {
     xdg.configFile."yabai/skhdrc" = {
       source = ./dotfiles/skhdrc;
     };

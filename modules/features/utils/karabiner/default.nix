@@ -9,7 +9,7 @@ assert ctx.isDarwin;
     ];
   };
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     { ... }:
     {
       xdg.configFile."karabiner/karabiner.json" = {

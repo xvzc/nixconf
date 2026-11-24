@@ -1,4 +1,4 @@
-{ ctx, inputs, ... }:
+{ inputs, ... }:
 {
   nixpkgs.overlays = with inputs; [
     (final: prev: {
@@ -6,7 +6,7 @@
     })
   ];
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pkgs,
       lib,

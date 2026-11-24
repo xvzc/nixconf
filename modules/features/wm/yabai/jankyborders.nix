@@ -1,11 +1,10 @@
 {
   lib,
-  ctx,
   config,
   ...
 }:
 lib.mkIf (config.features.wm.yabai.enable) {
-  home-manager.users.${ctx.user} = {
+  hm.users.default = {
     services.jankyborders = {
       enable = true;
       settings = {

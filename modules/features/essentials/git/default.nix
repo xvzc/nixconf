@@ -1,6 +1,6 @@
-{ ctx, ... }:
+{ ... }:
 {
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pub,
       config,

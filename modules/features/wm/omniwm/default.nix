@@ -66,7 +66,7 @@ in
 
       environment.systemPackages = [ package ];
 
-      home-manager.users.${ctx.user} = {
+      hm.users.default = {
         xdg.configFile."omniwm/settings.toml" = {
           source = ./dotfiles/settings.toml;
           # Replaces the file OmniWM generated on first launch.

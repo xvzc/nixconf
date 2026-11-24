@@ -50,7 +50,7 @@ lib.mkIf (config.features.wm.yabai.enable) {
     "boot-args" = "-arm64e_preview_abi"; # Allow non-Apple signed binaries
   };
 
-  home-manager.users.${ctx.user} = {
+  hm.users.default = {
     xdg.configFile = {
       "yabai/yabairc" = {
         source = ./dotfiles/yabairc;

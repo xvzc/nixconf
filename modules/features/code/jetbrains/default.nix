@@ -1,4 +1,4 @@
-{ ctx, lib, ... }:
+{ lib, ... }:
 {
   # ┌────────┐
   # │ COMMON │
@@ -9,7 +9,7 @@
     })
   ];
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     { ... }:
     {
       home.file.".ideavimrc".source = ./dotfiles/ideavimrc;

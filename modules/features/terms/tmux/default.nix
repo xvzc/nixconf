@@ -1,4 +1,4 @@
-{ ctx, lib, ... }:
+{ lib, ... }:
 {
   # ┌────────┐
   # │ COMMON │
@@ -17,7 +17,7 @@
   #   })
   # ];
 
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pkgs,
       lib,

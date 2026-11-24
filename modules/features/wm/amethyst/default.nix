@@ -103,7 +103,7 @@ in
       # Not in nixpkgs.
       homebrew.casks = [ "amethyst" ];
 
-      home-manager.users.${ctx.user} = {
+      hm.users.default = {
         # JSON is valid YAML. Amethyst reads it on launch (cmd-alt-r relaunches).
         home.file.".amethyst.yml".text = builtins.toJSON settings;
       };

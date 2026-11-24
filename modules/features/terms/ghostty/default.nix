@@ -1,11 +1,10 @@
 {
   pkgs,
   lib,
-  ctx,
   ...
 }:
 {
-  home-manager.users.${ctx.user} =
+  hm.users.default =
     {
       pkgs,
       ...

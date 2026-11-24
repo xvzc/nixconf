@@ -1,7 +1,7 @@
 { config, ctx, ... }:
 assert ctx.isLinux;
 {
-  # { home-manager.users.${ctx.user} = ./user.nix; }
+  # { hm.users.default = ./user.nix; }
 
   # 1. Enable the service and the firewall
   services.tailscale.enable = true;
