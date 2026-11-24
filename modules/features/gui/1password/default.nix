@@ -102,7 +102,7 @@
           else
             "${home}/.1password/agent.sock"
         );
-        ".ssh/1password-ssh-sign".source =
+        ".ssh/1password-sign".source =
           if pkgs.stdenv.isDarwin then
             "${pkgs._1password-gui}/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
           else

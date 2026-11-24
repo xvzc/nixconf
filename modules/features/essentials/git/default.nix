@@ -39,7 +39,7 @@
             behavior = "drop";
             backend = "ssh";
             key = "${home}/${pub.personal.path}";
-            backends.ssh.program = "${home}/.ssh/1password-ssh-sign";
+            backends.ssh.program = "${home}/.ssh/1password-sign";
           };
           revsets.git-sign-on-push = "~signed() & mine()";
 
@@ -109,7 +109,7 @@
           gpg = {
             format = "ssh";
             ssh = {
-              program = "${home}/.ssh/1password-ssh-sign";
+              program = "${home}/.ssh/1password-sign";
             };
           };
           url =
