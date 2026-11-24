@@ -135,7 +135,7 @@
         shell = pkgs.zsh;
         isNormalUser = true;
         openssh.authorizedKeys.keys = [
-          pub.ssh.desktop.key
+          pub.desktop.key
         ];
 
         extraGroups = [

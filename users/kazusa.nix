@@ -11,28 +11,28 @@
     includes = [ "~/.ssh/config.d/*" ];
 
     settings = {
-      "Host ${pub.ssh.desktop.name}" = {
+      "Host ${pub.desktop.name}" = {
         hostname = "172.20.0.100";
         user = "mizuki";
         forwardAgent = true;
         identitiesOnly = true;
         StrictHostKeyChecking = "no";
-        identityFile = "~/${pub.ssh.desktop.path}";
+        identityFile = "~/${pub.desktop.path}";
       };
 
-      "Host ${pub.ssh.router.name}" = {
+      "Host ${pub.router.name}" = {
         hostname = "172.20.0.1";
         user = "root";
         forwardAgent = true;
         identitiesOnly = true;
         StrictHostKeyChecking = "no";
-        identityFile = "~/${pub.ssh.router.path}";
+        identityFile = "~/${pub.router.path}";
       };
     };
   };
 
   home.file = {
-    "${pub.ssh.desktop.path}".text = pub.ssh.desktop.key;
-    "${pub.ssh.router.path}".text = pub.ssh.router.key;
+    "${pub.desktop.path}".text = pub.desktop.key;
+    "${pub.router.path}".text = pub.router.key;
   };
 }

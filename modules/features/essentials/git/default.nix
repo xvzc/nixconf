@@ -38,8 +38,8 @@
           signing = {
             behavior = "drop";
             backend = "ssh";
-            key = "${home}/${pub.ssh.personal.path}";
-            backends.ssh.program = (pub._1password { inherit pkgs; }).signer;
+            key = "${home}/${pub.personal.path}";
+            backends.ssh.program = "${home}/.ssh/1password-ssh-sign";
           };
           revsets.git-sign-on-push = "~signed() & mine()";
 
@@ -91,7 +91,7 @@
           user = {
             name = "xvzc";
             email = "me@xvzc.dev";
-            signingKey = "${home}/${pub.ssh.personal.path}";
+            signingKey = "${home}/${pub.personal.path}";
           };
 
           core = {
@@ -109,7 +109,7 @@
           gpg = {
             format = "ssh";
             ssh = {
-              program = (pub._1password { inherit pkgs; }).signer;
+              program = "${home}/.ssh/1password-ssh-sign";
             };
           };
           url =
@@ -126,8 +126,8 @@
                 );
             in
             mkGithubUrlMappings [
-              pub.ssh.personal.name
-              pub.ssh.work.name
+              pub.personal.name
+              pub.work.name
             ];
         };
       };

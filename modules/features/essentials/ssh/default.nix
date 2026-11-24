@@ -14,28 +14,28 @@
 
         settings = {
           "Match exec \"test -z $SSH_TTY\"" = {
-            identityAgent = (pub._1password { inherit pkgs; }).agent;
+            identityAgent = "~/.ssh/1password-agent.sock";
           };
 
-          "Host ${pub.ssh.personal.name}.github.com" = {
+          "Host ${pub.personal.name}.github.com" = {
             hostname = "github.com";
             forwardAgent = true;
             identitiesOnly = true;
-            identityFile = "~/${pub.ssh.personal.path}";
+            identityFile = "~/${pub.personal.path}";
           };
 
-          "Host ${pub.ssh.work.name}.github.com" = {
+          "Host ${pub.work.name}.github.com" = {
             hostname = "github.com";
             forwardAgent = true;
             identitiesOnly = true;
-            identityFile = "~/${pub.ssh.work.path}";
+            identityFile = "~/${pub.work.path}";
           };
         };
       };
 
       home.file = {
-        "${pub.ssh.personal.path}".text = pub.ssh.personal.key;
-        "${pub.ssh.work.path}".text = pub.ssh.work.key;
+        "${pub.personal.path}".text = pub.personal.key;
+        "${pub.work.path}".text = pub.work.key;
       };
     };
 }
