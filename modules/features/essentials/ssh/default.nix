@@ -91,6 +91,8 @@ in
           settings = {
             PermitRootLogin = mkDefault "no";
             PasswordAuthentication = mkDefault false;
+            # Otherwise PAM still prompts for the password.
+            KbdInteractiveAuthentication = mkDefault false;
           };
         };
 

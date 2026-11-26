@@ -7,14 +7,12 @@
   # GitHub accounts: `git@<account>.github.com:...` picks the key.
   "xvzc.github.com" = {
     hostname = "github.com";
-    forwardAgent = true;
     identitiesOnly = true;
     identityFile = "~/${pub.git.xvzc.path}";
   };
 
   "work.github.com" = {
     hostname = "github.com";
-    forwardAgent = true;
     identitiesOnly = true;
     identityFile = "~/${pub.git.work.path}";
   };
