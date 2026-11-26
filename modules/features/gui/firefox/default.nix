@@ -32,25 +32,6 @@ lib.optionalAttrs ctx.isDarwin {
       # of stopping at the conflict.
       home.file."${config.programs.firefox.configPath}/profiles.ini".force = true;
 
-      # Linux: move the profiles from the legacy ~/.mozilla/firefox to the XDG
-      # path, once, before the new files are linked. Not while Firefox runs.
-      home.activation.firefoxXdgProfiles = lib.mkIf pkgs.stdenv.isLinux (
-        lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
-          old="$HOME/.mozilla/firefox"
-          new="${config.programs.firefox.configPath}"
-          if [ -d "$old" ] && [ ! -L "$old" ] && [ ! -e "$new" ]; then
-            if ${pkgs.procps}/bin/pgrep -u "$(id -u)" -f '(^|/)\.?firefox(-bin)?(-wrapped)?( |$)' >/dev/null; then
-              errorEcho "Firefox is running: quit it, so $old can move to $new."
-              exit 1
-            fi
-            run mkdir -p "$(dirname "$new")"
-            run mv $VERBOSE_ARG "$old" "$new"
-          elif [ -d "$old" ] && [ ! -L "$old" ]; then
-            warnEcho "Both $old and $new exist; Firefox uses $new. Remove $old once unneeded."
-          fi
-        ''
-      );
-
       programs.firefox = {
         enable = true;
         # No built-in VPN (IP Protection), nor its toolbar button. A policy, so
