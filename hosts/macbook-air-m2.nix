@@ -1,6 +1,7 @@
 {
-  lib,
   pkgs,
+  lib,
+  ctx,
   ...
 }:
 {
@@ -22,8 +23,8 @@
         persistent-others = lib.mkForce [ ];
         persistent-apps = [
           "/Applications/Nix Apps/Firefox.app" # features/gui/firefox installs it there
-          "${pkgs.spotify}/Applications/Spotify.app"
-          "${pkgs.wezterm}/Applications/WezTerm.app"
+          "/Users/${ctx.user}/Applications/Home Manager Apps/WezTerm.app"
+          "/Users/${ctx.user}/Applications/Home Manager Apps/Spotify.app"
         ];
       };
 
