@@ -42,7 +42,7 @@ in
   # copy the upgraded file back here.
   #
   # OmniWM needs "Displays have separate Spaces" turned on (spans-displays =
-  # false in modules/system/darwin/preferences.nix), and Accessibility and
+  # false in modules/platforms/darwin/system-preferences.nix), and Accessibility and
   # Input Monitoring granted on first launch.
   config = lib.mkMerge [
     # Once disabled, unload the user agent and remove its plist: switching to

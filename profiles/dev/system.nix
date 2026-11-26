@@ -80,5 +80,6 @@ lib.mkMerge [
       enable = true;
       package = pkgs.docker_29;
     };
+    users.users.${ctx.user}.extraGroups = [ "docker" ];
   })
 ]

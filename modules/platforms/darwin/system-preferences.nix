@@ -5,7 +5,7 @@
   config,
   ...
 }:
-{
+lib.mkIf config.platforms.darwin.systemPreferences.enable {
   # ┏━━━━━━━┓
   # ┃ LOGIN ┃
   # ┗━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

@@ -8,7 +8,14 @@ lib.mkIf config.features.wm.hyprland.enable {
   environment.systemPackages = with pkgs; [
     dunst
     wl-clipboard
+    pavucontrol # waybar's volume module opens it on right-click
   ];
+
+  # Chromium and Electron apps run on Wayland natively.
+  environment.sessionVariables = {
+    NIXOS_OZONE_WL = "1";
+    ELECTRON_OZONE_PLATFORM_HINT = "auto";
+  };
 
   services.dbus.packages = with pkgs; [ xfce.xfconf ];
   services = {

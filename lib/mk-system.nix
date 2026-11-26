@@ -53,6 +53,7 @@ platforms.${platform}.builder {
     }
 
     platforms.${platform}.modules
+    ../modules/platforms/${platform}
 
     ./hm.nix
 

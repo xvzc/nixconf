@@ -17,7 +17,7 @@ let
   # swap: windows rotate in layout order, so alt-j/k and cmd-alt-j/k move
   # through them. Switching to space N is not an Amethyst command; it uses the
   # macOS "Switch to Desktop N" shortcuts, set to Option+N by
-  # modules/system/darwin/preferences.nix while Amethyst is enabled (throwing a
+  # modules/platforms/darwin/system-preferences.nix while Amethyst is enabled (throwing a
   # window to a space needs them too).
   settings = {
     layouts = [
