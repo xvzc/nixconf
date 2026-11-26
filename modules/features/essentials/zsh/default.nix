@@ -32,7 +32,7 @@
 
         ${lib.optionalString pkgs.stdenv.isDarwin # sh
           ''
-            function nbs() {
+            function _nbs_local() {
               local system
               system=$(
                 ${pkgs.nix}/bin/nix build \
@@ -50,7 +50,7 @@
 
         ${lib.optionalString pkgs.stdenv.isLinux # sh
           ''
-            function nbs() {
+            function _nbs_local() {
               local system
               system=$(
                 NIXPKGS_ALLOW_UNSUPPORTED_SYSTEM=1 ${pkgs.nix}/bin/nix build \
@@ -62,6 +62,21 @@
                   switch --store-path "$system" --no-reexec
             }
           ''
+        }
+
+        # nbs: switch this machine. nbs <host>: switch that NixOS host over ssh,
+        # evaluating here and building there.
+        function nbs() {
+          if [[ $# -eq 0 || $1 == "$HOST" ]]; then
+            _nbs_local
+            return
+          fi
+          ${pkgs.nixos-rebuild-ng}/bin/nixos-rebuild switch \
+            --flake "$NIXOS_CONFIG#$1" \
+            --target-host "$1" \
+            --build-host "$1" \
+            --sudo \
+            --use-substitutes
         }
 
         function nid() {
@@ -86,6 +101,8 @@
         ".local/share/zsh/site-functions" = {
           source = ./dotfiles/site-functions;
           recursive = true;
+          # `compinit -C` keeps using its dump, which misses new completions.
+          onChange = "rm -f ${config.home.homeDirectory}/.zcompdump";
         };
       };
 

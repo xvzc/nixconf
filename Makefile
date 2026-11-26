@@ -10,7 +10,9 @@ HOSTS := \
   quit
 
 UNAME := $(shell uname)
-HOST := $(shell hostname)
+LOCAL_HOST := $(shell hostname)
+# `make switch HOST=<nixos host>` switches that host over ssh.
+HOST := $(LOCAL_HOST)
 
 ifeq ($(UNAME), Darwin)
 INSTALL_COMMAND := sh .cache/install.sh
@@ -103,7 +105,11 @@ else
 endif
 
 switch:
-ifeq ($(UNAME), Darwin)
+ifneq ($(HOST), $(LOCAL_HOST))
+	nix run --inputs-from . nixpkgs#nixos-rebuild-ng -- switch \
+		--flake ".#$(HOST)" --target-host "$(HOST)" --build-host "$(HOST)" \
+		--sudo --use-substitutes --no-update-lock-file
+else ifeq ($(UNAME), Darwin)
 	@SYSTEM=$$(nix build ".#darwinConfigurations.$(HOST).system" --no-link --print-out-paths \
 		--no-update-lock-file) \
 		&& sudo -H "$$(command -v nix-env)" -p /nix/var/nix/profiles/system --set "$$SYSTEM" \

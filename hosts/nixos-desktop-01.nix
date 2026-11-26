@@ -19,6 +19,11 @@
     {
 
       features.wm.hyprland.enable = true;
+      features.essentials.ssh.server = {
+        enable = true;
+        forwardSudoAuth = true;
+        authorizedKeys = [ pub.host.nixos-desktop-01.key ];
+      };
     }
     # ┏━━━━━━━━┓
     # ┃ SYSTEM ┃
@@ -47,9 +52,6 @@
           };
         };
       };
-
-      security.pam.sshAgentAuth.enable = true;
-      security.pam.services.sudo.sshAgentAuth = true;
 
       virtualisation.libvirtd.enable = true;
       programs.virt-manager.enable = true;
@@ -134,10 +136,6 @@
       users.users.${ctx.user} = {
         shell = pkgs.zsh;
         isNormalUser = true;
-        openssh.authorizedKeys.keys = [
-          pub.desktop.key
-        ];
-
         extraGroups = [
           "wheel"
           "docker"
@@ -178,32 +176,6 @@
             };
           };
         };
-      };
-
-      services.openssh = {
-        enable = true;
-        ports = [ 22 ];
-        settings = {
-          PermitRootLogin = "no";
-          PasswordAuthentication = false;
-        };
-      };
-    }
-    # ┏━━━━━━━━━━━┓
-    # ┃ SSH HOSTS ┃
-    # ┗━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    {
-      hm.users.default = {
-        programs.ssh.settings."Host ${pub.router.name}" = {
-          hostname = "router.tailb7f463.ts.net";
-          user = "root";
-          forwardAgent = true;
-          identitiesOnly = true;
-          StrictHostKeyChecking = "no";
-          identityFile = "~/${pub.router.path}";
-        };
-
-        home.file."${pub.router.path}".text = pub.router.key;
       };
     }
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

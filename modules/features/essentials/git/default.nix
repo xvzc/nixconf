@@ -38,7 +38,7 @@
           signing = {
             behavior = "drop";
             backend = "ssh";
-            key = "${home}/${pub.personal.path}";
+            key = "${home}/${pub.git.xvzc.path}";
             backends.ssh.program = "${home}/.ssh/1password-sign";
           };
           revsets.git-sign-on-push = "~signed() & mine()";
@@ -91,7 +91,7 @@
           user = {
             name = "xvzc";
             email = "me@xvzc.dev";
-            signingKey = "${home}/${pub.personal.path}";
+            signingKey = "${home}/${pub.git.xvzc.path}";
           };
 
           core = {
@@ -125,10 +125,7 @@
                   }) names
                 );
             in
-            mkGithubUrlMappings [
-              pub.personal.name
-              pub.work.name
-            ];
+            mkGithubUrlMappings (builtins.attrNames pub.git);
         };
       };
     };

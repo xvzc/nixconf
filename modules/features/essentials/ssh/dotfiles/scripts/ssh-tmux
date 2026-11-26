@@ -1,0 +1,65 @@
+#!/usr/bin/env zsh
+# ssh, plus: an interactive login (no remote command) to a host tagged "tmux"
+# in the ssh config attaches to the most recently used tmux session there, or
+# opens a plain shell when no tmux server runs.
+#
+# `--no-tmux`, among the options, skips it. Arguments are parsed as ssh(1)
+# does: options may also follow the destination, and `--` ends them. Options
+# that make no interactive shell (-N -W -s -T -f -O -G -V) skip it too.
+# Everything else is passed to ssh unchanged and in order.
+#
+# Usage: ssh-tmux [--no-tmux] <ssh arguments>
+emulate -L zsh
+
+# ssh(1) options that take a value, and those that make no interactive shell.
+local with_value='[BbcDEeFIiJLlmOoPpRSWw]' no_shell='[NsTfGVOW]'
+
+local -a pass
+local dest="" no_tmux="" skip="" flags
+while (( $# )); do
+  case $1 in
+    --no-tmux)
+      no_tmux=1
+      shift
+      ;;
+    --)
+      pass+=("$1")
+      shift
+      [[ -n $dest ]] && break  # the remote command follows
+      (( $# )) && { dest=$1; pass+=("$1"); shift; }
+      ;;
+    -?*)
+      pass+=("$1")
+      flags=${1#-}
+      shift
+      # Bundled flags (-tv), each possibly ending in one that takes a value.
+      while [[ -n $flags ]]; do
+        case $flags in
+          ${~no_shell}*) skip=1 ;|
+          ${~with_value})  # value in the next word: -p 22
+            (( $# )) && { pass+=("$1"); shift; }
+            break
+            ;;
+          ${~with_value}?*)  # value in this word: -p22
+            break
+            ;;
+        esac
+        flags=${flags#?}
+      done
+      ;;
+    *)
+      [[ -n $dest ]] && break  # the remote command starts here
+      dest=$1
+      pass+=("$1")
+      shift
+      ;;
+  esac
+done
+local has_cmd=$#
+pass+=("$@")
+
+if [[ -n $dest && -z $no_tmux && -z $skip ]] && (( ! has_cmd )) &&
+  command ssh -G "${pass[@]}" 2>/dev/null | grep -qx 'tag tmux'; then
+  exec ssh -t "${pass[@]}" 'tmux attach 2>/dev/null || exec "$SHELL" -l'
+fi
+exec ssh "${pass[@]}"

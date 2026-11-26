@@ -2,7 +2,6 @@
   lib,
   pkgs,
   ctx,
-  pub,
   ...
 }:
 {
@@ -49,44 +48,6 @@
         ];
       };
 
-    }
-    # SSH hosts, reached over Tailscale MagicDNS.
-    {
-      hm.users.default = {
-        programs.ssh.settings = {
-          "Host nixos-desktop-01" = {
-            hostname = "nixos-desktop-01.tailb7f463.ts.net";
-            user = "mizuki";
-            HostKeyAlias = "nixos-desktop-01";
-            forwardAgent = true;
-            identitiesOnly = true;
-            StrictHostKeyChecking = "no";
-            identityFile = "~/${pub.desktop.path}";
-          };
-
-          # Windows on the same machine (dual boot), so the same LAN address as
-          # NixOS: HostKeyAlias keeps its host key apart in known_hosts.
-          "Host windows-desktop" = {
-            hostname = "172.20.0.100";
-            user = "anonymous";
-            HostKeyAlias = "windows-desktop";
-          };
-
-          "Host ${pub.router.name}" = {
-            hostname = "router.tailb7f463.ts.net";
-            user = "root";
-            forwardAgent = true;
-            identitiesOnly = true;
-            StrictHostKeyChecking = "no";
-            identityFile = "~/${pub.router.path}";
-          };
-        };
-
-        home.file = {
-          "${pub.desktop.path}".text = pub.desktop.key;
-          "${pub.router.path}".text = pub.router.key;
-        };
-      };
     }
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     { system.stateVersion = 6; }

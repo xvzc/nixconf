@@ -1,0 +1,10 @@
+#compdef nbs
+
+# NixOS hosts in the flake, except this machine (plain `nbs` switches it).
+_nbs() {
+  local -a hosts
+  hosts=(${(f)"$(nix eval --raw "$NIXOS_CONFIG#nixosConfigurations" \
+    --apply 'c: builtins.concatStringsSep "\n" (builtins.attrNames c)' 2>/dev/null)"})
+  hosts=(${hosts:#$HOST})
+  _describe 'host' hosts
+}

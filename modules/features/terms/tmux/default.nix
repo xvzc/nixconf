@@ -1,5 +1,7 @@
 { lib, ... }:
 {
+  imports = [ ./agent.nix ];
+
   # ┌────────┐
   # │ COMMON │
   # └────────┘
