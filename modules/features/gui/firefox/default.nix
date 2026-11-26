@@ -41,10 +41,6 @@ lib.optionalAttrs ctx.isDarwin {
           # Versions come from Nix; the app cannot update itself in the store.
           DisableAppUpdate = true;
         };
-        # Linux: the XDG path, whatever a host's home.stateVersion (its default
-        # only from 26.05). Darwin keeps its own default, the only place
-        # Firefox reads there.
-        configPath = lib.mkIf pkgs.stdenv.isLinux "${config.xdg.configHome}/mozilla/firefox";
         # Darwin: installed above, unwrapped; policies go to macOS defaults.
         package = if pkgs.stdenv.isDarwin then null else pkgs.firefox-bin;
 
