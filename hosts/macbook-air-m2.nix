@@ -21,7 +21,7 @@
       system.defaults.dock = {
         persistent-others = lib.mkForce [ ];
         persistent-apps = [
-          "/Applications/Firefox.app" # LEAVE THIS AS IT IS!!
+          "/Applications/Nix Apps/Firefox.app" # features/gui/firefox installs it there
           "${pkgs.spotify}/Applications/Spotify.app"
           "${pkgs.wezterm}/Applications/WezTerm.app"
         ];

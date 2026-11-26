@@ -1,13 +1,14 @@
 {
-  config,
   ctx,
   lib,
+  pkgs,
   ...
 }:
 lib.optionalAttrs ctx.isDarwin {
-  homebrew.casks = lib.mkIf config.nix-homebrew.enable [
-    "firefox"
-  ];
+  # Mozilla's signed app, unpacked as is (1Password's browser integration
+  # rejects an unsigned or re-wrapped Firefox). Not programs.firefox.package:
+  # Home Manager would wrap it, which breaks the signature there.
+  environment.systemPackages = [ pkgs.mv.tip.firefox-bin-unwrapped ];
 }
 // {
   # ┌────────┐
@@ -21,13 +22,30 @@ lib.optionalAttrs ctx.isDarwin {
 
   hm.users.default =
     {
+      config,
       pkgs,
       lib,
       ...
     }:
     {
+      # Firefox rewrites profiles.ini itself; replace it on activation instead
+      # of stopping at the conflict.
+      home.file."${config.programs.firefox.configPath}/profiles.ini".force = true;
+
       programs.firefox = {
         enable = true;
+        # No built-in VPN (IP Protection), nor its toolbar button. A policy, so
+        # Mozilla's remote rollouts (Nimbus) cannot turn it back on.
+        policies = {
+          IPProtectionAvailable = false;
+          # Versions come from Nix; the app cannot update itself in the store.
+          DisableAppUpdate = true;
+        };
+        # Linux: the XDG path, Home Manager's default from 26.05 (set here, as
+        # home.stateVersion is older). Darwin keeps its own default, the only
+        # place Firefox reads there.
+        configPath = lib.mkIf pkgs.stdenv.isLinux "${config.xdg.configHome}/mozilla/firefox";
+        # Darwin: installed above, unwrapped; policies go to macOS defaults.
         package = if pkgs.stdenv.isDarwin then null else pkgs.firefox-bin;
 
         profiles.default = {
@@ -50,6 +68,17 @@ lib.optionalAttrs ctx.isDarwin {
               order:-1 !important; /*113*/
               border-top: none !important;
               border-bottom: 1px solid ThreeDShadow !important;
+            }
+
+            /* No bookmarks sidebar (the bookmarks toolbar stays). */
+            #sidebar-box[sidebarcommand="viewBookmarksSidebar"],
+            #sidebar-box[sidebarcommand="viewBookmarksSidebar"] + #sidebar-splitter {
+              display: none !important;
+            }
+
+            /* No sidebar button in the toolbar. */
+            #sidebar-button {
+              display: none !important;
             }
           '';
         };
@@ -76,6 +105,17 @@ lib.optionalAttrs ctx.isDarwin {
               order:-1 !important; /*113*/
               border-top: none !important;
               border-bottom: 1px solid ThreeDShadow !important;
+            }
+
+            /* No bookmarks sidebar (the bookmarks toolbar stays). */
+            #sidebar-box[sidebarcommand="viewBookmarksSidebar"],
+            #sidebar-box[sidebarcommand="viewBookmarksSidebar"] + #sidebar-splitter {
+              display: none !important;
+            }
+
+            /* No sidebar button in the toolbar. */
+            #sidebar-button {
+              display: none !important;
             }
           '';
         };
