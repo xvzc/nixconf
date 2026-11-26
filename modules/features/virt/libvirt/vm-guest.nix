@@ -34,7 +34,7 @@ let
         cat <<'USAGE'
       Usage: vm-guest <command> [name]
 
-        up       start, and wait until ssh is reachable
+        up       start (returns at once; ssh waits for the guest)
         down     shut down (forced after 60s)
         list     show the guests, their state and address
         ssh      start if needed, then ssh in (extra args go to ssh)
@@ -136,7 +136,6 @@ let
       case $cmd in
         up)
           is_running "$name" || virsh start "$name" >/dev/null
-          wait_ssh "$name"
           ;;
         down)
           is_running "$name" || exit 0
@@ -189,9 +188,46 @@ let
       esac
     '';
   };
+
+  # zsh completion: commands, then a guest name, then -y for reinstall.
+  completion = pkgs.writeTextDir "share/zsh/site-functions/_vm-guest" ''
+    #compdef vm-guest
+    local -a commands guests
+    commands=(
+      'up:start a guest'
+      'down:shut a guest down (forced after 60s)'
+      'reboot:reboot a guest'
+      'list:show the guests, their state and address'
+      'ssh:start a guest if needed, then ssh in'
+      'console:attach to the serial console'
+      'reinstall:erase the disk and reinstall from the image'
+    )
+    guests=(${lib.escapeShellArgs (lib.attrNames built.guests)})
+
+    if (( CURRENT == 2 )); then
+      _describe -t commands 'vm-guest command' commands
+      return
+    fi
+    case $words[2] in
+      list|help) ;;
+      reinstall)
+        if (( CURRENT == 3 )); then
+          _alternative 'guests:guest:compadd -a guests' 'options:option:compadd -- -y'
+        else
+          compadd -- -y
+        fi
+        ;;
+      *)
+        (( CURRENT == 3 )) && _describe -t guests 'guest' guests
+        ;;
+    esac
+  '';
 in
 lib.mkIf cfg.enable {
-  environment.systemPackages = [ vmGuest ];
+  environment.systemPackages = [
+    vmGuest
+    completion
+  ];
 
   systemd.services.vm-define = {
     description = "Define the libvirt network and VM guests";
