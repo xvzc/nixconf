@@ -17,7 +17,7 @@ lib.mkIf config.features.wm.hyprland.enable {
     ELECTRON_OZONE_PLATFORM_HINT = "auto";
   };
 
-  services.dbus.packages = with pkgs; [ xfce.xfconf ];
+  services.dbus.packages = with pkgs; [ xfconf ];
   services = {
     xserver = {
       enable = true;
@@ -100,6 +100,9 @@ lib.mkIf config.features.wm.hyprland.enable {
         enable = true;
         gtk2.enable = true;
         gtk3.enable = true;
+        # The pre-26.05 default (home.stateVersion is older): GTK4 apps use the
+        # same theme.
+        gtk4.theme = config.gtk.theme;
         # colorScheme = "dark";
 
         theme = {
