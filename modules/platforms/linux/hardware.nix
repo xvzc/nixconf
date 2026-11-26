@@ -32,12 +32,13 @@ in
     # ┌─────┐
     # │ CPU │
     # └─────┘
+    # Load the vendor's microcode updates at boot.
     (lib.mkIf (cfg.cpu == "intel") {
-      environment.systemPackages = [ pkgs.microcode-intel ];
+      hardware.cpu.intel.updateMicrocode = true;
     })
 
     (lib.mkIf (cfg.cpu == "amd") {
-      environment.systemPackages = [ pkgs.microcode-amd ];
+      hardware.cpu.amd.updateMicrocode = true;
     })
 
     # ┌─────┐
