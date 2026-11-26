@@ -40,9 +40,9 @@ let
         ssh      start if needed, then ssh in (extra args go to ssh)
         reboot   reboot (asks the guest, like down)
         console  attach to the serial console (detach: Ctrl-])
-        reinstall [-y]
+        reinstall
                  erase the disk and reinstall from the image; the next boot
-                 is a first boot again. Asks first, unless -y.
+                 is a first boot again. Asks first.
 
       [name] may be omitted when there is one guest.
       USAGE
@@ -163,19 +163,15 @@ let
           virsh reboot "$name" >/dev/null
           ;;
         reinstall)
-          if [ "''${1:-}" != "-y" ]; then
-            echo "vm-guest: everything on $name is erased, and it is reinstalled from the image." >&2
-            echo "          Its next boot is a first boot again." >&2
-            if [ ! -t 0 ]; then
-              echo "vm-guest: not a terminal; pass -y to confirm" >&2
-              exit 1
-            fi
-            read -r -p "Reinstall $name? [y/N] " answer
-            case $answer in
-              [yY] | [yY][eE][sS]) ;;
-              *) echo "vm-guest: cancelled" >&2; exit 1 ;;
-            esac
-          fi
+          echo "vm-guest: everything on $name is erased, and it is reinstalled from the image." >&2
+          echo "          Its next boot is a first boot again." >&2
+          # No answer (no input) cancels.
+          answer=""
+          read -r -p "Reinstall $name? [y/N] " answer || true
+          case $answer in
+            [yY] | [yY][eE][sS]) ;;
+            *) echo "vm-guest: cancelled" >&2; exit 1 ;;
+          esac
           if is_running "$name"; then virsh destroy "$name" >/dev/null; fi
           rm -f "''${disk[$name]}"
           create_disk "$name"
@@ -189,39 +185,35 @@ let
     '';
   };
 
-  # zsh completion: commands, then a guest name, then -y for reinstall.
-  completion = pkgs.writeTextDir "share/zsh/site-functions/_vm-guest" ''
-    #compdef vm-guest
-    local -a commands guests
-    commands=(
-      'up:start a guest'
-      'down:shut a guest down (forced after 60s)'
-      'reboot:reboot a guest'
-      'list:show the guests, their state and address'
-      'ssh:start a guest if needed, then ssh in'
-      'console:attach to the serial console'
-      'reinstall:erase the disk and reinstall from the image'
-    )
-    guests=(${lib.escapeShellArgs (lib.attrNames built.guests)})
+  # zsh completion: commands, then a guest name.
+  completion =
+    pkgs.writeTextDir "share/zsh/site-functions/_vm-guest"
+      #sh
+      ''
+        #compdef vm-guest
+        local -a commands guests
+        commands=(
+          'up:start a guest'
+          'down:shut a guest down (forced after 60s)'
+          'reboot:reboot a guest'
+          'list:show the guests, their state and address'
+          'ssh:start a guest if needed, then ssh in'
+          'console:attach to the serial console'
+          'reinstall:erase the disk and reinstall from the image'
+        )
+        guests=(${lib.escapeShellArgs (lib.attrNames built.guests)})
 
-    if (( CURRENT == 2 )); then
-      _describe -t commands 'vm-guest command' commands
-      return
-    fi
-    case $words[2] in
-      list|help) ;;
-      reinstall)
-        if (( CURRENT == 3 )); then
-          _alternative 'guests:guest:compadd -a guests' 'options:option:compadd -- -y'
-        else
-          compadd -- -y
+        if (( CURRENT == 2 )); then
+          _describe -t commands 'vm-guest command' commands
+          return
         fi
-        ;;
-      *)
-        (( CURRENT == 3 )) && _describe -t guests 'guest' guests
-        ;;
-    esac
-  '';
+        case $words[2] in
+          list|help) ;;
+          *)
+            (( CURRENT == 3 )) && _describe -t guests 'guest' guests
+            ;;
+        esac
+      '';
 in
 lib.mkIf cfg.enable {
   environment.systemPackages = [
