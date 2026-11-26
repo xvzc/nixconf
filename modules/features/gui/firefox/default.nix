@@ -60,8 +60,15 @@ lib.optionalAttrs ctx.isDarwin {
             "sidebar.revamp" = false;
           };
           userChrome = ''
-            .browserContainer > findbar {
-              order:-1 !important; /*113*/
+            /* Find bar above the page, full width. The content area is a grid
+               now, so `order` alone no longer moves it: take the cell of the
+               notification box (above the page), and draw over a notification
+               that shares it. */
+            findbar {
+              grid-area: notificationbox !important;
+              order: -1 !important;
+              position: relative;
+              z-index: 1;
               border-top: none !important;
               border-bottom: 1px solid ThreeDShadow !important;
             }
@@ -97,8 +104,15 @@ lib.optionalAttrs ctx.isDarwin {
             # "network.proxy.ssl_port" = 8080;
           };
           userChrome = ''
-            .browserContainer > findbar {
-              order:-1 !important; /*113*/
+            /* Find bar above the page, full width. The content area is a grid
+               now, so `order` alone no longer moves it: take the cell of the
+               notification box (above the page), and draw over a notification
+               that shares it. */
+            findbar {
+              grid-area: notificationbox !important;
+              order: -1 !important;
+              position: relative;
+              z-index: 1;
               border-top: none !important;
               border-bottom: 1px solid ThreeDShadow !important;
             }
