@@ -27,6 +27,13 @@ lib.optionalAttrs ctx.isDarwin {
       lib,
       ...
     }:
+    let
+      # Extensions, by add-on ID: their addons.mozilla.org slug.
+      extensions = {
+        "{d7742d87-e61d-4b78-b8a1-b469842139fa}" = "vimium-ff";
+        "{d634138d-c276-4fc8-924b-40a0ea21d284}" = "1password-x-password-manager";
+      };
+    in
     {
       # Firefox rewrites profiles.ini itself; replace it on activation instead
       # of stopping at the conflict.
@@ -40,6 +47,13 @@ lib.optionalAttrs ctx.isDarwin {
           IPProtectionAvailable = false;
           # Versions come from Nix; the app cannot update itself in the store.
           DisableAppUpdate = true;
+          # Installed from addons.mozilla.org, latest version, in every
+          # profile; their buttons go in the extensions menu, not the toolbar.
+          ExtensionSettings = lib.mapAttrs (_: slug: {
+            installation_mode = "force_installed";
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/${slug}/latest.xpi";
+            default_area = "menupanel";
+          }) extensions;
         };
         # Linux: the legacy path. Firefox uses it whenever ~/.mozilla exists,
         # which it always does (Home Manager keeps native-messaging-hosts
