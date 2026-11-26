@@ -30,8 +30,8 @@
     }
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     {
-      system.stateVersion = 6;
-      hm.users.default.home.stateVersion = "25.05";
+      system.stateVersion = 7;
+      hm.users.default.home.stateVersion = "26.05";
     }
   ];
 }

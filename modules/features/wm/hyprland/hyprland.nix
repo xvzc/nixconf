@@ -100,8 +100,8 @@ lib.mkIf config.features.wm.hyprland.enable {
         enable = true;
         gtk2.enable = true;
         gtk3.enable = true;
-        # The pre-26.05 default (home.stateVersion is older): GTK4 apps use the
-        # same theme.
+        # GTK4 apps use the same theme, whatever a host's home.stateVersion
+        # (from 26.05 the default is none).
         gtk4.theme = config.gtk.theme;
         # colorScheme = "dark";
 
