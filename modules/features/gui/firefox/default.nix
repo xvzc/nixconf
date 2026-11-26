@@ -55,10 +55,6 @@ lib.optionalAttrs ctx.isDarwin {
             default_area = "menupanel";
           }) extensions;
         };
-        # Linux: the legacy path. Firefox uses it whenever ~/.mozilla exists,
-        # which it always does (Home Manager keeps native-messaging-hosts
-        # there), so the XDG path would hold settings Firefox never reads.
-        configPath = lib.mkIf pkgs.stdenv.isLinux ".mozilla/firefox";
         # Darwin: installed above, unwrapped; policies go to macOS defaults.
         package = if pkgs.stdenv.isDarwin then null else pkgs.firefox-bin;
 
