@@ -38,7 +38,6 @@ let
       builder = nixpkgs.lib.nixosSystem;
       modules = [
         inputs.home-manager.nixosModules.home-manager
-        inputs.NixVirt.nixosModules.default
       ];
     };
   };

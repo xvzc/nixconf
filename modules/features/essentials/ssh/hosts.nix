@@ -50,4 +50,18 @@
     identityFile = "~/${pub.host.router.path}";
     StrictHostKeyChecking = "no";
   };
+
+  # FreeBSD VM on nixos-desktop-01 (features.virt.libvirt there, which sets the
+  # address). Reached through the desktop. `vm-guest reinstall` makes a new host key.
+  freebsd-vm-01 = {
+    hostname = "10.111.111.10";
+    user = "nezuko";
+    proxyJump = "nixos-desktop-01";
+    forwardAgent = true;
+    identitiesOnly = true;
+    identityFile = "~/${pub.host.vm-shared.path}";
+    StrictHostKeyChecking = "no";
+    UserKnownHostsFile = "/dev/null";
+    LogLevel = "ERROR";
+  };
 }

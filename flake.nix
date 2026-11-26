@@ -29,7 +29,6 @@
       url = "github:xvzc/assets";
       flake = false;
     };
-    NixVirt.url = "github:AshleyYakeley/NixVirt";
   };
 
   outputs =

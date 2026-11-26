@@ -1,1 +1,0 @@
-{ freebsd = import ./freebsd.nix; }
