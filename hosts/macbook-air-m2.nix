@@ -29,6 +29,9 @@
 
     }
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    { system.stateVersion = 6; }
+    {
+      system.stateVersion = 6;
+      hm.users.default.home.stateVersion = "25.05";
+    }
   ];
 }
