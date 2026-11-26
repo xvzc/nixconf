@@ -9,7 +9,6 @@ lib.mkIf config.platforms.darwin.systemPreferences.enable {
   # ┏━━━━━━━┓
   # ┃ LOGIN ┃
   # ┗━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  system.primaryUser = ctx.user;
   system.defaults.loginwindow = {
     autoLoginUser = ctx.user;
     SHOWFULLNAME = false; # show full name in login window

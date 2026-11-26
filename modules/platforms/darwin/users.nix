@@ -2,6 +2,9 @@
 # it declared to know its home: https://github.com/LnL7/nix-darwin/issues/423
 { ctx, pkgs, ... }:
 {
+  # The user that user-level settings (system.defaults, homebrew) apply to.
+  system.primaryUser = ctx.user;
+
   users = {
     knownUsers = [ ctx.user ];
     users.${ctx.user} = {
