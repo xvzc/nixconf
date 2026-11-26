@@ -4,22 +4,18 @@
   pkgs,
   ...
 }:
+let
+  # Mozilla's own builds from multiverse, so both OSes run the same version.
+  # Darwin: the signed app unpacked as is (1Password's browser integration
+  # rejects an unsigned or re-wrapped Firefox), installed system-wide, not as
+  # programs.firefox.package: Home Manager would wrap it and break the
+  # signature. Linux: the wrapped one, which takes the policies.
+  firefox = if ctx.isDarwin then pkgs.mv.tip.firefox-bin-unwrapped else pkgs.mv.tip.firefox-bin;
+in
 lib.optionalAttrs ctx.isDarwin {
-  # Mozilla's signed app, unpacked as is (1Password's browser integration
-  # rejects an unsigned or re-wrapped Firefox). Not programs.firefox.package:
-  # Home Manager would wrap it, which breaks the signature there.
-  environment.systemPackages = [ pkgs.mv.tip.firefox-bin-unwrapped ];
+  environment.systemPackages = [ firefox ];
 }
 // {
-  # ┌────────┐
-  # │ COMMON │
-  # └────────┘
-  nixpkgs.overlays = lib.mkBefore [
-    (final: prev: {
-      firefox = final.mv.tip.firefox-unwrapped;
-    })
-  ];
-
   hm.users.default =
     {
       config,
@@ -55,8 +51,8 @@ lib.optionalAttrs ctx.isDarwin {
             default_area = "menupanel";
           }) extensions;
         };
-        # Darwin: installed above, unwrapped; policies go to macOS defaults.
-        package = if pkgs.stdenv.isDarwin then null else pkgs.firefox-bin;
+        # Darwin: installed above; policies go to macOS defaults.
+        package = if ctx.isDarwin then null else firefox;
 
         profiles.default = {
           id = 0;
