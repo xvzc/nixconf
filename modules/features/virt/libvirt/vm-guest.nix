@@ -61,6 +61,8 @@ let
         [ -e "''${disk[$name]}" ] && return 0
         echo "vm-guest: creating the disk of $name" >&2
         local tmp="''${disk[$name]}.tmp.$$"
+        # Not for other users: it holds the guest's keys and test data.
+        umask 007
         xz -dc "''${image[$name]}" >"$tmp"
         qemu-img resize -q "$tmp" "''${size[$name]}G"
         mv "$tmp" "''${disk[$name]}"
